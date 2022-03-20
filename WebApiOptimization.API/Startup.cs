@@ -1,16 +1,23 @@
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using WebApiOptimization.Application.Commands;
+using WebApiOptimization.Application.Handlers.CommandHandlers;
+using WebApiOptimization.Core.Repositories;
+using WebApiOptimization.Core.Repositories.Base;
+using WebApiOptimization.Infrastructure.Data;
+using WebApiOptimization.Infrastructure.Repositories;
+using WebApiOptimization.Infrastructure.Repositories.Base;
 
 namespace WebApiOptimization.API
 {
@@ -28,10 +35,16 @@ namespace WebApiOptimization.API
         {
 
             services.AddControllers();
+            services.AddDbContext<NorthwndContext>(x => x.UseSqlServer(Configuration.GetConnectionString("NorthwndDB")), ServiceLifetime.Singleton);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApiOptimization.API", Version = "v1" });
             });
+            services.AddAutoMapper(typeof(Startup));
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+            services.AddMediatR(typeof(CreateEmployeeHandler).GetTypeInfo().Assembly);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
