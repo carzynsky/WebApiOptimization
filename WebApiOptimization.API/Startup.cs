@@ -6,13 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
-using WebApiOptimization.Application.Commands;
 using WebApiOptimization.Application.Handlers.CommandHandlers;
+using WebApiOptimization.Application.Handlers.QueryHandlers;
 using WebApiOptimization.Core.Repositories;
 using WebApiOptimization.Core.Repositories.Base;
 using WebApiOptimization.Infrastructure.Data;
@@ -44,7 +40,7 @@ namespace WebApiOptimization.API
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<IEmployeeRepository, EmployeeRepository>();
             services.AddMediatR(typeof(CreateEmployeeHandler).GetTypeInfo().Assembly);
-
+            services.AddMediatR(typeof(GetAllEmployeesHandler).GetTypeInfo().Assembly); // ??
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

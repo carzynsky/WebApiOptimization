@@ -1,13 +1,9 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands;
+using WebApiOptimization.Application.Queries;
 using WebApiOptimization.Application.Responses;
-using WebApiOptimization.Core.Entities;
 
 namespace WebApiOptimization.API.Controllers
 {
@@ -23,16 +19,16 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public IReadOnlyList<Employee> Get()
+        public ActionResult<IReadOnlyList<EmployeeResponse>> GetAll()
         {
-            throw new MissingMethodException();
+            var result = _mediator.Send(new GetAllEmployeesQuery());
+            return Ok(result);
         }
         
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<EmployeeResponse>> Add(CreateEmployeeCommand createEmployeeCommand)
+        public ActionResult<EmployeeResponse> Add(CreateEmployeeCommand createEmployeeCommand)
         {
-            var result = await _mediator.Send(createEmployeeCommand);
+            var result = _mediator.Send(createEmployeeCommand);
             return Ok(result);
         }
     }

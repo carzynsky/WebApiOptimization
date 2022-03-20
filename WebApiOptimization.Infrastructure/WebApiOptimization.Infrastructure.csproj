@@ -5,8 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WebApiOptimization.Application\WebApiOptimization.Application.csproj" />
     <ProjectReference Include="..\WebApiOptimization.Core\WebApiOptimization.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.15" />
   </ItemGroup>
 
 </Project>

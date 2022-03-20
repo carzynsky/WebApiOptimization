@@ -17,7 +17,7 @@ namespace WebApiOptimization.Core.Entities
         [Column("RegionID")]
         public int RegionId { get; set; }
 
-        [ForeignKey(nameof(RegionId))]
+        [ForeignKey("RegionID")]
         public virtual Region Region { get; set; }
     }
 }

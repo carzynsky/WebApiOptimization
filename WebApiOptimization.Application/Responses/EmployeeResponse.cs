@@ -32,8 +32,6 @@ namespace WebApiOptimization.Application.Responses
 
         public string Extension { get; set; }
 
-        public byte[] Photo { get; set; }
-
         public string Notes { get; set; }
 
         // ??? some fk but to what? to employee?

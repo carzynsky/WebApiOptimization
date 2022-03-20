@@ -6,16 +6,17 @@ namespace WebApiOptimization.Core.Entities
     [Table("OrderDetails")]
     public class OrderDetail
     {
+        [Key]
         [Column("OrderID")]
         public int OrderId { get; set; }
 
-        [ForeignKey(nameof(OrderId))]
+        [ForeignKey("OrderID")]
         public virtual Order Order { get; set; }
 
         [Column("ProductID")]
         public int ProductId { get; set; }
 
-        [ForeignKey(nameof(ProductId))]
+        [ForeignKey("ProductID")]
         public virtual Product Product { get; set; }
          
         [Column(TypeName = "money")]

@@ -7,6 +7,7 @@ namespace WebApiOptimization.Core.Entities
     public class Category
     {
         [Key]
+        [Column("CategoryID")]
         public int CategoryId { get; set; }
 
         [StringLength(15)]

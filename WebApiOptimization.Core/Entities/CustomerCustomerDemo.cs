@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApiOptimization.Core.Entities
 {
@@ -7,6 +8,7 @@ namespace WebApiOptimization.Core.Entities
     /// </summary>
     public class CustomerCustomerDemo
     {
+        [Key]
         [Column("CustomerID")]
         public int CustomerId { get; set; }
 

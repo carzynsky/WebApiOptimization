@@ -14,8 +14,14 @@ namespace WebApiOptimization.Core.Entities
         [Column("CustomerID")]
         public int CustomerId { get; set; }
 
+        [ForeignKey("CustomerID")]
+        public virtual Customer Customer { get; set; }
+
         [Column("EmployeeID")]
         public int EmployeeId { get; set; }
+
+        [ForeignKey("EmployeeID")]
+        public virtual Employee Employee { get; set; }
 
         public DateTime OrderDate { get; set; }
 

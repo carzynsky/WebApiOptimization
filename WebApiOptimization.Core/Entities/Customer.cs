@@ -7,6 +7,7 @@ namespace WebApiOptimization.Core.Entities
     public class Customer
     {
         [Key]
+        [Column("CustomerID")]
         public int CustomerId { get; set; }
 
         [StringLength(40)]

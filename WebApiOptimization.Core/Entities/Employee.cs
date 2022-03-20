@@ -8,6 +8,8 @@ namespace WebApiOptimization.Core.Entities
     public class Employee
     {
         [Key]
+        [Required]
+        [Column("EmployeeID")]
         public int EmployeeId { get; set; }
 
         [StringLength(20)]
@@ -56,7 +58,7 @@ namespace WebApiOptimization.Core.Entities
         public string Notes { get; set; }
 
         // ??? some fk but to what? to employee?
-        public int ReportsTo { get; set; }
+        public int? ReportsTo { get; set; }
 
         [StringLength(255)]
         public string PhotoPath { get; set; }
