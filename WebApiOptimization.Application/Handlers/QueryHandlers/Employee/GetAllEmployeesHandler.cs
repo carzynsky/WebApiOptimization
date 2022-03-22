@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Mappers;
-using WebApiOptimization.Application.Queries;
+using WebApiOptimization.Application.Queries.Employee;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
 
-namespace WebApiOptimization.Application.Handlers.QueryHandlers
+namespace WebApiOptimization.Application.Handlers.QueryHandlers.Employee
 {
-    public class GetAllEmployeesHandler : IRequestHandler<GetAllEmployeesQuery, IReadOnlyList<EmployeeResponse>>
+    public class GetAllEmployeesHandler : IRequestHandler<GetAllEmployeesQuery, IEnumerable<EmployeeResponse>>
     {
         private readonly IEmployeeRepository _employeeRepository;
         public GetAllEmployeesHandler(IEmployeeRepository employeeRepository)
@@ -17,10 +17,13 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers
             _employeeRepository = employeeRepository;
         }
 
-        public async Task<IReadOnlyList<EmployeeResponse>> Handle(GetAllEmployeesQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<EmployeeResponse>> Handle(GetAllEmployeesQuery request, CancellationToken cancellationToken)
         {
             var employees = _employeeRepository.GetAll();
-            var employeesResponse = EmployeeMapper.Mapper.Map<IReadOnlyList<EmployeeResponse>>(employees);
+            if (employees == null)
+                return new List<EmployeeResponse>();
+
+            var employeesResponse = EmployeeMapper.Mapper.Map<IEnumerable<EmployeeResponse>>(employees);
             return employeesResponse;
         }
     }

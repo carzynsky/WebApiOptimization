@@ -12,7 +12,7 @@ namespace WebApiOptimization.Infrastructure.Repositories
 {
     public class EmployeeRepository : Repository<Employee>, IEmployeeRepository
     {
-        public EmployeeRepository(NorthwndContext context) : base(context)
+        public EmployeeRepository(NorthwndContext northwndContext) : base(northwndContext)
         {
 
         }

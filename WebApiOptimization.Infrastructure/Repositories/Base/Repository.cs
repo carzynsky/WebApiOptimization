@@ -7,41 +7,46 @@ namespace WebApiOptimization.Infrastructure.Repositories.Base
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        protected readonly NorthwndContext _northwndContext;
+        protected readonly NorthwndContext NorthwndContext;
 
         public Repository(NorthwndContext northwndContext)
         {
-            _northwndContext = northwndContext;
+            NorthwndContext = northwndContext;
         }
 
         public T Add(T entity)
         {
-            _northwndContext.Add(entity);
-            _northwndContext.SaveChanges();
+            NorthwndContext.Add(entity);
+            NorthwndContext.SaveChanges();
             return entity;
         }
 
         public void Delete(T entity)
         {
-            _northwndContext.Set<T>().Remove(entity);
-            _northwndContext.SaveChanges();
+            NorthwndContext.Set<T>().Remove(entity);
+            NorthwndContext.SaveChanges();
         }
 
-        public IReadOnlyList<T> GetAll()
+        public void DeleteRange(IEnumerable<T> entitites)
         {
-            IReadOnlyList<T> list = _northwndContext.Set<T>().ToList();
-            return list;
+            NorthwndContext.Set<T>().RemoveRange(entitites);
+            NorthwndContext.SaveChanges();
+        }
+
+        public IEnumerable<T> GetAll()
+        {
+            return NorthwndContext.Set<T>().ToList();
         }
 
         public T GetById(int id)
         {
-            return _northwndContext.Set<T>().Find(id);
+            return NorthwndContext.Set<T>().Find(id);
         }
 
         public void Update(T entity)
         {
-            _northwndContext.Set<T>().Update(entity);
-            _northwndContext.SaveChanges();
+            NorthwndContext.Set<T>().Update(entity);
+            NorthwndContext.SaveChanges();
         }
     }
 }

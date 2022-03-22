@@ -14,6 +14,7 @@ namespace WebApiOptimization.Infrastructure.Data
         {
 
         }
+
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<CustomerCustomerDemo> CustomerCustomerDemos { get; set; }
@@ -27,5 +28,10 @@ namespace WebApiOptimization.Infrastructure.Data
         public virtual DbSet<Shipper> Shippers { get; set; }
         public virtual DbSet<Supplier> Suppliers { get; set; }
         public virtual DbSet<Territory> Territories { get; set; }
-} 
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
+    } 
 }

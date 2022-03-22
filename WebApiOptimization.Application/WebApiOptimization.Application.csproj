@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -13,6 +13,21 @@
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="MediatR.CQRS" Version="1.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Handlers\CommandHandlers\CategoryHandlers\" />
+    <Folder Include="Handlers\CommandHandlers\CustomerHandlers\" />
+    <Folder Include="Handlers\CommandHandlers\CustomerCustomerDemoHandlers\" />
+    <Folder Include="Handlers\CommandHandlers\EmployeeTerritoryHandlers\" />
+    <Folder Include="Handlers\CommandHandlers\TerritoryHandlers\" />
+    <Folder Include="Handlers\CommandHandlers\SupplierHandlers\" />
+    <Folder Include="Handlers\CommandHandlers\ShipperHandlers\" />
+    <Folder Include="Handlers\CommandHandlers\RegionHandlers\" />
+    <Folder Include="Handlers\CommandHandlers\ProductHandlers\" />
+    <Folder Include="Handlers\CommandHandlers\OrderDetailHandlers\" />
+    <Folder Include="Handlers\CommandHandlers\OrderHandlers\" />
+    <Folder Include="Handlers\QueryHandlers\Customer\" />
   </ItemGroup>
 
 </Project>

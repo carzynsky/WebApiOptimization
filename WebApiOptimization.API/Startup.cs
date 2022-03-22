@@ -7,8 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
-using WebApiOptimization.Application.Handlers.CommandHandlers;
-using WebApiOptimization.Application.Handlers.QueryHandlers;
+using WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandlers;
+using WebApiOptimization.Application.Handlers.QueryHandlers.Employee;
 using WebApiOptimization.Core.Repositories;
 using WebApiOptimization.Core.Repositories.Base;
 using WebApiOptimization.Infrastructure.Data;
@@ -38,9 +38,34 @@ namespace WebApiOptimization.API
             });
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+            #region AddTransient repos
+
+            services.AddTransient<ICategoryRepository, CategoryRepository>();
+            services.AddTransient<ICustomerCustomerDemoRepository, CustomerCustomerDemoRepository>();
+            services.AddTransient<ICustomerDemographicRepository, CustomerDemographicRepository>();
+            services.AddTransient<ICustomerRepository, CustomerRepository>();
             services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+            services.AddTransient<IEmployeeTerritoryRepository, EmployeeTerritoryRepository>();
+            services.AddTransient<IOrderDetailRepository, OrderDetailRepository>();
+            services.AddTransient<IOrderRepository, OrderRepository>();
+            services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<IRegionRepository, RegionRepository>();
+            services.AddTransient<IShipperRepository, ShipperRepository>();
+            services.AddTransient<ISupplierRepository, SupplierRepository>();
+            services.AddTransient<ITerritoryRepository, TerritoryRepository>();
+
+            #endregion
+
+            #region AddMediatr
+
             services.AddMediatR(typeof(CreateEmployeeHandler).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(GetAllEmployeesHandler).GetTypeInfo().Assembly); // ??
+            services.AddMediatR(typeof(GetAllEmployeesHandler).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(GetEmployeeHandler).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(DeleteEmployeeHandler).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(UpdateEmployeeHandler).GetTypeInfo().Assembly);
+
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

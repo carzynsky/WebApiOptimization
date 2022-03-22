@@ -1,13 +1,13 @@
 ﻿using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using WebApiOptimization.Application.Commands;
+using WebApiOptimization.Application.Commands.Employee;
 using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Entities;
 using WebApiOptimization.Core.Repositories;
 
-namespace WebApiOptimization.Application.Handlers.CommandHandlers
+namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandlers
 {
     public class CreateEmployeeHandler : IRequestHandler<CreateEmployeeCommand, EmployeeResponse>
     {

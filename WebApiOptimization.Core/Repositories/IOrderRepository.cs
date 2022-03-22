@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using WebApiOptimization.Core.Entities;
+using WebApiOptimization.Core.Repositories.Base;
 
 namespace WebApiOptimization.Core.Repositories
 {
-    interface IOrderRepository
+    public interface IOrderRepository : IRepository<Order>
     {
+        IEnumerable<Order> GetByEmployeeId(int employeeId);
     }
 }
