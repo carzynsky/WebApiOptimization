@@ -1,15 +1,15 @@
 ﻿using MediatR;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Queries.Product;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
 
 namespace WebApiOptimization.Application.Handlers.QueryHandlers.Product
 {
-    public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, IReadOnlyList<ProductResponse>>
+    public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, IEnumerable<ProductResponse>>
     {
         private readonly IProductRepository _productRepository;
 
@@ -18,9 +18,11 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Product
             _productRepository = productRepository;
         }
 
-        public Task<IReadOnlyList<ProductResponse>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProductResponse>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var products = _productRepository.GetAll();
+            var response = ProductMapper.Mapper.Map<IEnumerable<ProductResponse>>(products);
+            return response;
         }
     }
 }

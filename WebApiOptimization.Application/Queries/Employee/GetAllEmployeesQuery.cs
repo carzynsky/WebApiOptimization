@@ -4,6 +4,6 @@ using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.Application.Queries.Employee
 {
-    public record GetAllEmployeesQuery : IRequest<IReadOnlyList<EmployeeResponse>>;
+    public record GetAllEmployeesQuery : IRequest<IEnumerable<EmployeeResponse>>;
  
 }

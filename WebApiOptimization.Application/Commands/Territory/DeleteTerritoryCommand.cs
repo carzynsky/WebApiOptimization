@@ -3,5 +3,5 @@ using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.Application.Commands.Territory
 {
-    public record DeleteTerritoryCommand : IRequest<TerritoryResponse>;
+    public record DeleteTerritoryCommand(int Id) : IRequest<TerritoryResponse>;
 }

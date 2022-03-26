@@ -1,11 +1,67 @@
-﻿using System;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using WebApiOptimization.Application.Commands.Product;
+using WebApiOptimization.Application.Queries.Product;
+using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.API.Controllers
 {
-    public class ProductController
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ProductController : ControllerBase
     {
+        private IMediator _mediator;
+        public ProductController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<ProductResponse>> GetAll()
+        {
+            var result = _mediator.Send(new GetAllProductsQuery()).Result;
+            return Ok(result);
+        }
+
+        [HttpGet("{id:int}")]
+        public ActionResult<ProductResponse> GetById(int id)
+        {
+            var result = _mediator.Send(new GetProductByIdQuery(id)).Result;
+            if (result == null)
+                return NotFound($"Product with id={id} not found!");
+
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public ActionResult<ProductResponse> Add(CreateProductCommand createProductCommand)
+        {
+            var result = _mediator.Send(createProductCommand);
+            return Ok(result);
+        }
+
+        [HttpPut("{id:int}")]
+        public ActionResult<ProductResponse> Update(int id, UpdateProductCommand updateProductCommand)
+        {
+            if (id != updateProductCommand.ProductId)
+                return BadRequest($"ProductId does not match with updated data!");
+
+            var result = _mediator.Send(updateProductCommand).Result;
+            if (result == null)
+                return NotFound($"Product with id={id} not found!");
+
+            return Ok(result);
+        }
+
+        [HttpDelete("{id:int}")]
+        public ActionResult<ProductResponse> Delete(int id)
+        {
+            var result = _mediator.Send(new DeleteProductCommand(id)).Result;
+            if (result == null)
+                return NotFound($"Product with id={id} not found!");
+
+            return Ok();
+        }
     }
 }

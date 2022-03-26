@@ -4,5 +4,5 @@ using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.Application.Queries.EmployeeTerritory
 {
-    public record GetAllEmployeeTerritoriesQuery : IRequest<IReadOnlyList<EmployeeTerritoryResponse>>;
+    public record GetAllEmployeeTerritoriesQuery : IRequest<IEnumerable<EmployeeTerritoryResponse>>;
 }

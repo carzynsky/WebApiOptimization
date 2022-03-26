@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using WebApiOptimization.Application.Commands.Category;
 using WebApiOptimization.Application.Queries.Category;
-using WebApiOptimization.Application.Queries.Customer;
 using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.API.Controllers
@@ -21,14 +20,14 @@ namespace WebApiOptimization.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<CategoryResponse>> GetAll()
         {
-            var result = _mediator.Send(new GetAllCategoriesQuery());
+            var result = _mediator.Send(new GetAllCategoriesQuery()).Result;
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
         public ActionResult<CategoryResponse> GetById(int id)
         {
-            var result = _mediator.Send(new GetCustomerByIdQuery(id)).Result;
+            var result = _mediator.Send(new GetCategoryByIdQuery(id)).Result;
             if (result == null)
                 return NotFound($"Category with id={id} not found!");
 

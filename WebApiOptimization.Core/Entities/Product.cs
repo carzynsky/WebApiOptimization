@@ -17,14 +17,8 @@ namespace WebApiOptimization.Core.Entities
         [Column("SupplierID")]
         public int SupplierId { get; set; }
 
-        [ForeignKey("SupplierID")]
-        public virtual Supplier Supplier { get; set; }
-
         [Column("CategoryID")]
         public int CategoryId { get; set; }
-
-        [ForeignKey("CategoryID")]
-        public virtual Category Category { get; set; }
 
         [StringLength(40)]
         public string QuantityPerUnit { get; set; }

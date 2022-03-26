@@ -11,6 +11,7 @@ namespace WebApiOptimization.Application.Mappers
         {
             CreateMap<Employee, EmployeeResponse>().ReverseMap();
             CreateMap<Employee, CreateEmployeeCommand>().ReverseMap();
+            CreateMap<Employee, UpdateEmployeeCommand>().ReverseMap();
         }
     }
 }

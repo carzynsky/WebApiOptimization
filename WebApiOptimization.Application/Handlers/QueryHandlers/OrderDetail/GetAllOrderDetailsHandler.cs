@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Queries.OrderDetail;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
@@ -16,9 +16,11 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.OrderDetail
         {
             _orderDetailRepository = orderDetailRepository;
         }
-        public Task<IEnumerable<OrderDetailResponse>> Handle(GetAllOrderDetailsQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<OrderDetailResponse>> Handle(GetAllOrderDetailsQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var orderDetails = _orderDetailRepository.GetAll();
+            var response = OrderDetailMapper.Mapper.Map<IEnumerable<OrderDetailResponse>>(orderDetails);
+            return response;
         }
     }
 }

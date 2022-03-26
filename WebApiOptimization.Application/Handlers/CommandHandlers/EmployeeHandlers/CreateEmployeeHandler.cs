@@ -20,7 +20,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandle
 
         /// <summary>
         /// Will run synchronously anyway
-        /// </summary>
+        /// </summary> 
         /// <param name="request"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>

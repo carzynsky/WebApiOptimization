@@ -21,7 +21,7 @@ namespace WebApiOptimization.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<EmployeeResponse>> GetAll()
         {
-            var result = _mediator.Send(new GetAllEmployeesQuery());
+            var result = _mediator.Send(new GetAllEmployeesQuery()).Result;
             return Ok(result);
         }
 

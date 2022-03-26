@@ -8,10 +8,10 @@ using WebApiOptimization.Core.Repositories;
 
 namespace WebApiOptimization.Application.Handlers.QueryHandlers.Employee
 {
-    public class GetEmployeeHandler : IRequestHandler<GetEmployeeByIdQuery, EmployeeResponse>
+    public class GetEmployeeByIdHandler : IRequestHandler<GetEmployeeByIdQuery, EmployeeResponse>
     {
         private readonly IEmployeeRepository _employeeRepository;
-        public GetEmployeeHandler(IEmployeeRepository employeeRepository)
+        public GetEmployeeByIdHandler(IEmployeeRepository employeeRepository)
         {
             _employeeRepository = employeeRepository;
         }

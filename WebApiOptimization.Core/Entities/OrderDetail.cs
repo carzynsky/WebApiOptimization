@@ -10,14 +10,8 @@ namespace WebApiOptimization.Core.Entities
         [Column("OrderID")]
         public int OrderId { get; set; }
 
-        [ForeignKey("OrderID")]
-        public virtual Order Order { get; set; }
-
         [Column("ProductID")]
         public int ProductId { get; set; }
-
-        [ForeignKey("ProductID")]
-        public virtual Product Product { get; set; }
          
         [Column(TypeName = "money")]
         [Required]

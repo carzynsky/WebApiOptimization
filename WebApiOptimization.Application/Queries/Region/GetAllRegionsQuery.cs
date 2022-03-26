@@ -4,5 +4,5 @@ using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.Application.Queries.Region
 {
-    public record GetAllRegionsQuery : IRequest<IReadOnlyList<RegionResponse>>;
+    public record GetAllRegionsQuery : IRequest<IEnumerable<RegionResponse>>;
 }

@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Queries.CustomerCustomerDemo;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
@@ -18,9 +18,11 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.CustomerCustomer
             _customerCustomerDemoRepository = customerCustomerDemoRepository;
         }
 
-        public Task<IEnumerable<CustomerCustomerDemoResponse>> Handle(GetAllCustomerCustomerDemosQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<CustomerCustomerDemoResponse>> Handle(GetAllCustomerCustomerDemosQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var customerCustomerDemos = _customerCustomerDemoRepository.GetAll();
+            var response = CustomerCustomerDemoMapper.Mapper.Map<IEnumerable<CustomerCustomerDemoResponse>>(customerCustomerDemos);
+            return response;
         }
     }
 }

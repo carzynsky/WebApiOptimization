@@ -3,5 +3,5 @@ using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.Application.Commands.EmployeeTerritory
 {
-    public record DeleteEmployeeTerritoryCommand : IRequest<EmployeeTerritoryResponse>;
+    public record DeleteEmployeeTerritoryCommand(int Id) : IRequest<EmployeeTerritoryResponse>;
 }

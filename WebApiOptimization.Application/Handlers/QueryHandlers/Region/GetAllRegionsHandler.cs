@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Queries.Region;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
@@ -16,9 +16,11 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Region
         {
             _regionRepository = regionRepository;
         }
-        public Task<IEnumerable<RegionResponse>> Handle(GetAllRegionsQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<RegionResponse>> Handle(GetAllRegionsQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var regions = _regionRepository.GetAll();
+            var response = RegionMapper.Mapper.Map<IEnumerable<RegionResponse>>(regions);
+            return response;
         }
     }
 }

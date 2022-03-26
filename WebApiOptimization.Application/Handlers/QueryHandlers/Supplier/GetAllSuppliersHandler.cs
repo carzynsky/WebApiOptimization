@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Queries.Supplier;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
@@ -16,10 +16,11 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Supplier
         {
             _supplierRepository = supplierRepository;
         }
-
-        public Task<IEnumerable<SupplierResponse>> Handle(GetAllSuppliersQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<SupplierResponse>> Handle(GetAllSuppliersQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var suppliers = _supplierRepository.GetAll();
+            var response = SupplierMapper.Mapper.Map<IEnumerable<SupplierResponse>>(suppliers);
+            return response;
         }
     }
 }
