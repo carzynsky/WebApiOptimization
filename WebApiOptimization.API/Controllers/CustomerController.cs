@@ -29,7 +29,7 @@ namespace WebApiOptimization.API.Controllers
         {
             var result = _mediator.Send(new GetCustomerByIdQuery(id)).Result;
             if (result == null)
-                return NotFound($"Category with id={id} not found!");
+                return NotFound($"Customer with id={id} not found!");
 
             return Ok(result);
         }

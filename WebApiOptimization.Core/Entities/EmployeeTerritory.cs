@@ -17,6 +17,7 @@ namespace WebApiOptimization.Core.Entities
         public virtual Employee Employee { get; set; }
         */
 
+        [Key]
         [StringLength(20)]
         [Required]
         [Column("TerritoryID")]

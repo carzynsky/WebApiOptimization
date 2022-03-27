@@ -18,10 +18,10 @@ namespace WebApiOptimization.Core.Entities
         public string ContactName { get; set; }
 
         [StringLength(30)]
-        public string ContactTile{ get; set; }
+        public string ContactTitle{ get; set; }
 
         [StringLength(60)]
-        public string ContactAddress { get; set; }
+        public string Address { get; set; }
 
         [StringLength(15)]
         public string City { get; set; }

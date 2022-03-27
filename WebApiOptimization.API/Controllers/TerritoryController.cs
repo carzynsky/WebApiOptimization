@@ -44,7 +44,13 @@ namespace WebApiOptimization.API.Controllers
         [HttpPut("{id:int}")]
         public ActionResult<TerritoryResponse> Update(int id, UpdateTerritoryCommand updateTerritoryCommand)
         {
-            if (id != updateTerritoryCommand.TerritoryId)
+            int territoryId;
+            if (!int.TryParse(updateTerritoryCommand.TerritoryId, out territoryId))
+            {
+                return BadRequest($"Incorrect territory id!");
+            }
+
+            if (id != territoryId)
                 return BadRequest($"TerritoryId does not match with updated data!");
 
             var result = _mediator.Send(updateTerritoryCommand).Result;

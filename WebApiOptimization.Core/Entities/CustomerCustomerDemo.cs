@@ -6,6 +6,8 @@ namespace WebApiOptimization.Core.Entities
     /// <summary>
     /// Not used anyway
     /// </summary>
+    ///
+    [Table("CustomerCustomerDemo")]
     public class CustomerCustomerDemo
     {
         [Key]

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using WebApiOptimization.Application.Commands.EmployeeTerritory;
-using WebApiOptimization.Application.Queries.EmployeeTerritory;
+using WebApiOptimization.Application.Queries.EmployeeTerritoryQueries;
 using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.API.Controllers
@@ -18,18 +18,11 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<EmployeeTerritoryResponse>> GetAll()
+        public ActionResult<IEnumerable<EmployeeTerritoryResponse>> Get([FromQuery] GetEmployeeTerritoriesQuery getEmployeeTerritoriesQuery)
         {
-            var result = _mediator.Send(new GetAllEmployeeTerritoriesQuery()).Result;
-            return Ok(result);
-        }
-
-        [HttpGet("{id:int}")]
-        public ActionResult<EmployeeTerritoryResponse> GetById(int id)
-        {
-            var result = _mediator.Send(new GetEmployeeTerritoryByIdQuery(id)).Result;
+            var result = _mediator.Send(getEmployeeTerritoriesQuery).Result;
             if (result == null)
-                return NotFound($"EmployeeTerritory with id={id} not found!");
+                return NotFound($"EmployeeTerritory(ies) not found!");
 
             return Ok(result);
         }

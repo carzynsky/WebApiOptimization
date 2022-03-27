@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApiOptimization.Core.Entities
 {
+    [Table("Region")]
     public class Region
     {
         [Key]

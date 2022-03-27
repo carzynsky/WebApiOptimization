@@ -18,5 +18,14 @@ namespace WebApiOptimization.Infrastructure.Repositories
         {
             return NorthwndContext.EmployeeTerritories.Where(x => x.EmployeeId == employeeId);
         }
+
+        public IEnumerable<EmployeeTerritory> GetByTerritoryId(string territoryId)
+        {
+            return NorthwndContext.EmployeeTerritories.Where(x => x.TerritoryId == territoryId);
+        }
+        public IEnumerable<EmployeeTerritory> GetByEmployeeIdAndTerritoryId(int employeeId, string territoryId)
+        {
+            return NorthwndContext.EmployeeTerritories.Where(x => x.EmployeeId == employeeId && x.TerritoryId == territoryId);
+        }
     }
 }

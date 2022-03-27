@@ -8,7 +8,8 @@ namespace WebApiOptimization.Core.Entities
     {
         [Key]
         [Column("TerritoryID")]
-        public int TerritoryId { get; set; }
+        [Required]
+        public string TerritoryId { get; set; }
 
         [StringLength(50)]
         [Required]

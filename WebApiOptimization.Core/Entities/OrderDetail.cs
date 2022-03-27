@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApiOptimization.Core.Entities
 {
-    [Table("OrderDetails")]
+    [Table("Order Details")]
     public class OrderDetail
     {
         [Key]

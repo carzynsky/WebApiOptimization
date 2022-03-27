@@ -18,7 +18,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.TerritoryHandl
         }
         public async Task<TerritoryResponse> Handle(UpdateTerritoryCommand request, CancellationToken cancellationToken)
         {
-            var territoryToUpdate = _territoryRepository.GetById(request.TerritoryId);
+            var territoryToUpdate = _territoryRepository.GetById(int.Parse(request.TerritoryId));
             if (territoryToUpdate == null)
             {
                 return null;

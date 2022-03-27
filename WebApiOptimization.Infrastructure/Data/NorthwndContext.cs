@@ -31,6 +31,8 @@ namespace WebApiOptimization.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<EmployeeTerritory>()
+                .HasKey(x => new { x.EmployeeId, x.TerritoryId });
             base.OnModelCreating(modelBuilder);
         }
     } 

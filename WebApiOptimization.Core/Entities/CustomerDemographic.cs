@@ -10,8 +10,9 @@ namespace WebApiOptimization.Core.Entities
     public class CustomerDemographic
     {
         [Key]
+        [StringLength(10)]
         [Column("CustomerTypeID")]
-        public int CustomerTypeId { get; set; }
+        public string CustomerTypeId { get; set; }
 
         [Column(TypeName = "ntext")]
         public string CustomerDesc { get; set; }

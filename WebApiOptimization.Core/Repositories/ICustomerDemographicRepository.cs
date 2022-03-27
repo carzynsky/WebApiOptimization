@@ -5,5 +5,6 @@ namespace WebApiOptimization.Core.Repositories
 {
     public interface ICustomerDemographicRepository : IRepository<CustomerDemographic>
     {
+        CustomerDemographic GetByCustomerTypeId(string customerTypeId);
     }
 }
