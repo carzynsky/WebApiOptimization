@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Mappers;
@@ -19,6 +20,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Order
         public async Task<IEnumerable<OrderResponse>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
         {
             var orders = _orderRepository.GetAll();
+            var first = orders.FirstOrDefault();
             var response = OrderMapper.Mapper.Map<IEnumerable<OrderResponse>>(orders);
             return response;
         }

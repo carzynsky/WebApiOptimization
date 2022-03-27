@@ -1,9 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WebApiOptimization.Core.Entities;
 
 namespace WebApiOptimization.Infrastructure.Data
@@ -32,7 +27,7 @@ namespace WebApiOptimization.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<EmployeeTerritory>()
-                .HasKey(x => new { x.EmployeeId, x.TerritoryId });
+                .HasKey(x => new { x.EmployeeID, x.TerritoryID });
             base.OnModelCreating(modelBuilder);
         }
     } 

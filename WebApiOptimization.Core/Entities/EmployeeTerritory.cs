@@ -7,26 +7,17 @@ namespace WebApiOptimization.Core.Entities
     public class EmployeeTerritory
     {
         [Key]
-        [Column("EmployeeID")]
-        public int EmployeeId { get; set; }
-
-        /*
+        public int EmployeeID { get; set; }
 
         [ForeignKey("EmployeeID")]
-        [NotMapped]
         public virtual Employee Employee { get; set; }
-        */
 
         [Key]
         [StringLength(20)]
         [Required]
-        [Column("TerritoryID")]
-        public string TerritoryId { get; set; }
-
-        /*
+        public string TerritoryID { get; set; }
 
         [ForeignKey("TerritoryID")]
         public virtual Territory Territory { get; set; }
-        */
     }
 }

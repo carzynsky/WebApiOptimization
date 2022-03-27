@@ -8,7 +8,7 @@ namespace WebApiOptimization.Application.Responses
 {
     public class CustomerDemographicResponse
     {
-        public string CustomerTypeId { get; set; }
+        public string CustomerTypeID { get; set; }
         public string CustomerDesc { get; set; }
     }
 }

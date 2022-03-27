@@ -16,16 +16,16 @@ namespace WebApiOptimization.Infrastructure.Repositories
 
         public IEnumerable<EmployeeTerritory> GetByEmployeeId(int employeeId)
         {
-            return NorthwndContext.EmployeeTerritories.Where(x => x.EmployeeId == employeeId);
+            return NorthwndContext.EmployeeTerritories.Where(x => x.EmployeeID == employeeId);
         }
 
         public IEnumerable<EmployeeTerritory> GetByTerritoryId(string territoryId)
         {
-            return NorthwndContext.EmployeeTerritories.Where(x => x.TerritoryId == territoryId);
+            return NorthwndContext.EmployeeTerritories.Where(x => x.TerritoryID == territoryId);
         }
         public IEnumerable<EmployeeTerritory> GetByEmployeeIdAndTerritoryId(int employeeId, string territoryId)
         {
-            return NorthwndContext.EmployeeTerritories.Where(x => x.EmployeeId == employeeId && x.TerritoryId == territoryId);
+            return NorthwndContext.EmployeeTerritories.Where(x => x.EmployeeID == employeeId && x.TerritoryID == territoryId);
         }
     }
 }

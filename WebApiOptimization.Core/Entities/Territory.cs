@@ -15,8 +15,10 @@ namespace WebApiOptimization.Core.Entities
         [Required]
         public string TerritoryDescription { get; set; }
 
-        [Column("RegionID")]
-        public int RegionId { get; set; }
+        public int RegionID { get; set; }
+
+        [ForeignKey("RegionID")]
+        public virtual Region Region { get; set; }
 
     }
 }

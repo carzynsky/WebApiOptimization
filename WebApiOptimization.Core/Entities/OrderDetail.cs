@@ -7,12 +7,16 @@ namespace WebApiOptimization.Core.Entities
     public class OrderDetail
     {
         [Key]
-        [Column("OrderID")]
-        public int OrderId { get; set; }
+        public int OrderID { get; set; }
 
-        [Column("ProductID")]
-        public int ProductId { get; set; }
-         
+        [ForeignKey("OrderID")]
+        public virtual Order Order { get; set; }
+
+        public int ProductID { get; set; }
+
+        [ForeignKey("ProductID")]
+        public virtual Product Product { get; set; }
+
         [Column(TypeName = "money")]
         [Required]
         public decimal UnitPrice { get; set; }

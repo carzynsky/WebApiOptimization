@@ -1,12 +1,15 @@
 ﻿using System;
+using WebApiOptimization.Core.Entities;
 
 namespace WebApiOptimization.Application.Responses
 {
     public class OrderResponse
     {
-        public int OrderId { get; set; }
-        public string CustomerId { get; set; }
-        public int? EmployeeId { get; set; }
+        public int OrderID { get; set; }
+        public string CustomerID { get; set; }
+        public Customer Customer { get; set; }
+        public int? EmployeeID { get; set; }
+        public Employee Employee { get; set; }
         public DateTime? OrderDate { get; set; }
         public DateTime? RequiredDate { get; set; }
         public DateTime? ShippedDate { get; set; }

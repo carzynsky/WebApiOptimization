@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using WebApiOptimization.Core.Entities;
 using WebApiOptimization.Core.Repositories;
@@ -16,7 +17,11 @@ namespace WebApiOptimization.Infrastructure.Repositories
 
         public IEnumerable<Order> GetByEmployeeId(int employeeId)
         {
-            return NorthwndContext.Orders.Where(x => x.EmployeeId == employeeId);
+            return NorthwndContext.Orders.Where(x => x.EmployeeID == employeeId);
+        }
+        public override IEnumerable<Order> GetAll()
+        {
+            return NorthwndContext.Orders.Include(x => x.Employee).Include(x => x.Customer);
         }
     }
 }
