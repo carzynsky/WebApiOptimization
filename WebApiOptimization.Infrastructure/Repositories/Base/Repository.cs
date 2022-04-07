@@ -33,7 +33,7 @@ namespace WebApiOptimization.Infrastructure.Repositories.Base
             NorthwndContext.SaveChanges();
         }
 
-        public virtual IEnumerable<T> GetAll()
+        public virtual List<T> GetAll()
         {
             return NorthwndContext.Set<T>().ToList();
         }

@@ -14,9 +14,9 @@ namespace WebApiOptimization.Infrastructure.Repositories
         {
            
         }
-        public override IEnumerable<EmployeeTerritory> GetAll()
+        public override List<EmployeeTerritory> GetAll()
         {
-            return NorthwndContext.EmployeeTerritories.Include(x => x.Employee).Include(x => x.Territory);
+            return NorthwndContext.EmployeeTerritories.Include(x => x.Employee).Include(x => x.Territory).ToList();
         }
 
         public IEnumerable<EmployeeTerritory> GetByEmployeeId(int employeeId)

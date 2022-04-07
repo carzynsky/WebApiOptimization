@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using WebApiOptimization.Core.Entities;
 using WebApiOptimization.Core.Repositories;
 using WebApiOptimization.Infrastructure.Data;
@@ -13,9 +14,9 @@ namespace WebApiOptimization.Infrastructure.Repositories
         {
             
         }
-        public override IEnumerable<Territory> GetAll()
+        public override List<Territory> GetAll()
         {
-            return NorthwndContext.Territories.Include(x => x.Region);
+            return NorthwndContext.Territories.Include(x => x.Region).ToList();
         }
     }
 }

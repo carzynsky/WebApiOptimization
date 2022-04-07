@@ -19,9 +19,9 @@ namespace WebApiOptimization.Infrastructure.Repositories
         {
             return NorthwndContext.Orders.Where(x => x.EmployeeID == employeeId);
         }
-        public override IEnumerable<Order> GetAll()
+        public override List<Order> GetAll()
         {
-            return NorthwndContext.Orders.Include(x => x.Employee).Include(x => x.Customer);
+            return NorthwndContext.Orders.Include(x => x.Employee).Include(x => x.Customer).ToList();
         }
     }
 }

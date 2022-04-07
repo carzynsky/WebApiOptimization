@@ -18,9 +18,9 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<OrderResponse>> GetAll()
+        public ActionResult<List<OrderResponse>> GetAll()
         {
-            var result = _mediator.Send(new GetAllOrdersQuery()).Result;
+            var result = _mediator.Send(new GetAllOrdersQuery());
             return Ok(result);
         }
 

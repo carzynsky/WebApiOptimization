@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using WebApiOptimization.Core.Entities;
 using WebApiOptimization.Core.Repositories;
 using WebApiOptimization.Infrastructure.Data;
@@ -14,9 +15,9 @@ namespace WebApiOptimization.Infrastructure.Repositories
 
         }
 
-        public override IEnumerable<OrderDetail> GetAll()
+        public override List<OrderDetail> GetAll()
         {
-            return NorthwndContext.OrderDetails.Include(x => x.Order).Include(x => x.Product);
+            return NorthwndContext.OrderDetails.Include(x => x.Order).Include(x => x.Product).ToList();
         }
     }
 }

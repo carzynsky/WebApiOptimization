@@ -33,7 +33,7 @@ namespace WebApiOptimization.API
         {
 
             services.AddControllers();
-            services.AddDbContext<NorthwndContext>(x => x.UseSqlServer(Configuration.GetConnectionString("NorthwndDB")), ServiceLifetime.Singleton);
+            services.AddDbContext<NorthwndContext>(x => x.UseSqlServer(Configuration.GetConnectionString("NorthwndDB")), ServiceLifetime.Transient);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApiOptimization.API", Version = "v1" });
@@ -61,6 +61,7 @@ namespace WebApiOptimization.API
 
             #region AddMediatr
 
+            // one is enough
             services.AddMediatR(typeof(CreateEmployeeHandler).GetTypeInfo().Assembly);
             /*
             services.AddMediatR(typeof(GetAllEmployeesHandler).GetTypeInfo().Assembly);
