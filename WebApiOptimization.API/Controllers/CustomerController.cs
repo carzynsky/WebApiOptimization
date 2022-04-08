@@ -20,14 +20,14 @@ namespace WebApiOptimization.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<CustomerResponse>> GetAll()
         {
-            var result = _mediator.Send(new GetAllCustomersQuery()).Result;
+            var result = _mediator.Send(new GetAllCustomersQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
         public ActionResult<CustomerResponse> GetById(int id)
         {
-            var result = _mediator.Send(new GetCustomerByIdQuery(id)).Result;
+            var result = _mediator.Send(new GetCustomerByIdQuery(id));
             if (result == null)
                 return NotFound($"Customer with id={id} not found!");
 
@@ -47,7 +47,7 @@ namespace WebApiOptimization.API.Controllers
             if (id != updateCustomerCommand.CustomerId)
                 return BadRequest($"CustomerId does not match with updated data!");
 
-            var result = _mediator.Send(updateCustomerCommand).Result;
+            var result = _mediator.Send(updateCustomerCommand);
             if (result == null)
                 return NotFound($"Customer with id={id} not found!");
 
@@ -57,7 +57,7 @@ namespace WebApiOptimization.API.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult<CustomerResponse> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteCustomerCommand(id)).Result;
+            var result = _mediator.Send(new DeleteCustomerCommand(id));
             if (result == null)
                 return NotFound($"Customer with id={id} not found!");
 

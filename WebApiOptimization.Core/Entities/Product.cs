@@ -7,8 +7,8 @@ namespace WebApiOptimization.Core.Entities
     public class Product
     {
         [Key]
-        [Column("ProductID")]
-        public int ProductId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int ProductID { get; set; }
 
         [StringLength(40)]
         [Required]

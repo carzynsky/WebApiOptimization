@@ -3,7 +3,7 @@ using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.Application.Commands.OrderDetail
 {
-    public class CreateOrderDetailCommand : IRequest<OrderDetailResponse>
+    public class CreateOrderDetailCommand : IRequest<ResponseBuilder<OrderDetailResponse>>
     {
         public int OrderId { get; set; }
         public int ProductId { get; set; }

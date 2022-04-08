@@ -7,5 +7,6 @@ namespace WebApiOptimization.Core.Repositories
     public interface IOrderRepository : IRepository<Order>
     {
         IEnumerable<Order> GetByEmployeeId(int employeeId);
+        IEnumerable<Order> GetByCustomerId(string customerId);
     }
 }

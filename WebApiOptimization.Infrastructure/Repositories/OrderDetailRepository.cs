@@ -15,9 +15,54 @@ namespace WebApiOptimization.Infrastructure.Repositories
 
         }
 
-        public override List<OrderDetail> GetAll()
+        public override IEnumerable<OrderDetail> GetAll()
         {
-            return NorthwndContext.OrderDetails.Include(x => x.Order).Include(x => x.Product).ToList();
+            return NorthwndContext.OrderDetails
+                .Include(x => x.Order)
+                .Include(x => x.Product);
+        }
+
+        public IEnumerable<OrderDetail> GetByOrderId(int orderId, bool eagerLoading = false)
+        {
+            if (eagerLoading)
+            {
+                return NorthwndContext.OrderDetails
+                .AsNoTracking()
+                .Where(x => x.OrderID == orderId)
+                .Include(x => x.Order)
+                .Include(x => x.Product);
+            }
+
+            return NorthwndContext.OrderDetails
+                .AsNoTracking()
+                .Where(x => x.OrderID == orderId);
+        }
+
+        public IEnumerable<OrderDetail> GetByProductId(int productId, bool eagerLoading = false)
+        {
+            if (eagerLoading)
+            {
+                return NorthwndContext.OrderDetails
+                .Where(x => x.ProductID == productId)
+                .Include(x => x.Order)
+                .Include(x => x.Product);
+            }
+
+            return NorthwndContext.OrderDetails
+                .Where(x => x.ProductID == productId);
+        }
+
+        public IEnumerable<OrderDetail> GetByOrderIdAndProductId(int orderId, int productId, bool eagerLoading = false)
+        {
+            if (eagerLoading)
+            {
+                return NorthwndContext.OrderDetails
+                 .Where(x => x.OrderID == orderId && x.ProductID == productId)
+                 .Include(x => x.Order)
+                 .Include(x => x.Product);
+            }
+            return NorthwndContext.OrderDetails
+                 .Where(x => x.OrderID == orderId && x.ProductID == productId);
         }
     }
 }

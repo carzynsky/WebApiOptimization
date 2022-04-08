@@ -11,10 +11,8 @@ namespace WebApiOptimization.Core.Entities
     public class CustomerCustomerDemo
     {
         [Key]
-        [Column("CustomerID")]
-        public int CustomerId { get; set; }
+        public int CustomerID { get; set; }
 
-        [Column("CustomerTypeID")]
-        public int CustomerTypeId { get; set; }
+        public int CustomerTypeID { get; set; }
     }
 }

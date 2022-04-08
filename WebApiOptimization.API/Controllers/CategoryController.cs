@@ -20,14 +20,14 @@ namespace WebApiOptimization.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<CategoryResponse>> GetAll()
         {
-            var result = _mediator.Send(new GetAllCategoriesQuery()).Result;
+            var result = _mediator.Send(new GetAllCategoriesQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
         public ActionResult<CategoryResponse> GetById(int id)
         {
-            var result = _mediator.Send(new GetCategoryByIdQuery(id)).Result;
+            var result = _mediator.Send(new GetCategoryByIdQuery(id));
             if (result == null)
                 return NotFound($"Category with id={id} not found!");
 
@@ -47,7 +47,7 @@ namespace WebApiOptimization.API.Controllers
             if (id != updateCategoryCommand.CategoryId)
                 return BadRequest($"CategoryId does not match with updated data!");
 
-            var result = _mediator.Send(updateCategoryCommand).Result;
+            var result = _mediator.Send(updateCategoryCommand);
             if (result == null)
                 return NotFound($"Category with id={id} not found!");
 
@@ -57,7 +57,7 @@ namespace WebApiOptimization.API.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult<CategoryResponse> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteCategoryCommand(id)).Result;
+            var result = _mediator.Send(new DeleteCategoryCommand(id));
             if (result == null)
                 return NotFound($"Category with id={id} not found!");
 

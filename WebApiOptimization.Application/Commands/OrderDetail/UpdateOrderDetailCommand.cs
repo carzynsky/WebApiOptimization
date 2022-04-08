@@ -3,7 +3,8 @@ using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.Application.Commands.OrderDetail
 {
-    public class UpdateOrderDetailCommand : IRequest<OrderDetailResponse>
+    public record UpdateOrderDetailQueryParameter(int OrderId, int ProductId);
+    public class UpdateOrderDetailCommand : IRequest<ResponseBuilder<OrderDetailResponse>>
     {
         public int OrderId { get; set; }
         public int ProductId { get; set; }

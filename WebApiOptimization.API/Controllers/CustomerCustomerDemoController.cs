@@ -20,14 +20,14 @@ namespace WebApiOptimization.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<CustomerCustomerDemoResponse>> GetAll()
         {
-            var result = _mediator.Send(new GetAllCustomerCustomerDemosQuery()).Result;
+            var result = _mediator.Send(new GetAllCustomerCustomerDemosQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
         public ActionResult<CustomerCustomerDemoResponse> GetById(int id)
         {
-            var result = _mediator.Send(new GetCustomerCustomerDemoByIdQuery(id)).Result;
+            var result = _mediator.Send(new GetCustomerCustomerDemoByIdQuery(id));
             if (result == null)
                 return NotFound($"CustomerCustomerDemo with id={id} not found!");
 
@@ -47,7 +47,7 @@ namespace WebApiOptimization.API.Controllers
             if (id != updateCustomerCustomerDemoCommand.CustomerId)
                 return BadRequest($"CustomerId does not match with updated data!");
 
-            var result = _mediator.Send(updateCustomerCustomerDemoCommand).Result;
+            var result = _mediator.Send(updateCustomerCustomerDemoCommand);
             if (result == null)
                 return NotFound($"CustomerCustomerDemo with customer id={id} not found!");
 
@@ -57,7 +57,7 @@ namespace WebApiOptimization.API.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult<CustomerCustomerDemoResponse> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteCustomerCustomerDemoCommand(id)).Result;
+            var result = _mediator.Send(new DeleteCustomerCustomerDemoCommand(id));
             if (result == null)
                 return NotFound($"CustomerCustomerDemo with customer id={id} not found!");
 

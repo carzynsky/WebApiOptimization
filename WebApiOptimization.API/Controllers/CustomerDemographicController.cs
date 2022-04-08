@@ -20,14 +20,14 @@ namespace WebApiOptimization.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<CustomerDemographicResponse>> GetAll()
         {
-            var result = _mediator.Send(new GetAllCustomerDemographicsQuery()).Result;
+            var result = _mediator.Send(new GetAllCustomerDemographicsQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
         public ActionResult<CustomerDemographicResponse> GetById(int id)
         {
-            var result = _mediator.Send(new GetCustomerDemographicByIdQuery(id)).Result;
+            var result = _mediator.Send(new GetCustomerDemographicByIdQuery(id));
             if (result == null)
                 return NotFound($"CustomerDemographic with id={id} not found!");
 
@@ -53,7 +53,7 @@ namespace WebApiOptimization.API.Controllers
             if (id != customerTypeId)
                 return BadRequest($"CustomerTypeId does not match with updated data!");
 
-            var result = _mediator.Send(updateCustomerDemographicCommand).Result;
+            var result = _mediator.Send(updateCustomerDemographicCommand);
             if (result == null)
                 return NotFound($"CustomerDemographic with customer type id={id} not found!");
 
@@ -63,7 +63,7 @@ namespace WebApiOptimization.API.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult<CustomerDemographicResponse> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteCustomerDemographicCommand(id)).Result;
+            var result = _mediator.Send(new DeleteCustomerDemographicCommand(id));
             if (result == null)
                 return NotFound($"CustomerDemographic with customer type id={id} not found!");
 

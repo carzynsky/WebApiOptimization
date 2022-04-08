@@ -14,23 +14,34 @@ namespace WebApiOptimization.Infrastructure.Repositories
         {
            
         }
-        public override List<EmployeeTerritory> GetAll()
+        public override IEnumerable<EmployeeTerritory> GetAll()
         {
-            return NorthwndContext.EmployeeTerritories.Include(x => x.Employee).Include(x => x.Territory).ToList();
+            return NorthwndContext.EmployeeTerritories
+                .Include(x => x.Employee)
+                .Include(x => x.Territory);
         }
 
         public IEnumerable<EmployeeTerritory> GetByEmployeeId(int employeeId)
         {
-            return NorthwndContext.EmployeeTerritories.Where(x => x.EmployeeID == employeeId);
+            return NorthwndContext.EmployeeTerritories
+                .Where(x => x.EmployeeID == employeeId)
+                .Include(x => x.Employee)
+                .Include(x => x.Territory);
         }
 
         public IEnumerable<EmployeeTerritory> GetByTerritoryId(string territoryId)
         {
-            return NorthwndContext.EmployeeTerritories.Where(x => x.TerritoryID == territoryId);
+            return NorthwndContext.EmployeeTerritories
+                .Where(x => x.TerritoryID == territoryId)
+                .Include(x => x.Employee)
+                .Include(x => x.Territory);
         }
         public IEnumerable<EmployeeTerritory> GetByEmployeeIdAndTerritoryId(int employeeId, string territoryId)
         {
-            return NorthwndContext.EmployeeTerritories.Where(x => x.EmployeeID == employeeId && x.TerritoryID == territoryId);
+            return NorthwndContext.EmployeeTerritories
+                .Where(x => x.EmployeeID == employeeId && x.TerritoryID == territoryId)
+                .Include(x => x.Employee)
+                .Include(x => x.Territory);
         }
     }
 }

@@ -15,7 +15,8 @@ namespace WebApiOptimization.Infrastructure.Repositories
 
         public CustomerDemographic GetByCustomerTypeId(string customerTypeId)
         {
-            return NorthwndContext.CustomerDemographics.FirstOrDefault(x => x.CustomerTypeId == customerTypeId);
+            return NorthwndContext.CustomerDemographics
+                .FirstOrDefault(x => x.CustomerTypeId == customerTypeId);
         }
     }
 }

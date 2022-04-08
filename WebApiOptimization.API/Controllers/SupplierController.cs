@@ -20,14 +20,14 @@ namespace WebApiOptimization.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<SupplierResponse>> GetAll()
         {
-            var result = _mediator.Send(new GetAllSuppliersQuery()).Result;
+            var result = _mediator.Send(new GetAllSuppliersQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
         public ActionResult<SupplierResponse> GetById(int id)
         {
-            var result = _mediator.Send(new GetSupplierByIdQuery(id)).Result;
+            var result = _mediator.Send(new GetSupplierByIdQuery(id));
             if (result == null)
                 return NotFound($"Supplier with id={id} not found!");
 
@@ -47,7 +47,7 @@ namespace WebApiOptimization.API.Controllers
             if (id != updateSupplierCommand.SupplierId)
                 return BadRequest($"SupplierId does not match with updated data!");
 
-            var result = _mediator.Send(updateSupplierCommand).Result;
+            var result = _mediator.Send(updateSupplierCommand);
             if (result == null)
                 return NotFound($"Supplier with id={id} not found!");
 
@@ -57,7 +57,7 @@ namespace WebApiOptimization.API.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult<SupplierResponse> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteSupplierCommand(id)).Result;
+            var result = _mediator.Send(new DeleteSupplierCommand(id));
             if (result == null)
                 return NotFound($"Supplier with id={id} not found!");
 

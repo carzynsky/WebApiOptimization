@@ -9,17 +9,17 @@ using WebApiOptimization.Core.Repositories;
 
 namespace WebApiOptimization.Application.Handlers.QueryHandlers.Order
 {
-    public class GetAllOrdersHandler : IRequestHandler<GetAllOrdersQuery, List<OrderResponse>>
+    public class GetAllOrdersHandler : IRequestHandler<GetAllOrdersQuery, IEnumerable<OrderResponse>>
     {
         private readonly IOrderRepository _orderRepository; 
         public GetAllOrdersHandler(IOrderRepository orderRepository)
         {
             _orderRepository = orderRepository;
         }
-        public async Task<List<OrderResponse>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<OrderResponse>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
         {
             var orders = _orderRepository.GetAll();
-            var response = OrderMapper.Mapper.Map<List<OrderResponse>>(orders);
+            var response = OrderMapper.Mapper.Map<IEnumerable<OrderResponse>>(orders);
             return response;
         }
     }

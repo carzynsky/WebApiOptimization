@@ -8,8 +8,8 @@ namespace WebApiOptimization.Core.Entities
     public class Order
     {
         [Key]
-        [Column("OrderID")]
-        public int OrderId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int OrderID { get; set; }
 
         [StringLength(5)]
         public string CustomerID { get; set; }

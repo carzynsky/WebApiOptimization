@@ -14,9 +14,17 @@ namespace WebApiOptimization.Infrastructure.Repositories
         {
             
         }
-        public override List<Territory> GetAll()
+        public override IEnumerable<Territory> GetAll()
         {
-            return NorthwndContext.Territories.Include(x => x.Region).ToList();
+            return NorthwndContext.Territories
+                .Include(x => x.Region);
+        }
+
+        public IEnumerable<Territory> GetByRegionId(int regionId)
+        {
+            return NorthwndContext.Territories
+                .Where(x => x.RegionID == regionId)
+                .Include(x => x.Region);
         }
     }
 }

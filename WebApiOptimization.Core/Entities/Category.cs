@@ -8,6 +8,7 @@ namespace WebApiOptimization.Core.Entities
     {
         [Key]
         [Column("CategoryID")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CategoryId { get; set; }
 
         [StringLength(15)]

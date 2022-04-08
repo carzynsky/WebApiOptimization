@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.Employee;
@@ -30,11 +31,11 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandle
 
             try
             {
-                var employeeTerritoryEntityToRemove = _employeeTerritoryRepository.GetByEmployeeId(request.Id);
+                var employeeTerritoryEntityToRemove = _employeeTerritoryRepository.GetByEmployeeId(request.Id).ToList();
                 if (employeeTerritoryEntityToRemove != null)
                     _employeeTerritoryRepository.DeleteRange(employeeTerritoryEntityToRemove);
 
-                var orderEntityToRemove = _orderRepository.GetByEmployeeId(request.Id);
+                var orderEntityToRemove = _orderRepository.GetByEmployeeId(request.Id).ToList();
                 if (orderEntityToRemove != null)
                     _orderRepository.DeleteRange(orderEntityToRemove);
 

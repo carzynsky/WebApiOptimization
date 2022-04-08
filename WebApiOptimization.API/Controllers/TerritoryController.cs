@@ -20,14 +20,14 @@ namespace WebApiOptimization.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<TerritoryResponse>> GetAll()
         {
-            var result = _mediator.Send(new GetAllTerritoriesQuery()).Result;
+            var result = _mediator.Send(new GetAllTerritoriesQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
         public ActionResult<TerritoryResponse> GetById(int id)
         {
-            var result = _mediator.Send(new GetTerritoryByIdQuery(id)).Result;
+            var result = _mediator.Send(new GetTerritoryByIdQuery(id));
             if (result == null)
                 return NotFound($"Territory with id={id} not found!");
 
@@ -53,7 +53,7 @@ namespace WebApiOptimization.API.Controllers
             if (id != territoryId)
                 return BadRequest($"TerritoryId does not match with updated data!");
 
-            var result = _mediator.Send(updateTerritoryCommand).Result;
+            var result = _mediator.Send(updateTerritoryCommand);
             if (result == null)
                 return NotFound($"Territory with id={id} not found!");
 
@@ -63,7 +63,7 @@ namespace WebApiOptimization.API.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult<TerritoryResponse> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteTerritoryCommand(id)).Result;
+            var result = _mediator.Send(new DeleteTerritoryCommand(id));
             if (result == null)
                 return NotFound($"Territory with id={id} not found!");
 

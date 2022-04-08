@@ -18,7 +18,7 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<OrderResponse>> GetAll()
+        public ActionResult<IEnumerable<OrderResponse>> GetAll()
         {
             var result = _mediator.Send(new GetAllOrdersQuery());
             return Ok(result);
@@ -27,7 +27,7 @@ namespace WebApiOptimization.API.Controllers
         [HttpGet("{id:int}")]
         public ActionResult<OrderResponse> GetById(int id)
         {
-            var result = _mediator.Send(new GetOrderByIdQuery(id)).Result;
+            var result = _mediator.Send(new GetOrderByIdQuery(id));
             if (result == null)
                 return NotFound($"Order with id={id} not found!");
 
@@ -47,7 +47,7 @@ namespace WebApiOptimization.API.Controllers
             if (id != updateOrderCommand.OrderId)
                 return BadRequest($"OrderId does not match with updated data!");
 
-            var result = _mediator.Send(updateOrderCommand).Result;
+            var result = _mediator.Send(updateOrderCommand);
             if (result == null)
                 return NotFound($"Order with id={id} not found!");
 
@@ -57,7 +57,7 @@ namespace WebApiOptimization.API.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult<OrderResponse> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteOrderCommand(id)).Result;
+            var result = _mediator.Send(new DeleteOrderCommand(id));
             if (result == null)
                 return NotFound($"Order with id={id} not found!");
 

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using WebApiOptimization.Core.Repositories.Base;
 using WebApiOptimization.Infrastructure.Data;
@@ -33,9 +35,9 @@ namespace WebApiOptimization.Infrastructure.Repositories.Base
             NorthwndContext.SaveChanges();
         }
 
-        public virtual List<T> GetAll()
+        public virtual IEnumerable<T> GetAll()
         {
-            return NorthwndContext.Set<T>().ToList();
+            return NorthwndContext.Set<T>().AsNoTracking();
         }
 
         public T GetById(int id)

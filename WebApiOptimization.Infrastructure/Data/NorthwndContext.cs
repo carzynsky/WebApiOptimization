@@ -28,7 +28,14 @@ namespace WebApiOptimization.Infrastructure.Data
         {
             modelBuilder.Entity<EmployeeTerritory>()
                 .HasKey(x => new { x.EmployeeID, x.TerritoryID });
+            modelBuilder.Entity<OrderDetail>()
+                .HasKey(x => new { x.OrderID, x.ProductID });
             base.OnModelCreating(modelBuilder);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         }
     } 
 }

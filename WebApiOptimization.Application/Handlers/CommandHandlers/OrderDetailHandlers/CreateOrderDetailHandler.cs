@@ -10,24 +10,32 @@ using WebApiOptimization.Core.Repositories;
 
 namespace WebApiOptimization.Application.Handlers.CommandHandlers.OrderDetailHandlers
 {
-    public class CreateOrderDetailHandler : IRequestHandler<CreateOrderDetailCommand, OrderDetailResponse>
+    public class CreateOrderDetailHandler : IRequestHandler<CreateOrderDetailCommand, ResponseBuilder<OrderDetailResponse>>
     {
         private readonly IOrderDetailRepository _orderDetailRepository;
         public CreateOrderDetailHandler(IOrderDetailRepository orderDetailRepository)
         {
             _orderDetailRepository = orderDetailRepository;
         }
-        public async Task<OrderDetailResponse> Handle(CreateOrderDetailCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseBuilder<OrderDetailResponse>> Handle(CreateOrderDetailCommand request, CancellationToken cancellationToken)
         {
             var orderDetailEntity = OrderDetailMapper.Mapper.Map<OrderDetail>(request);
             if(orderDetailEntity == null)
             {
-                return null;
+                return new ResponseBuilder<OrderDetailResponse> { Message = $"OrderDetail to update not found !", Data = null };
             }
 
-            var newOrderDetail = _orderDetailRepository.Add(orderDetailEntity);
+            OrderDetail newOrderDetail;
+            try
+            {
+                newOrderDetail = _orderDetailRepository.Add(orderDetailEntity);
+            }
+            catch (Exception e)
+            {
+                return new ResponseBuilder<OrderDetailResponse> { Message = $"OrderDetail not updated!. Error: {e.Message}", Data = null };
+            }
             var response = OrderDetailMapper.Mapper.Map<OrderDetailResponse>(newOrderDetail);
-            return response;
+            return new ResponseBuilder<OrderDetailResponse> { Message = "OrderDetail updated.", Data = response };
         }
     }
 }

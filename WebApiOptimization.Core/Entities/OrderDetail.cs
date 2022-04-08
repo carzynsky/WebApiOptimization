@@ -12,6 +12,7 @@ namespace WebApiOptimization.Core.Entities
         [ForeignKey("OrderID")]
         public virtual Order Order { get; set; }
 
+        [Key]
         public int ProductID { get; set; }
 
         [ForeignKey("ProductID")]

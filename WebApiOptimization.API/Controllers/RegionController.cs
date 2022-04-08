@@ -20,14 +20,14 @@ namespace WebApiOptimization.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<RegionResponse>> GetAll()
         {
-            var result = _mediator.Send(new GetAllRegionsQuery()).Result;
+            var result = _mediator.Send(new GetAllRegionsQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
         public ActionResult<RegionResponse> GetById(int id)
         {
-            var result = _mediator.Send(new GetRegionByIdQuery(id)).Result;
+            var result = _mediator.Send(new GetRegionByIdQuery(id));
             if (result == null)
                 return NotFound($"Region with id={id} not found!");
 
@@ -47,7 +47,7 @@ namespace WebApiOptimization.API.Controllers
             if (id != updateRegionCommand.RegionId)
                 return BadRequest($"RegionId does not match with updated data!");
 
-            var result = _mediator.Send(updateRegionCommand).Result;
+            var result = _mediator.Send(updateRegionCommand);
             if (result == null)
                 return NotFound($"Region with id={id} not found!");
 
@@ -57,7 +57,7 @@ namespace WebApiOptimization.API.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult<RegionResponse> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteRegionCommand(id)).Result;
+            var result = _mediator.Send(new DeleteRegionCommand(id));
             if (result == null)
                 return NotFound($"Region with id={id} not found!");
 

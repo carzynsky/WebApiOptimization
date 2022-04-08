@@ -21,14 +21,14 @@ namespace WebApiOptimization.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<EmployeeResponse>> GetAll()
         {
-            var result = _mediator.Send(new GetAllEmployeesQuery()).Result;
+            var result = _mediator.Send(new GetAllEmployeesQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
         public ActionResult<EmployeeResponse> GetById(int id)
         {
-            var result = _mediator.Send(new GetEmployeeByIdQuery(id)).Result;
+            var result = _mediator.Send(new GetEmployeeByIdQuery(id));
             if (result == null)
                 return NotFound($"Employee with id={id} not found!");
 
@@ -48,7 +48,7 @@ namespace WebApiOptimization.API.Controllers
             if (id != updateEmployeeCommand.EmployeeId)
                 return BadRequest($"EmployeeId does not match with updated data!");
 
-            var result = _mediator.Send(updateEmployeeCommand).Result;
+            var result = _mediator.Send(updateEmployeeCommand);
             if (result == null)
                 return NotFound($"Employee with id={id} not found!");
 
@@ -58,7 +58,7 @@ namespace WebApiOptimization.API.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult<EmployeeResponse> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteEmployeeCommand(id)).Result;
+            var result = _mediator.Send(new DeleteEmployeeCommand(id));
             if (result == null)
                 return NotFound($"Employee with id={id} not found!");
 

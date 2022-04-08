@@ -18,9 +18,9 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<EmployeeTerritoryResponse>> Get([FromQuery] GetEmployeeTerritoriesQuery getEmployeeTerritoriesQuery)
+        public ActionResult<IEnumerable<EmployeeTerritoryResponse>> GetAll([FromQuery] GetEmployeeTerritoriesQuery getEmployeeTerritoriesQuery)
         {
-            var result = _mediator.Send(getEmployeeTerritoriesQuery).Result;
+            var result = _mediator.Send(getEmployeeTerritoriesQuery);
             if (result == null)
                 return NotFound($"EmployeeTerritory(ies) not found!");
 
@@ -40,7 +40,7 @@ namespace WebApiOptimization.API.Controllers
             if (id != updateEmployeeTerritoryCommand.EmployeeId)
                 return BadRequest($"EmployeeId does not match with updated data!");
 
-            var result = _mediator.Send(updateEmployeeTerritoryCommand).Result;
+            var result = _mediator.Send(updateEmployeeTerritoryCommand);
             if (result == null)
                 return NotFound($"EmployeeTerritory with employee id={id} not found!");
 
@@ -50,7 +50,7 @@ namespace WebApiOptimization.API.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult<EmployeeTerritoryResponse> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteEmployeeTerritoryCommand(id)).Result;
+            var result = _mediator.Send(new DeleteEmployeeTerritoryCommand(id));
             if (result == null)
                 return NotFound($"EmployeeTerritory with employee id={id} not found!");
 

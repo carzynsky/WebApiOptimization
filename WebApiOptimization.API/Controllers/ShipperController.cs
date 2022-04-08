@@ -19,14 +19,14 @@ namespace WebApiOptimization.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<ShipperResponse>> GetAll()
         {
-            var result = _mediator.Send(new GetAllShippersQuery()).Result;
+            var result = _mediator.Send(new GetAllShippersQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
         public ActionResult<ShipperResponse> GetById(int id)
         {
-            var result = _mediator.Send(new GetShipperByIdQuery(id)).Result;
+            var result = _mediator.Send(new GetShipperByIdQuery(id));
             if (result == null)
                 return NotFound($"Shipper with id={id} not found!");
 
@@ -46,7 +46,7 @@ namespace WebApiOptimization.API.Controllers
             if (id != updateShipperCommand.ShipperId)
                 return BadRequest($"ShipperId does not match with updated data!");
 
-            var result = _mediator.Send(updateShipperCommand).Result;
+            var result = _mediator.Send(updateShipperCommand);
             if (result == null)
                 return NotFound($"Shipper with id={id} not found!");
 
@@ -56,7 +56,7 @@ namespace WebApiOptimization.API.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult<ShipperResponse> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteShipperCommand(id)).Result;
+            var result = _mediator.Send(new DeleteShipperCommand(id));
             if (result == null)
                 return NotFound($"Shipper with id={id} not found!");
 
