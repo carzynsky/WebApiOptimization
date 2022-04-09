@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using WebApiOptimization.Application.Commands.Customer;
-using WebApiOptimization.Application.Queries.Customer;
+using WebApiOptimization.Application.Commands.CustomerCommands;
+using WebApiOptimization.Application.Queries.CustomerQueries;
 using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.API.Controllers
@@ -18,14 +18,14 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<CustomerResponse>> GetAll()
+        public ActionResult<ResponseBuilder<IEnumerable<CustomerResponse>>> GetAll()
         {
             var result = _mediator.Send(new GetAllCustomersQuery());
             return Ok(result);
         }
 
-        [HttpGet("{id:int}")]
-        public ActionResult<CustomerResponse> GetById(int id)
+        [HttpGet("{id}")]
+        public ActionResult<ResponseBuilder<CustomerResponse>> GetById(string id)
         {
             var result = _mediator.Send(new GetCustomerByIdQuery(id));
             if (result == null)
@@ -35,14 +35,14 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<CustomerResponse> Add(CreateCustomerCommand createCustomerCommand)
+        public ActionResult<ResponseBuilder<CustomerResponse>> Add(CreateCustomerCommand createCustomerCommand)
         {
             var result = _mediator.Send(createCustomerCommand);
             return Ok(result);
         }
 
-        [HttpPut("{id:int}")]
-        public ActionResult<CustomerResponse> Update(int id, UpdateCustomerCommand updateCustomerCommand)
+        [HttpPut("{id}")]
+        public ActionResult<ResponseBuilder<CustomerResponse>> Update(string id, UpdateCustomerCommand updateCustomerCommand)
         {
             if (id != updateCustomerCommand.CustomerId)
                 return BadRequest($"CustomerId does not match with updated data!");
@@ -54,8 +54,8 @@ namespace WebApiOptimization.API.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("{id:int}")]
-        public ActionResult<CustomerResponse> Delete(int id)
+        [HttpDelete("{id}")]
+        public ActionResult<ResponseBuilder<CustomerResponse>> Delete(string id)
         {
             var result = _mediator.Send(new DeleteCustomerCommand(id));
             if (result == null)

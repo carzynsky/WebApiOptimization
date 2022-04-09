@@ -1,30 +1,44 @@
 ﻿using MediatR;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using WebApiOptimization.Application.Commands.CustomerDemographic;
+using WebApiOptimization.Application.Commands.CustomerDemographicCommands;
 using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
 
 namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerDemographicHandlers
 {
-    public class DeleteCustomerDemographic : IRequestHandler<DeleteCustomerDemographicCommand, CustomerDemographicResponse>
+    public class DeleteCustomerDemographic : IRequestHandler<DeleteCustomerDemographicCommand, ResponseBuilder<CustomerDemographicResponse>>
     {
         private readonly ICustomerDemographicRepository _customerDemographicRepository;
-        public DeleteCustomerDemographic(ICustomerDemographicRepository customerDemographicRepository)
+        private readonly ICustomerCustomerDemoRepository _customerCustomerDemoRepository;
+
+        public DeleteCustomerDemographic(ICustomerDemographicRepository customerDemographicRepository, ICustomerCustomerDemoRepository customerCustomerDemoRepository)
         {
             _customerDemographicRepository = customerDemographicRepository;
+            _customerCustomerDemoRepository = customerCustomerDemoRepository;
         }
-        public async Task<CustomerDemographicResponse> Handle(DeleteCustomerDemographicCommand request, CancellationToken cancellationToken)
+
+        public async Task<ResponseBuilder<CustomerDemographicResponse>> Handle(DeleteCustomerDemographicCommand request, CancellationToken cancellationToken)
         {
-            var customerDemographicToDelete = _customerDemographicRepository.GetById(request.CustomerTypeId);
+            var customerDemographicToDelete = _customerDemographicRepository.GetByCustomerTypeId(request.CustomerTypeId);
             if(customerDemographicToDelete == null)
             {
-                return null;
+                return new ResponseBuilder<CustomerDemographicResponse> { Message = $"CustomerDemographic with id={request.CustomerTypeId} not found!", Data = null };
+            }
+
+            // Find CustomerCustomerDemos with this CustomerTypeId
+            var customerCustomerDemosWithThisCustomerTypeId = _customerCustomerDemoRepository.GetByCustomerTypeId(request.CustomerTypeId).ToList();
+            if (customerCustomerDemosWithThisCustomerTypeId.Any())
+            {
+                // Remove entries
+                _customerCustomerDemoRepository.DeleteRange(customerCustomerDemosWithThisCustomerTypeId);
             }
 
             _customerDemographicRepository.Delete(customerDemographicToDelete);
-            return CustomerDemographicMapper.Mapper.Map<CustomerDemographicResponse>(customerDemographicToDelete);
+            var response = CustomerDemographicMapper.Mapper.Map<CustomerDemographicResponse>(customerDemographicToDelete);
+            return new ResponseBuilder<CustomerDemographicResponse> { Message = "CustomerDemographic deleted.", Data = response };
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using WebApiOptimization.Application.Commands.CustomerCustomerDemo;
+using WebApiOptimization.Application.Commands.CustomerCustomerDemoCommands;
+using WebApiOptimization.Application.Helpers;
 using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Entities;
@@ -9,7 +11,7 @@ using WebApiOptimization.Core.Repositories;
 
 namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerCustomerDemoHandlers
 {
-    public class CreateCustomerCustomerDemoHandler : IRequestHandler<CreateCustomerCustomerDemoCommand, CustomerCustomerDemoResponse>
+    public class CreateCustomerCustomerDemoHandler : IRequestHandler<CreateCustomerCustomerDemoCommand, ResponseBuilder<CustomerCustomerDemoResponse>>
     {
         private readonly ICustomerCustomerDemoRepository _customerCustomerDemoRepository;
 
@@ -18,22 +20,25 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerCustom
             _customerCustomerDemoRepository = customerCustomerDemoRepository;
         }
 
-        public async Task<CustomerCustomerDemoResponse> Handle(CreateCustomerCustomerDemoCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseBuilder<CustomerCustomerDemoResponse>> Handle(CreateCustomerCustomerDemoCommand request, CancellationToken cancellationToken)
         {
             var customerCustomerDemoEntity = CustomerCustomerDemoMapper.Mapper.Map<CustomerCustomerDemo>(request);
             if(customerCustomerDemoEntity == null)
             {
-                return null;
+                return new ResponseBuilder<CustomerCustomerDemoResponse> { Message = ResponseBuilderHelper.InvalidData, Data = null };
             }
-
-            var newCustomerCustomerDemo = _customerCustomerDemoRepository.Add(customerCustomerDemoEntity);
-            if(newCustomerCustomerDemo == null)
+            try
             {
-                return null;
-            }
+                var newCustomerCustomerDemo = _customerCustomerDemoRepository.Add(customerCustomerDemoEntity);
+                var response = CustomerCustomerDemoMapper.Mapper.Map<CustomerCustomerDemoResponse>(newCustomerCustomerDemo);
+                return new ResponseBuilder<CustomerCustomerDemoResponse> { Message ="CustomerCustomerDemo created.", Data = response };
 
-            var response = CustomerCustomerDemoMapper.Mapper.Map<CustomerCustomerDemoResponse>(newCustomerCustomerDemo);
-            return response;
+            }
+            catch (Exception e)
+            {
+                return new ResponseBuilder<CustomerCustomerDemoResponse> { Message = $"CustomerCustomerDemo not created! Error: {e.Message}", Data = null };
+            }
+            
         }
     }
 }

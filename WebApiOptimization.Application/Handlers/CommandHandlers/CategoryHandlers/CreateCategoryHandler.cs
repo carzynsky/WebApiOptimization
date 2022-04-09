@@ -1,7 +1,8 @@
 ﻿using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using WebApiOptimization.Application.Commands.Category;
+using WebApiOptimization.Application.Commands.CategoryCommands;
 using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Entities;
@@ -9,24 +10,33 @@ using WebApiOptimization.Core.Repositories;
 
 namespace WebApiOptimization.Application.Handlers.CommandHandlers.CategoryHandlers
 {
-    public class CreateCategoryHandler : IRequestHandler<CreateCategoryCommand, CategoryResponse>
+    public class CreateCategoryHandler : IRequestHandler<CreateCategoryCommand, ResponseBuilder<CategoryResponse>>
     {
         private readonly ICategoryRepository _categoryRepository;
+
         public CreateCategoryHandler(ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }
-        public async Task<CategoryResponse> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+
+        public async Task<ResponseBuilder<CategoryResponse>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
             var categoryEntity = CategoryMapper.Mapper.Map<Category>(request);
             if (categoryEntity == null)
             {
-                return null;
+                return new ResponseBuilder<CategoryResponse> { Message = "Invalid data provided!", Data = null };
             }
 
-            var newCategory = _categoryRepository.Add(categoryEntity);
-            var categoryResponse = CategoryMapper.Mapper.Map<CategoryResponse>(newCategory);
-            return categoryResponse;
+            try
+            {
+                var newCategory = _categoryRepository.Add(categoryEntity);
+                var categoryResponse = CategoryMapper.Mapper.Map<CategoryResponse>(newCategory);
+                return new ResponseBuilder<CategoryResponse> { Message = "Category created.", Data = categoryResponse };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<CategoryResponse> { Message = $"Category not created! Error: {e.Message}", Data = null };
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using WebApiOptimization.Application.Commands.Employee;
+using WebApiOptimization.Application.Commands.EmployeeCommands;
 using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Entities;
@@ -9,7 +9,7 @@ using WebApiOptimization.Core.Repositories;
 
 namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandlers
 {
-    public class UpdateEmployeeHandler : IRequestHandler<UpdateEmployeeCommand, EmployeeResponse>
+    public class UpdateEmployeeHandler : IRequestHandler<UpdateEmployeeCommand, ResponseBuilder<EmployeeResponse>>
     {
         private readonly IEmployeeRepository _employeeRepository;
 
@@ -18,23 +18,18 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandle
             _employeeRepository = employeeRepository;
         }
 
-        public async Task<EmployeeResponse> Handle(UpdateEmployeeCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseBuilder<EmployeeResponse>> Handle(UpdateEmployeeCommand request, CancellationToken cancellationToken)
         {
             var employeeToUpdate = _employeeRepository.GetById(request.EmployeeId);
             if (employeeToUpdate == null)
             {
-                return null;
+                return new ResponseBuilder<EmployeeResponse> { Message = $"Employee with id={request.EmployeeId} not found!", Data = null };
             }
 
             var employeeToUpdateEntity = EmployeeMapper.Mapper.Map<Employee>(request);
-            if(employeeToUpdateEntity == null)
-            {
-                return null;
-            }
-
             _employeeRepository.Update(employeeToUpdateEntity);
             var response = EmployeeMapper.Mapper.Map<EmployeeResponse>(employeeToUpdateEntity);
-            return response;
+            return new ResponseBuilder<EmployeeResponse> { Message = "Employee updated.", Data = response };
         }
     }
 }

@@ -10,7 +10,7 @@ using WebApiOptimization.Core.Repositories;
 
 namespace WebApiOptimization.Application.Handlers.QueryHandlers.EmployeeTerritoryHandlers
 {
-    public class GetEmployeeTerritoryHandler : IRequestHandler<GetEmployeeTerritoriesQuery, IEnumerable<EmployeeTerritoryResponse>>
+    public class GetEmployeeTerritoryHandler : IRequestHandler<GetEmployeeTerritoriesQuery, ResponseBuilder<IEnumerable<EmployeeTerritoryResponse>>>
     {
         private readonly IEmployeeTerritoryRepository _employeeTerritoryRepository;
 
@@ -18,7 +18,8 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.EmployeeTerritor
         {
             _employeeTerritoryRepository = employeeTerritoryRepository;
         }
-        public async Task<IEnumerable<EmployeeTerritoryResponse>> Handle(GetEmployeeTerritoriesQuery request, CancellationToken cancellationToken)
+
+        public async Task<ResponseBuilder<IEnumerable<EmployeeTerritoryResponse>>> Handle(GetEmployeeTerritoriesQuery request, CancellationToken cancellationToken)
         {
             IEnumerable<EmployeeTerritory> employeeTerritories;
 
@@ -40,7 +41,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.EmployeeTerritor
             }
 
             var response = EmployeeTerritoryMapper.Mapper.Map<IEnumerable<EmployeeTerritoryResponse>>(employeeTerritories);
-            return response;
+            return new ResponseBuilder<IEnumerable<EmployeeTerritoryResponse>> { Message = "OK.", Data = response };
         }
     }
 }

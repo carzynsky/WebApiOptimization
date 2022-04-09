@@ -18,6 +18,7 @@ namespace WebApiOptimization.Infrastructure.Repositories
         public override IEnumerable<OrderDetail> GetAll()
         {
             return NorthwndContext.OrderDetails
+                .AsNoTracking()
                 .Include(x => x.Order)
                 .Include(x => x.Product);
         }
@@ -27,10 +28,10 @@ namespace WebApiOptimization.Infrastructure.Repositories
             if (eagerLoading)
             {
                 return NorthwndContext.OrderDetails
-                .AsNoTracking()
-                .Where(x => x.OrderID == orderId)
-                .Include(x => x.Order)
-                .Include(x => x.Product);
+                    .AsNoTracking()
+                    .Where(x => x.OrderID == orderId)
+                    .Include(x => x.Order)
+                    .Include(x => x.Product);
             }
 
             return NorthwndContext.OrderDetails
@@ -43,12 +44,14 @@ namespace WebApiOptimization.Infrastructure.Repositories
             if (eagerLoading)
             {
                 return NorthwndContext.OrderDetails
-                .Where(x => x.ProductID == productId)
-                .Include(x => x.Order)
-                .Include(x => x.Product);
+                    .AsNoTracking()
+                    .Where(x => x.ProductID == productId)
+                    .Include(x => x.Order)
+                    .Include(x => x.Product);
             }
 
             return NorthwndContext.OrderDetails
+                .AsNoTracking()
                 .Where(x => x.ProductID == productId);
         }
 
@@ -57,12 +60,14 @@ namespace WebApiOptimization.Infrastructure.Repositories
             if (eagerLoading)
             {
                 return NorthwndContext.OrderDetails
-                 .Where(x => x.OrderID == orderId && x.ProductID == productId)
-                 .Include(x => x.Order)
-                 .Include(x => x.Product);
+                    .AsNoTracking()
+                    .Where(x => x.OrderID == orderId && x.ProductID == productId)
+                    .Include(x => x.Order)
+                    .Include(x => x.Product);
             }
             return NorthwndContext.OrderDetails
-                 .Where(x => x.OrderID == orderId && x.ProductID == productId);
+                .AsNoTracking()
+                .Where(x => x.OrderID == orderId && x.ProductID == productId);
         }
     }
 }

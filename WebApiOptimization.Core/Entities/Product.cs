@@ -14,12 +14,12 @@ namespace WebApiOptimization.Core.Entities
         [Required]
         public string ProductName { get; set; }
 
-        public int SupplierID { get; set; }
+        public int? SupplierID { get; set; }
 
         [ForeignKey("SupplierID")]
         public virtual Supplier Supplier { get; set; }
 
-        public int CategoryID { get; set; }
+        public int? CategoryID { get; set; }
 
         [ForeignKey("CategoryID")]
         public virtual Category Category { get; set; }

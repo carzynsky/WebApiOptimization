@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using WebApiOptimization.Application.Commands.Supplier;
+using WebApiOptimization.Application.Commands.SupplierCommands;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Entities;
 

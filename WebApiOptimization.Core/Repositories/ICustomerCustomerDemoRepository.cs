@@ -6,6 +6,8 @@ namespace WebApiOptimization.Core.Repositories
 {
     public interface ICustomerCustomerDemoRepository : IRepository<CustomerCustomerDemo>
     {
-        IEnumerable<CustomerCustomerDemo> GetByCustomerId(int customerId);
+        IEnumerable<CustomerCustomerDemo> GetByCustomerId(string customerId, bool eagerLoading = false);
+        IEnumerable<CustomerCustomerDemo> GetByCustomerTypeId(string customerTypeId, bool eagerLoading = false);
+        IEnumerable<CustomerCustomerDemo> GetByCustomerIdAndCustomerTypeId(string customerId, string customerTypeId, bool eagerLoading = false);
     }
 }

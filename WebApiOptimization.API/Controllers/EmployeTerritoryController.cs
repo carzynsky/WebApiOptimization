@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using WebApiOptimization.Application.Commands.EmployeeTerritory;
+using WebApiOptimization.Application.Commands.EmployeeTerritoryCommands;
 using WebApiOptimization.Application.Queries.EmployeeTerritoryQueries;
 using WebApiOptimization.Application.Responses;
 
@@ -18,7 +18,7 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<EmployeeTerritoryResponse>> GetAll([FromQuery] GetEmployeeTerritoriesQuery getEmployeeTerritoriesQuery)
+        public ActionResult<ResponseBuilder<IEnumerable<EmployeeTerritoryResponse>>> GetAll([FromQuery] GetEmployeeTerritoriesQuery getEmployeeTerritoriesQuery)
         {
             var result = _mediator.Send(getEmployeeTerritoriesQuery);
             if (result == null)
@@ -28,12 +28,13 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<EmployeeTerritoryResponse> Add(CreateEmployeeTerritoryCommand createEmployeeTerritoryCommand)
+        public ActionResult<ResponseBuilder<EmployeeTerritoryResponse>> Add(CreateEmployeeTerritoryCommand createEmployeeTerritoryCommand)
         {
             var result = _mediator.Send(createEmployeeTerritoryCommand);
             return Ok(result);
         }
 
+        /*
         [HttpPut("{id:int}")]
         public ActionResult<EmployeeTerritoryResponse> Update(int id, UpdateEmployeeTerritoryCommand updateEmployeeTerritoryCommand)
         {
@@ -46,13 +47,14 @@ namespace WebApiOptimization.API.Controllers
 
             return Ok(result);
         }
+        */
 
-        [HttpDelete("{id:int}")]
-        public ActionResult<EmployeeTerritoryResponse> Delete(int id)
+        [HttpDelete]
+        public ActionResult<ResponseBuilder<EmployeeTerritoryResponse>> Delete([FromQuery] DeleteEmployeeTerritoryCommand deleteEmployeeTerritoryCommand)
         {
-            var result = _mediator.Send(new DeleteEmployeeTerritoryCommand(id));
+            var result = _mediator.Send(deleteEmployeeTerritoryCommand);
             if (result == null)
-                return NotFound($"EmployeeTerritory with employee id={id} not found!");
+                return NotFound($"EmployeeTerritory not found!");
 
             return Ok();
         }

@@ -17,31 +17,57 @@ namespace WebApiOptimization.Infrastructure.Repositories
         public override IEnumerable<EmployeeTerritory> GetAll()
         {
             return NorthwndContext.EmployeeTerritories
+                .AsNoTracking()
                 .Include(x => x.Employee)
                 .Include(x => x.Territory);
         }
 
-        public IEnumerable<EmployeeTerritory> GetByEmployeeId(int employeeId)
+        public IEnumerable<EmployeeTerritory> GetByEmployeeId(int employeeId, bool eagerloading = false)
         {
+            if (eagerloading)
+            {
+                return NorthwndContext.EmployeeTerritories
+                    .AsNoTracking()
+                    .Where(x => x.EmployeeID == employeeId)
+                    .Include(x => x.Employee)
+                    .Include(x => x.Territory);
+            }
+
             return NorthwndContext.EmployeeTerritories
-                .Where(x => x.EmployeeID == employeeId)
-                .Include(x => x.Employee)
-                .Include(x => x.Territory);
+                    .AsNoTracking()
+                    .Where(x => x.EmployeeID == employeeId);
         }
 
-        public IEnumerable<EmployeeTerritory> GetByTerritoryId(string territoryId)
+        public IEnumerable<EmployeeTerritory> GetByTerritoryId(string territoryId, bool eagerLoading = false)
         {
+            if (eagerLoading)
+            {
+                return NorthwndContext.EmployeeTerritories
+                    .AsNoTracking()
+                    .Where(x => x.TerritoryID == territoryId)
+                    .Include(x => x.Employee)
+                    .Include(x => x.Territory);
+            }
+
             return NorthwndContext.EmployeeTerritories
-                .Where(x => x.TerritoryID == territoryId)
-                .Include(x => x.Employee)
-                .Include(x => x.Territory);
+                   .AsNoTracking()
+                   .Where(x => x.TerritoryID == territoryId);
         }
-        public IEnumerable<EmployeeTerritory> GetByEmployeeIdAndTerritoryId(int employeeId, string territoryId)
+
+        public IEnumerable<EmployeeTerritory> GetByEmployeeIdAndTerritoryId(int employeeId, string territoryId, bool eagerLoading = false)
         {
+            if (eagerLoading)
+            {
+                return NorthwndContext.EmployeeTerritories
+                    .AsNoTracking()
+                    .Where(x => x.EmployeeID == employeeId && x.TerritoryID == territoryId)
+                    .Include(x => x.Employee)
+                    .Include(x => x.Territory);
+            }
+
             return NorthwndContext.EmployeeTerritories
-                .Where(x => x.EmployeeID == employeeId && x.TerritoryID == territoryId)
-                .Include(x => x.Employee)
-                .Include(x => x.Territory);
+                    .AsNoTracking()
+                    .Where(x => x.EmployeeID == employeeId && x.TerritoryID == territoryId);
         }
     }
 }

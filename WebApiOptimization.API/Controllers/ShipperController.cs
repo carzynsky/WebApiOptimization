@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using WebApiOptimization.Application.Commands.Shipper;
-using WebApiOptimization.Application.Queries.Shipper;
+using WebApiOptimization.Application.Commands.ShipperCommands;
+using WebApiOptimization.Application.Queries.ShipperQueries;
 using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.API.Controllers
@@ -12,19 +12,21 @@ namespace WebApiOptimization.API.Controllers
     public class ShipperController : ControllerBase
     {
         private readonly IMediator _mediator;
+
         public ShipperController(IMediator mediator)
         {
             _mediator = mediator;
         }
+
         [HttpGet]
-        public ActionResult<IEnumerable<ShipperResponse>> GetAll()
+        public ActionResult<ResponseBuilder<IEnumerable<ShipperResponse>>> GetAll()
         {
             var result = _mediator.Send(new GetAllShippersQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<ShipperResponse> GetById(int id)
+        public ActionResult<ResponseBuilder<ShipperResponse>> GetById(int id)
         {
             var result = _mediator.Send(new GetShipperByIdQuery(id));
             if (result == null)
@@ -34,14 +36,14 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ShipperResponse> Add(CreateShipperCommand createShipperCommand)
+        public ActionResult<ResponseBuilder<ShipperResponse>> Add(CreateShipperCommand createShipperCommand)
         {
             var result = _mediator.Send(createShipperCommand);
             return Ok(result);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult<ShipperResponse> Update(int id, UpdateShipperCommand updateShipperCommand)
+        public ActionResult<ResponseBuilder<ShipperResponse>> Update(int id, UpdateShipperCommand updateShipperCommand)
         {
             if (id != updateShipperCommand.ShipperId)
                 return BadRequest($"ShipperId does not match with updated data!");
@@ -54,7 +56,7 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult<ShipperResponse> Delete(int id)
+        public ActionResult<ResponseBuilder<ShipperResponse>> Delete(int id)
         {
             var result = _mediator.Send(new DeleteShipperCommand(id));
             if (result == null)

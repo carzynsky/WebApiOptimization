@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using WebApiOptimization.Application.Commands.CustomerCustomerDemo;
-using WebApiOptimization.Application.Queries.CustomerCustomerDemo;
+using WebApiOptimization.Application.Commands.CustomerCustomerDemoCommands;
+using WebApiOptimization.Application.Queries.CustomerCustomerDemoQueries;
 using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.API.Controllers
@@ -12,35 +12,27 @@ namespace WebApiOptimization.API.Controllers
     public class CustomerCustomerDemoController : ControllerBase
     {
         private readonly IMediator _mediator;
+
         public CustomerCustomerDemoController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<CustomerCustomerDemoResponse>> GetAll()
+        public ActionResult<ResponseBuilder<IEnumerable<CustomerCustomerDemoResponse>>> Get([FromQuery] GetCustomerCustomerDemoQuery getCustomerCustomerDemoQuery)
         {
-            var result = _mediator.Send(new GetAllCustomerCustomerDemosQuery());
-            return Ok(result);
-        }
-
-        [HttpGet("{id:int}")]
-        public ActionResult<CustomerCustomerDemoResponse> GetById(int id)
-        {
-            var result = _mediator.Send(new GetCustomerCustomerDemoByIdQuery(id));
-            if (result == null)
-                return NotFound($"CustomerCustomerDemo with id={id} not found!");
-
+            var result = _mediator.Send(getCustomerCustomerDemoQuery);
             return Ok(result);
         }
 
         [HttpPost]
-        public ActionResult<CustomerCustomerDemoResponse> Add(CreateCustomerCustomerDemoCommand createCustomerCustomerDemoCommand)
+        public ActionResult<ResponseBuilder<CustomerCustomerDemoResponse>> Add(CreateCustomerCustomerDemoCommand createCustomerCustomerDemoCommand)
         {
             var result = _mediator.Send(createCustomerCustomerDemoCommand);
             return Ok(result);
         }
 
+        /* NO UPDATE FOR CustomerCustomerDemo
         [HttpPut("{id:int}")]
         public ActionResult<CustomerCustomerDemoResponse> Update(int id, UpdateCustomerCustomerDemoCommand updateCustomerCustomerDemoCommand)
         {
@@ -54,12 +46,19 @@ namespace WebApiOptimization.API.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("{id:int}")]
-        public ActionResult<CustomerCustomerDemoResponse> Delete(int id)
+        */
+
+        [HttpDelete]
+        public ActionResult<ResponseBuilder<CustomerCustomerDemoResponse>> Delete([FromQuery] DeleteCustomerCustomerDemoCommand deleteCustomerCustomerDemoCommand)
         {
-            var result = _mediator.Send(new DeleteCustomerCustomerDemoCommand(id));
+            if(deleteCustomerCustomerDemoCommand.CustomerId == null && deleteCustomerCustomerDemoCommand.CustomerTypeId == null)
+            {
+                return BadRequest("Parameters not provided!");
+            }
+
+            var result = _mediator.Send(deleteCustomerCustomerDemoCommand);
             if (result == null)
-                return NotFound($"CustomerCustomerDemo with customer id={id} not found!");
+                return NotFound($"CustomerCustomerDemos not found!");
 
             return Ok();
         }

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using WebApiOptimization.Application.Commands.Territory;
+using WebApiOptimization.Application.Commands.TerritoryCommands;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Entities;
 

@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using WebApiOptimization.Application.Commands.Supplier;
+using WebApiOptimization.Application.Commands.SupplierCommands;
 using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Entities;
@@ -9,30 +9,27 @@ using WebApiOptimization.Core.Repositories;
 
 namespace WebApiOptimization.Application.Handlers.CommandHandlers.SupplierHandlers
 {
-    public class UpdateSupplierHandler : IRequestHandler<UpdateSupplierCommand, SupplierResponse>
+    public class UpdateSupplierHandler : IRequestHandler<UpdateSupplierCommand, ResponseBuilder<SupplierResponse>>
     {
         private readonly ISupplierRepository _supplierRepository;
+
         public UpdateSupplierHandler(ISupplierRepository supplierRepository)
         {
             _supplierRepository = supplierRepository;
         }
-        public async Task<SupplierResponse> Handle(UpdateSupplierCommand request, CancellationToken cancellationToken)
+
+        public async Task<ResponseBuilder<SupplierResponse>> Handle(UpdateSupplierCommand request, CancellationToken cancellationToken)
         {
             var supplierToUpdate = _supplierRepository.GetById(request.SupplierId);
             if (supplierToUpdate == null)
             {
-                return null;
+                return new ResponseBuilder<SupplierResponse> { Message = $"Supplier with id={request.SupplierId} not found!", Data = null };
             }
 
             var supplierToUpdateEntity = SupplierMapper.Mapper.Map<Supplier>(request);
-            if (supplierToUpdateEntity == null)
-            {
-                return null;
-            }
-
             _supplierRepository.Update(supplierToUpdateEntity);
             var response = SupplierMapper.Mapper.Map<SupplierResponse>(supplierToUpdateEntity);
-            return response;
+            return new ResponseBuilder<SupplierResponse> { Message = $"Supplier updated.", Data = response };
         }
     }
 }

@@ -11,8 +11,15 @@ namespace WebApiOptimization.Core.Entities
     public class CustomerCustomerDemo
     {
         [Key]
-        public int CustomerID { get; set; }
+        public string CustomerID { get; set; }
 
-        public int CustomerTypeID { get; set; }
+        [ForeignKey("CustomerID")]
+        public Customer Customer { get; set; }
+
+        [Key]
+        public string CustomerTypeID { get; set; }
+
+        [ForeignKey("CustomerTypeID")]
+        public CustomerDemographic CustomerType { get; set; }
     }
 }

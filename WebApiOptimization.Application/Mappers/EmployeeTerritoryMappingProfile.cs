@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using WebApiOptimization.Application.Commands.EmployeeTerritory;
+using WebApiOptimization.Application.Commands.EmployeeTerritoryCommands;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Entities;
 
@@ -11,7 +11,6 @@ namespace WebApiOptimization.Application.Mappers
         {
             CreateMap<EmployeeTerritory, EmployeeTerritoryResponse>().ReverseMap();
             CreateMap<EmployeeTerritory, CreateEmployeeTerritoryCommand>().ReverseMap();
-            CreateMap<EmployeeTerritory, UpdateEmployeeTerritoryCommand>().ReverseMap();
         }
     }
 }

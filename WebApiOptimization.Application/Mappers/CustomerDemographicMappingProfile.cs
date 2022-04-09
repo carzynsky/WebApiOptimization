@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using WebApiOptimization.Application.Commands.CustomerDemographic;
+using WebApiOptimization.Application.Commands.CustomerDemographicCommands;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Entities;
 

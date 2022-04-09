@@ -14,6 +14,7 @@ namespace WebApiOptimization.Application.Responses
         public DateTime? RequiredDate { get; set; }
         public DateTime? ShippedDate { get; set; }
         public int? ShipVia { get; set; }
+        public Shipper Shipper { get; set; }
         public decimal? Freight { get; set; }
         public string ShipName { get; set; }
         public string ShipAddress { get; set; }

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using WebApiOptimization.Application.Commands.CustomerCustomerDemo;
+using WebApiOptimization.Application.Commands.CustomerCustomerDemoCommands;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Entities;
 
@@ -11,7 +11,6 @@ namespace WebApiOptimization.Application.Mappers
         {
             CreateMap<CustomerCustomerDemo, CustomerCustomerDemoResponse>().ReverseMap();
             CreateMap<CustomerCustomerDemo, CreateCustomerCustomerDemoCommand>().ReverseMap();
-            CreateMap<CustomerCustomerDemo, UpdateCustomerCustomerDemoCommand>().ReverseMap();
         }
     }
 }

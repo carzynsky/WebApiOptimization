@@ -40,7 +40,7 @@ namespace WebApiOptimization.Infrastructure.Repositories.Base
             return NorthwndContext.Set<T>().AsNoTracking();
         }
 
-        public T GetById(int id)
+        public virtual T GetById(int id)
         {
             return NorthwndContext.Set<T>().Find(id);
         }
@@ -48,6 +48,12 @@ namespace WebApiOptimization.Infrastructure.Repositories.Base
         public void Update(T entity)
         {
             NorthwndContext.Set<T>().Update(entity);
+            NorthwndContext.SaveChanges();
+        }
+
+        public void UpdateRange(IEnumerable<T> entities)
+        {
+            NorthwndContext.Set<T>().UpdateRange(entities);
             NorthwndContext.SaveChanges();
         }
     }

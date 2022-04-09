@@ -1,9 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using WebApiOptimization.Application.Commands.OrderDetail;
-using WebApiOptimization.Application.Queries.OrderDetail;
-using WebApiOptimization.Application.Queries.OrderDetail.Queries;
+using WebApiOptimization.Application.Commands.OrderDetailCommands;
+using WebApiOptimization.Application.Queries.OrderDetailQueries;
 using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.API.Controllers
@@ -19,7 +18,7 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ResponseBuilder<OrderDetailResponse>> Get([FromQuery] GetOrderDetailQuery getOrderDetailQuery)
+        public ActionResult<ResponseBuilder<IEnumerable<OrderDetailResponse>>> Get([FromQuery] GetOrderDetailQuery getOrderDetailQuery)
         {
             var result = _mediator.Send(getOrderDetailQuery);
             if (result == null)
@@ -57,7 +56,7 @@ namespace WebApiOptimization.API.Controllers
         /// <param name="deleteOrderDetailCommand"></param>
         /// <returns></returns>
         [HttpDelete]
-        public ActionResult<List<ResponseBuilder<OrderDetailResponse>>> Delete([FromQuery] DeleteOrderDetailCommand deleteOrderDetailCommand)
+        public ActionResult<ResponseBuilder<List<OrderDetailResponse>>> Delete([FromQuery] DeleteOrderDetailCommand deleteOrderDetailCommand)
         {
             var result = _mediator.Send(deleteOrderDetailCommand);
             if (result == null)

@@ -3,14 +3,14 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using WebApiOptimization.Application.Commands.Employee;
+using WebApiOptimization.Application.Commands.EmployeeCommands;
 using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
 
 namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandlers
 {
-    public class DeleteEmployeeHandler : IRequestHandler<DeleteEmployeeCommand, EmployeeResponse>
+    public class DeleteEmployeeHandler : IRequestHandler<DeleteEmployeeCommand, ResponseBuilder<EmployeeResponse>>
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IEmployeeTerritoryRepository _employeeTerritoryRepository;
@@ -23,28 +23,37 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandle
             _orderRepository = orderRepository;
         }
 
-        public async Task<EmployeeResponse> Handle(DeleteEmployeeCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseBuilder<EmployeeResponse>> Handle(DeleteEmployeeCommand request, CancellationToken cancellationToken)
         {
             var employeeToRemoveEntity = _employeeRepository.GetById(request.Id);
             if (employeeToRemoveEntity == null)
-                return null;
+            {
+                return new ResponseBuilder<EmployeeResponse> { Message = $"Employee with id={request.Id} not found!", Data = null };
+            }
 
             try
             {
                 var employeeTerritoryEntityToRemove = _employeeTerritoryRepository.GetByEmployeeId(request.Id).ToList();
-                if (employeeTerritoryEntityToRemove != null)
+                if (employeeTerritoryEntityToRemove.Any())
+                {
                     _employeeTerritoryRepository.DeleteRange(employeeTerritoryEntityToRemove);
+                }
 
-                var orderEntityToRemove = _orderRepository.GetByEmployeeId(request.Id).ToList();
-                if (orderEntityToRemove != null)
-                    _orderRepository.DeleteRange(orderEntityToRemove);
+                // Set EmployeeId as null for each Order
+                var ordersWithThisEmployeeId = _orderRepository.GetByEmployeeId(request.Id).ToList();
+                if (ordersWithThisEmployeeId.Any())
+                {
+                    ordersWithThisEmployeeId.ForEach(x => x.EmployeeID = null);
+                    _orderRepository.UpdateRange(ordersWithThisEmployeeId);
+                }
 
                 _employeeRepository.Delete(employeeToRemoveEntity);
-                return EmployeeMapper.Mapper.Map<EmployeeResponse>(employeeToRemoveEntity);
+                var response = EmployeeMapper.Mapper.Map<EmployeeResponse>(employeeToRemoveEntity);
+                return new ResponseBuilder<EmployeeResponse> { Message = "Employee deleted.", Data = response };
             }
             catch (Exception e)
             {
-                return null;
+                return new ResponseBuilder<EmployeeResponse> { Message = $"Employee not deleted! Error: {e.Message}", Data = null };
             }
         }
     }

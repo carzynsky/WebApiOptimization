@@ -17,24 +17,41 @@ namespace WebApiOptimization.Infrastructure.Repositories
         public override IEnumerable<Product> GetAll()
         {
             return NorthwndContext.Products
+                .AsNoTracking()
                 .Include(x => x.Category)
                 .Include(x => x.Supplier);
         }
 
-        public IEnumerable<Product> GetByCategoryId(int categoryId)
+        public IEnumerable<Product> GetByCategoryId(int categoryId, bool eagerLoading = false)
         {
+            if (eagerLoading)
+            {
+                return NorthwndContext.Products
+                    .AsNoTracking()
+                    .Where(x => x.CategoryID == categoryId)
+                    .Include(x => x.Category)
+                    .Include(x => x.Supplier);
+            }
+
             return NorthwndContext.Products
-                .Where(x => x.CategoryID == categoryId)
-                .Include(x => x.Category)
-                .Include(x => x.Supplier);
+                    .AsNoTracking()
+                    .Where(x => x.CategoryID == categoryId);
         }
 
-        public IEnumerable<Product> GetBySupplierId(int supplierId)
+        public IEnumerable<Product> GetBySupplierId(int supplierId, bool eagerLoading = false)
         {
+            if (eagerLoading)
+            {
+                return NorthwndContext.Products
+                    .AsNoTracking()
+                    .Where(x => x.SupplierID == supplierId)
+                    .Include(x => x.Category)
+                    .Include(x => x.Supplier);
+            }
+
             return NorthwndContext.Products
-                .Where(x => x.SupplierID == supplierId)
-                .Include(x => x.Category)
-                .Include(x => x.Supplier);
+                    .AsNoTracking()
+                    .Where(x => x.SupplierID == supplierId);
         }
     }
 }

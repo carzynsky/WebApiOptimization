@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using WebApiOptimization.Application.Commands.Employee;
-using WebApiOptimization.Application.Queries.Employee;
+using WebApiOptimization.Application.Commands.EmployeeCommands;
+using WebApiOptimization.Application.Queries.EmployeeQueries;
 using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.API.Controllers
@@ -19,14 +19,14 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<EmployeeResponse>> GetAll()
+        public ActionResult<ResponseBuilder<IEnumerable<EmployeeResponse>>> GetAll()
         {
             var result = _mediator.Send(new GetAllEmployeesQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<EmployeeResponse> GetById(int id)
+        public ActionResult<ResponseBuilder<EmployeeResponse>> GetById(int id)
         {
             var result = _mediator.Send(new GetEmployeeByIdQuery(id));
             if (result == null)
@@ -36,14 +36,14 @@ namespace WebApiOptimization.API.Controllers
         }
         
         [HttpPost]
-        public ActionResult<EmployeeResponse> Add(CreateEmployeeCommand createEmployeeCommand)
+        public ActionResult<ResponseBuilder<EmployeeResponse>> Add(CreateEmployeeCommand createEmployeeCommand)
         {
             var result = _mediator.Send(createEmployeeCommand);
             return Ok(result);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult<EmployeeResponse> Update(int id, UpdateEmployeeCommand updateEmployeeCommand)
+        public ActionResult<ResponseBuilder<EmployeeResponse>> Update(int id, UpdateEmployeeCommand updateEmployeeCommand)
         {
             if (id != updateEmployeeCommand.EmployeeId)
                 return BadRequest($"EmployeeId does not match with updated data!");
@@ -56,7 +56,7 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult<EmployeeResponse> Delete(int id)
+        public ActionResult<ResponseBuilder<EmployeeResponse>> Delete(int id)
         {
             var result = _mediator.Send(new DeleteEmployeeCommand(id));
             if (result == null)

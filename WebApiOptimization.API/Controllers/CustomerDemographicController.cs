@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using WebApiOptimization.Application.Commands.CustomerDemographic;
-using WebApiOptimization.Application.Queries.CustomerDemographic;
+using WebApiOptimization.Application.Commands.CustomerDemographicCommands;
+using WebApiOptimization.Application.Queries.CustomerDemographicQueries;
 using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.API.Controllers
@@ -12,20 +12,21 @@ namespace WebApiOptimization.API.Controllers
     public class CustomerDemographicController : ControllerBase
     {
         private readonly IMediator _mediator;
+
         public CustomerDemographicController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<CustomerDemographicResponse>> GetAll()
+        public ActionResult<ResponseBuilder<IEnumerable<CustomerDemographicResponse>>> GetAll()
         {
             var result = _mediator.Send(new GetAllCustomerDemographicsQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<CustomerDemographicResponse> GetById(int id)
+        public ActionResult<ResponseBuilder<CustomerDemographicResponse>> GetById(int id)
         {
             var result = _mediator.Send(new GetCustomerDemographicByIdQuery(id));
             if (result == null)
@@ -35,14 +36,14 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<CustomerDemographicResponse> Add(CreateCustomerDemographicCommand createCustomerDemographicCommand)
+        public ActionResult<ResponseBuilder<CustomerDemographicResponse>> Add(CreateCustomerDemographicCommand createCustomerDemographicCommand)
         {
             var result = _mediator.Send(createCustomerDemographicCommand);
             return Ok(result);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult<CustomerDemographicResponse> Update(int id, UpdateCustomerDemographicCommand updateCustomerDemographicCommand)
+        public ActionResult<ResponseBuilder<CustomerDemographicResponse>> Update(int id, UpdateCustomerDemographicCommand updateCustomerDemographicCommand)
         {
             int customerTypeId;
             if(!int.TryParse(updateCustomerDemographicCommand.CustomerTypeId, out customerTypeId))
@@ -60,8 +61,8 @@ namespace WebApiOptimization.API.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("{id:int}")]
-        public ActionResult<CustomerDemographicResponse> Delete(int id)
+        [HttpDelete("{id}")]
+        public ActionResult<ResponseBuilder<CustomerDemographicResponse>> Delete(string id)
         {
             var result = _mediator.Send(new DeleteCustomerDemographicCommand(id));
             if (result == null)

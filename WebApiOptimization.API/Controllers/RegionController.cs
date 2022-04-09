@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using WebApiOptimization.Application.Commands.Region;
-using WebApiOptimization.Application.Queries.Region;
+using WebApiOptimization.Application.Commands.RegionCommands;
+using WebApiOptimization.Application.Queries.RegionQueries;
 using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.API.Controllers
@@ -18,14 +18,14 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<RegionResponse>> GetAll()
+        public ActionResult<ResponseBuilder<IEnumerable<RegionResponse>>> GetAll()
         {
             var result = _mediator.Send(new GetAllRegionsQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<RegionResponse> GetById(int id)
+        public ActionResult<ResponseBuilder<RegionResponse>> GetById(int id)
         {
             var result = _mediator.Send(new GetRegionByIdQuery(id));
             if (result == null)
@@ -35,14 +35,14 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<RegionResponse> Add(CreateRegionCommand createRegionCommand)
+        public ActionResult<ResponseBuilder<RegionResponse>> Add(CreateRegionCommand createRegionCommand)
         {
             var result = _mediator.Send(createRegionCommand);
             return Ok(result);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult<RegionResponse> Update(int id, UpdateRegionCommand updateRegionCommand)
+        public ActionResult<ResponseBuilder<RegionResponse>> Update(int id, UpdateRegionCommand updateRegionCommand)
         {
             if (id != updateRegionCommand.RegionId)
                 return BadRequest($"RegionId does not match with updated data!");
@@ -55,7 +55,7 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult<RegionResponse> Delete(int id)
+        public ActionResult<ResponseBuilder<RegionResponse>> Delete(int id)
         {
             var result = _mediator.Send(new DeleteRegionCommand(id));
             if (result == null)

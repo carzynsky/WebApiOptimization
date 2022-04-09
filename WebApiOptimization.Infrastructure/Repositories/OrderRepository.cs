@@ -18,24 +18,61 @@ namespace WebApiOptimization.Infrastructure.Repositories
         public override IEnumerable<Order> GetAll()
         {
             return NorthwndContext.Orders
+                .AsNoTracking()
                 .Include(x => x.Employee)
-                .Include(x => x.Customer);
+                .Include(x => x.Customer)
+                .Include(x => x.Shipper);
         }
 
-        public IEnumerable<Order> GetByEmployeeId(int employeeId)
+        public IEnumerable<Order> GetByEmployeeId(int employeeId, bool eagerLoading = false)
         {
+            if (eagerLoading)
+            {
+                return NorthwndContext.Orders
+                    .AsNoTracking()
+                    .Where(x => x.EmployeeID == employeeId)
+                    .Include(x => x.Employee)
+                    .Include(x => x.Customer)
+                    .Include(x => x.Shipper);
+            }
+
             return NorthwndContext.Orders
-                .Where(x => x.EmployeeID == employeeId)
-                .Include(x => x.Employee)
-                .Include(x => x.Customer);
+                    .AsNoTracking()
+                    .Where(x => x.EmployeeID == employeeId);
         }
 
-        public IEnumerable<Order> GetByCustomerId(string customerId)
+        public IEnumerable<Order> GetByCustomerId(string customerId, bool eagerLoading = false)
         {
+            if (eagerLoading)
+            {
+                return NorthwndContext.Orders
+                    .AsNoTracking()
+                    .Where(x => x.CustomerID.Equals(customerId))
+                    .Include(x => x.Employee)
+                    .Include(x => x.Customer)
+                    .Include(x => x.Shipper);
+            }
+
             return NorthwndContext.Orders
-                .Where(x => x.CustomerID.Equals(customerId))
-                .Include(x => x.Employee)
-                .Include(x => x.Customer);
+                    .AsNoTracking()
+                    .Where(x => x.CustomerID.Equals(customerId));
+        }
+
+        public IEnumerable<Order> GetByShipperId(int shipperId, bool eagerLoading = false)
+        {
+            if (eagerLoading)
+            {
+                return NorthwndContext.Orders
+                   .AsNoTracking()
+                   .Where(x => x.ShipVia == shipperId)
+                   .Include(x => x.Employee)
+                   .Include(x => x.Customer)
+                   .Include(x => x.Shipper);
+            }
+
+            return NorthwndContext.Orders
+                   .AsNoTracking()
+                   .Where(x => x.ShipVia == shipperId);
         }
     }
 }

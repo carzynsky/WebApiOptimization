@@ -1,31 +1,44 @@
 ﻿using MediatR;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using WebApiOptimization.Application.Commands.Order;
+using WebApiOptimization.Application.Commands.OrderCommands;
 using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
 
 namespace WebApiOptimization.Application.Handlers.CommandHandlers.OrderHandlers
 {
-    public class DeleteOrderHandler : IRequestHandler<DeleteOrderCommand, OrderResponse>
+    public class DeleteOrderHandler : IRequestHandler<DeleteOrderCommand, ResponseBuilder<OrderResponse>>
     {
         private readonly IOrderRepository _orderRepository;
-        public DeleteOrderHandler(IOrderRepository orderRepository)
+        private readonly IOrderDetailRepository _orderDetailRepository;
+
+        public DeleteOrderHandler(IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository)
         {
             _orderRepository = orderRepository;
+            _orderDetailRepository = orderDetailRepository;
         }
-        public async Task<OrderResponse> Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
+
+        public async Task<ResponseBuilder<OrderResponse>> Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
         {
             var orderToDelete = _orderRepository.GetById(request.Id);
             if(orderToDelete == null)
             {
-                return null;
+                return new ResponseBuilder<OrderResponse> { Message = $"Order with id={request.Id} not found!", Data = null };
+            }
+
+            // Find order details with this orderId
+            var orderDetailsWithThisOrderId = _orderDetailRepository.GetByOrderId(request.Id).ToList();
+            if (orderDetailsWithThisOrderId.Any())
+            {
+                // Remove entries
+                _orderDetailRepository.DeleteRange(orderDetailsWithThisOrderId);
             }
 
             _orderRepository.Delete(orderToDelete);
             var response = OrderMapper.Mapper.Map<OrderResponse>(orderToDelete);
-            return response;
+            return new ResponseBuilder<OrderResponse> { Message = "Order deleted.", Data = response };
         }
     }
 }

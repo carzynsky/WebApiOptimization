@@ -28,9 +28,10 @@ namespace WebApiOptimization.Core.Entities
 
         public DateTime? ShippedDate { get; set; }
 
-        // ToDo
-        // fk
         public int? ShipVia { get; set; }
+
+        [ForeignKey("ShipVia")]
+        public Shipper Shipper { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? Freight { get; set; }

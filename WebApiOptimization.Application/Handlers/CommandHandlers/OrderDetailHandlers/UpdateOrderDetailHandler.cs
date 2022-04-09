@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using WebApiOptimization.Application.Commands.OrderDetail;
+using WebApiOptimization.Application.Commands.OrderDetailCommands;
 using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Entities;

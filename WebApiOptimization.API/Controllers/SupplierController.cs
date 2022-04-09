@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using WebApiOptimization.Application.Commands.Supplier;
-using WebApiOptimization.Application.Queries.Supplier;
+using WebApiOptimization.Application.Commands.SupplierCommands;
+using WebApiOptimization.Application.Queries.SupplierQueries;
 using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.API.Controllers
@@ -12,20 +12,21 @@ namespace WebApiOptimization.API.Controllers
     public class SupplierController : ControllerBase
     {
         private IMediator _mediator;
+
         public SupplierController(IMediator mediator)
         {
             _mediator = mediator;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<SupplierResponse>> GetAll()
+        public ActionResult<ResponseBuilder<IEnumerable<SupplierResponse>>> GetAll()
         {
             var result = _mediator.Send(new GetAllSuppliersQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<SupplierResponse> GetById(int id)
+        public ActionResult<ResponseBuilder<SupplierResponse>> GetById(int id)
         {
             var result = _mediator.Send(new GetSupplierByIdQuery(id));
             if (result == null)
@@ -35,14 +36,14 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<SupplierResponse> Add(CreateSupplierCommand createSupplierCommand)
+        public ActionResult<ResponseBuilder<SupplierResponse>> Add(CreateSupplierCommand createSupplierCommand)
         {
             var result = _mediator.Send(createSupplierCommand);
             return Ok(result);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult<SupplierResponse> Update(int id, UpdateSupplierCommand updateSupplierCommand)
+        public ActionResult<ResponseBuilder<SupplierResponse>> Update(int id, UpdateSupplierCommand updateSupplierCommand)
         {
             if (id != updateSupplierCommand.SupplierId)
                 return BadRequest($"SupplierId does not match with updated data!");
@@ -55,7 +56,7 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult<SupplierResponse> Delete(int id)
+        public ActionResult<ResponseBuilder<SupplierResponse>> Delete(int id)
         {
             var result = _mediator.Send(new DeleteSupplierCommand(id));
             if (result == null)

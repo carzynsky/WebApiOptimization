@@ -28,8 +28,13 @@ namespace WebApiOptimization.Infrastructure.Data
         {
             modelBuilder.Entity<EmployeeTerritory>()
                 .HasKey(x => new { x.EmployeeID, x.TerritoryID });
+
             modelBuilder.Entity<OrderDetail>()
                 .HasKey(x => new { x.OrderID, x.ProductID });
+
+            modelBuilder.Entity<CustomerCustomerDemo>()
+                .HasKey(x => new { x.CustomerID, x.CustomerTypeID });
+
             base.OnModelCreating(modelBuilder);
         }
 

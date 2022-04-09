@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using WebApiOptimization.Application.Queries.OrderDetail.Queries;
+using WebApiOptimization.Application.Queries.OrderDetailQueries;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
 using WebApiOptimization.Core.Entities;
@@ -36,8 +36,8 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.OrderDetailHandl
             {
                 orderDetails = _orderDetailRepository.GetByOrderIdAndProductId((int)request.OrderId, (int)request.ProductId, true);
             }
-            var response = OrderDetailMapper.Mapper.Map<IEnumerable<OrderDetailResponse>>(orderDetails);
 
+            var response = OrderDetailMapper.Mapper.Map<IEnumerable<OrderDetailResponse>>(orderDetails);
             return new ResponseBuilder<IEnumerable<OrderDetailResponse>> { Message = "OK.", Data = response };
         }
     }
