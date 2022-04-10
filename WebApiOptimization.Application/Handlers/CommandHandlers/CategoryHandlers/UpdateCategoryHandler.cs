@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.CategoryCommands;
@@ -27,15 +28,22 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CategoryHandle
                 return new ResponseBuilder<CategoryResponse> { Message = $"Category with id={request.CategoryId} not found!", Data = null };
             }
 
-            var categoryToUpdateEntity = CategoryMapper.Mapper.Map<Category>(request);
-            if(categoryToUpdateEntity == null)
+            try
             {
-                return new ResponseBuilder<CategoryResponse> { Message = ResponseBuilderHelper.InvalidData, Data = null };
-            }
+                var categoryToUpdateEntity = CategoryMapper.Mapper.Map<Category>(request);
+                if (categoryToUpdateEntity == null)
+                {
+                    return new ResponseBuilder<CategoryResponse> { Message = ResponseBuilderHelper.InvalidData, Data = null };
+                }
 
-            _categoryRepository.Update(categoryToUpdateEntity);
-            var response = CategoryMapper.Mapper.Map<CategoryResponse>(categoryToUpdateEntity);
-            return new ResponseBuilder<CategoryResponse> { Message = "Category updated.", Data = response }; ;
+                _categoryRepository.Update(categoryToUpdateEntity);
+                var response = CategoryMapper.Mapper.Map<CategoryResponse>(categoryToUpdateEntity);
+                return new ResponseBuilder<CategoryResponse> { Message = "Category updated.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<CategoryResponse> { Message = $"Category not updated! Error: {e.InnerException.Message}", Data = null};
+            }
         }
     }
 }

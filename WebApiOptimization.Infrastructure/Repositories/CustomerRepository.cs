@@ -18,7 +18,7 @@ namespace WebApiOptimization.Infrastructure.Repositories
         {
             return NorthwndContext.Customers
                 .AsNoTracking()
-                .FirstOrDefault(x => x.CustomerId.Equals(customerId));
+                .FirstOrDefault(x => x.CustomerID.Equals(customerId));
         }
     }
 }

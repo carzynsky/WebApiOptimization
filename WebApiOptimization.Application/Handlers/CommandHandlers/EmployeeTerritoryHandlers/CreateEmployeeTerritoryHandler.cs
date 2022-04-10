@@ -36,7 +36,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeTerrit
             }
             catch (Exception e)
             {
-                return new ResponseBuilder<EmployeeTerritoryResponse> { Message = $"EmployeeTerritory not created! Error: {e.Message}", Data = null };
+                return new ResponseBuilder<EmployeeTerritoryResponse> { Message = $"EmployeeTerritory not created! Error: {e.InnerException.Message}", Data = null };
             }
         }
     }

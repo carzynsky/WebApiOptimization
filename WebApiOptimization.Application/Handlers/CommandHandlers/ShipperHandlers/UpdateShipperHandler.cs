@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.ShipperCommands;
@@ -26,10 +27,17 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.ShipperHandler
                 return new ResponseBuilder<ShipperResponse> { Message = $"Shipper with id={request.ShipperId} not found!", Data = null };
             }
 
-            var shipperToUpdateEntity = ShipperMapper.Mapper.Map<Shipper>(request);
-            _shipperRepository.Update(shipperToUpdateEntity);
-            var response = ShipperMapper.Mapper.Map<ShipperResponse>(shipperToUpdateEntity);
-            return new ResponseBuilder<ShipperResponse> { Message = $"Shipper updated.", Data = response };
+            try
+            {
+                var shipperToUpdateEntity = ShipperMapper.Mapper.Map<Shipper>(request);
+                _shipperRepository.Update(shipperToUpdateEntity);
+                var response = ShipperMapper.Mapper.Map<ShipperResponse>(shipperToUpdateEntity);
+                return new ResponseBuilder<ShipperResponse> { Message = "Shipper updated.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<ShipperResponse> { Message = $"Shipper not updated! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

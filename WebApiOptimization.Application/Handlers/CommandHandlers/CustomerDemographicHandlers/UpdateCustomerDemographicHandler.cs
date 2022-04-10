@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.CustomerDemographicCommands;
@@ -26,10 +27,17 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerDemogr
                 return new ResponseBuilder<CustomerDemographicResponse> { Message = $"CustomerDemographic with id={request.CustomerTypeId} not found!", Data = null };
             }
 
-            var customerDemographicToUpdateEntity = CustomerDemographicMapper.Mapper.Map<CustomerDemographic>(request);
-            _customerDemographicRepository.Update(customerDemographicToUpdateEntity);
-            var response = CustomerCustomerDemoMapper.Mapper.Map<CustomerDemographicResponse>(customerDemographicToUpdateEntity);
-            return new ResponseBuilder<CustomerDemographicResponse> { Message = "CustomerDemographic updated.", Data = response };
+            try
+            {
+                var customerDemographicToUpdateEntity = CustomerDemographicMapper.Mapper.Map<CustomerDemographic>(request);
+                _customerDemographicRepository.Update(customerDemographicToUpdateEntity);
+                var response = CustomerCustomerDemoMapper.Mapper.Map<CustomerDemographicResponse>(customerDemographicToUpdateEntity);
+                return new ResponseBuilder<CustomerDemographicResponse> { Message = "CustomerDemographic updated.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<CustomerDemographicResponse> { Message = $"CustomerDemographic not updated! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.RegionCommands;
@@ -26,10 +27,17 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.RegionHandlers
                 return new ResponseBuilder<RegionResponse> { Message = $"Region with id={request.RegionId} not found!", Data = null };
             }
 
-            var regionToUpdateEntity = RegionMapper.Mapper.Map<Region>(request);
-            _regionRepository.Update(regionToUpdateEntity);
-            var response = RegionMapper.Mapper.Map<RegionResponse>(regionToUpdateEntity);
-            return new ResponseBuilder<RegionResponse> { Message = "Region updated.", Data = response };
+            try
+            {
+                var regionToUpdateEntity = RegionMapper.Mapper.Map<Region>(request);
+                _regionRepository.Update(regionToUpdateEntity);
+                var response = RegionMapper.Mapper.Map<RegionResponse>(regionToUpdateEntity);
+                return new ResponseBuilder<RegionResponse> { Message = "Region updated.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<RegionResponse> { Message = $"Region not updated! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

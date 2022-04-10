@@ -7,6 +7,7 @@ using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
 using System.Linq;
+using System;
 
 namespace WebApiOptimization.Application.Handlers.CommandHandlers.OrderDetailHandlers
 {
@@ -27,9 +28,16 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.OrderDetailHan
                 return new ResponseBuilder<List<OrderDetailResponse>> { Message = $"OrderDetails with orderId={request.OrderID} not found!", Data = null };
             }
 
-            _orderDetailRepository.DeleteRange(orderDetailsToRemove);
-            var response = OrderDetailMapper.Mapper.Map<List<OrderDetailResponse>>(orderDetailsToRemove);
-            return new ResponseBuilder<List<OrderDetailResponse>> { Message = "OrderDetails deleted.", Data = response };
+            try
+            {
+                _orderDetailRepository.DeleteRange(orderDetailsToRemove);
+                var response = OrderDetailMapper.Mapper.Map<List<OrderDetailResponse>>(orderDetailsToRemove);
+                return new ResponseBuilder<List<OrderDetailResponse>> { Message = "OrderDetails deleted.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<List<OrderDetailResponse>> { Message = $"OrderDetails not deleted! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

@@ -14,10 +14,12 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.ProductHandler
     public class CreateProductHandler : IRequestHandler<CreateProductCommand, ResponseBuilder<ProductResponse>>
     {
         private readonly IProductRepository _productRepository;
+
         public CreateProductHandler(IProductRepository productRepository)
         {
             _productRepository = productRepository;
         }
+
         public async Task<ResponseBuilder<ProductResponse>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
             var productEntity = ProductMapper.Mapper.Map<Product>(request);
@@ -34,10 +36,9 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.ProductHandler
             }
             catch(Exception e)
             {
-                return new ResponseBuilder<ProductResponse> { Message = $"Product not created! Error: {e.Message}", Data = null };
+                return new ResponseBuilder<ProductResponse> { Message = $"Product not created! Error: {e.InnerException.Message}", Data = null };
 
             }
-           
         }
     }
 }

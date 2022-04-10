@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.EmployeeCommands;
@@ -26,10 +27,18 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandle
                 return new ResponseBuilder<EmployeeResponse> { Message = $"Employee with id={request.EmployeeId} not found!", Data = null };
             }
 
-            var employeeToUpdateEntity = EmployeeMapper.Mapper.Map<Employee>(request);
-            _employeeRepository.Update(employeeToUpdateEntity);
-            var response = EmployeeMapper.Mapper.Map<EmployeeResponse>(employeeToUpdateEntity);
-            return new ResponseBuilder<EmployeeResponse> { Message = "Employee updated.", Data = response };
+            try
+            {
+                var employeeToUpdateEntity = EmployeeMapper.Mapper.Map<Employee>(request);
+                _employeeRepository.Update(employeeToUpdateEntity);
+                var response = EmployeeMapper.Mapper.Map<EmployeeResponse>(employeeToUpdateEntity);
+                return new ResponseBuilder<EmployeeResponse> { Message = "Employee updated.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<EmployeeResponse> { Message = $"Employee not updated! Error: {e.InnerException.Message}", Data = null };
+            }
+            
         }
     }
 }

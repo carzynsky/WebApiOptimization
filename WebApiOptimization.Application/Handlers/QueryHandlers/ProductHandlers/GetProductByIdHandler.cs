@@ -19,7 +19,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Product
 
         public async Task<ResponseBuilder<ProductResponse>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
         {
-            var productEntity = _productRepository.GetById(request.Id);
+            var productEntity = _productRepository.GetById(request.Id, true);
             if(productEntity == null)
             {
                 return new ResponseBuilder<ProductResponse> { Message = $"Product with id={request.Id} not found!", Data = null };

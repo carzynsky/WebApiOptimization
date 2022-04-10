@@ -36,9 +36,8 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.RegionHandlers
             }
             catch(Exception e)
             {
-                return new ResponseBuilder<RegionResponse> { Message = $"Region not created! Error: {e.Message}", Data = null };
+                return new ResponseBuilder<RegionResponse> { Message = $"Region not created! Error: {e.InnerException.Message}", Data = null };
             }
-            
         }
     }
 }

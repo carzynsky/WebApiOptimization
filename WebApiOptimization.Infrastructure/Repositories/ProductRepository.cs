@@ -14,12 +14,29 @@ namespace WebApiOptimization.Infrastructure.Repositories
         {
 
         }
+
         public override IEnumerable<Product> GetAll()
         {
             return NorthwndContext.Products
                 .AsNoTracking()
                 .Include(x => x.Category)
                 .Include(x => x.Supplier);
+        }
+
+        public Product GetById(int id, bool eagerLoading = false)
+        {
+            if (eagerLoading)
+            {
+                return NorthwndContext.Products
+                    .AsNoTracking()
+                    .Include(x => x.Category)
+                    .Include(x => x.Supplier)
+                    .FirstOrDefault(x => x.ProductID == id);
+            }
+
+            return NorthwndContext.Products
+                    .AsNoTracking()
+                    .FirstOrDefault(x => x.ProductID == id);
         }
 
         public IEnumerable<Product> GetByCategoryId(int categoryId, bool eagerLoading = false)

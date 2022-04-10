@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,9 +15,10 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.ShipperHandler
         private readonly IShipperRepository _shipperRepository;
         private readonly IOrderRepository _orderRepository;
 
-        public DeleteShipperHandler(IShipperRepository shipperRepository)
+        public DeleteShipperHandler(IShipperRepository shipperRepository, IOrderRepository orderRepository)
         {
             _shipperRepository = shipperRepository;
+            _orderRepository = orderRepository;
         }
 
         public async Task<ResponseBuilder<ShipperResponse>> Handle(DeleteShipperCommand request, CancellationToken cancellationToken)
@@ -27,17 +29,24 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.ShipperHandler
                 return new ResponseBuilder<ShipperResponse> { Message = $"Shipper with id={request.Id} not found!", Data = null };
             }
 
-            // Find orders with this shipperId
-            var ordersWithThisShipperId = _orderRepository.GetByShipperId(request.Id).ToList();
-            if (ordersWithThisShipperId.Any())
+            try
             {
-                ordersWithThisShipperId.ForEach(x => x.ShipVia = null);
-                _orderRepository.UpdateRange(ordersWithThisShipperId);
-            }
+                // Find orders with this shipperId
+                var ordersWithThisShipperId = _orderRepository.GetByShipperId(request.Id).ToList();
+                if (ordersWithThisShipperId.Any())
+                {
+                    ordersWithThisShipperId.ForEach(x => x.ShipVia = null);
+                    _orderRepository.UpdateRange(ordersWithThisShipperId);
+                }
 
-            _shipperRepository.Delete(shipperToDeleteEntity);
-            var response = ShipperMapper.Mapper.Map<ShipperResponse>(shipperToDeleteEntity);
-            return new ResponseBuilder<ShipperResponse> { Message = "Shipper deleted.", Data = response };
+                _shipperRepository.Delete(shipperToDeleteEntity);
+                var response = ShipperMapper.Mapper.Map<ShipperResponse>(shipperToDeleteEntity);
+                return new ResponseBuilder<ShipperResponse> { Message = "Shipper deleted.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<ShipperResponse> { Message = $"Shipper not deleted! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

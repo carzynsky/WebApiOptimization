@@ -6,6 +6,7 @@ namespace WebApiOptimization.Core.Repositories
 {
     public interface IProductRepository : IRepository<Product>
     {
+        Product GetById(int id, bool eagerLoading = false);
         IEnumerable<Product> GetByCategoryId(int categoryId, bool eagerLoading = false);
         IEnumerable<Product> GetBySupplierId(int supplierId, bool eagerLoading = false);
     }

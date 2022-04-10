@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,17 +29,24 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.SupplierHandle
                 return new ResponseBuilder<SupplierResponse> { Message = $"Supplier with id={request.Id} not found!", Data = null };
             }
 
-            // Find products with this supplierId
-            var productsWithThisSupplierId = _productRepository.GetBySupplierId(request.Id).ToList();
-            if (productsWithThisSupplierId.Any())
+            try
             {
-                productsWithThisSupplierId.ForEach(x => x.SupplierID = null);
-                _productRepository.UpdateRange(productsWithThisSupplierId);
-            }
+                // Find products with this supplierId
+                var productsWithThisSupplierId = _productRepository.GetBySupplierId(request.Id).ToList();
+                if (productsWithThisSupplierId.Any())
+                {
+                    productsWithThisSupplierId.ForEach(x => x.SupplierID = null);
+                    _productRepository.UpdateRange(productsWithThisSupplierId);
+                }
 
-            _supplierRepository.Delete(supplierToDeleteEntity);
-            var response = SupplierMapper.Mapper.Map<SupplierResponse>(supplierToDeleteEntity);
-            return new ResponseBuilder<SupplierResponse> { Message = $"Supplier deleted.", Data = response };
+                _supplierRepository.Delete(supplierToDeleteEntity);
+                var response = SupplierMapper.Mapper.Map<SupplierResponse>(supplierToDeleteEntity);
+                return new ResponseBuilder<SupplierResponse> { Message = "Supplier deleted.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<SupplierResponse> { Message = $"Supplier not deleted! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.OrderCommands;
@@ -26,10 +27,17 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.OrderHandlers
                 return new ResponseBuilder<OrderResponse> { Message = $"Order with id={request.OrderId} not found!", Data = null };
             }
 
-            var orderToUpdateEntity = OrderMapper.Mapper.Map<Order>(request);
-            _orderRepository.Update(orderToUpdateEntity);
-            var response = OrderMapper.Mapper.Map<OrderResponse>(orderToUpdateEntity);
-            return new ResponseBuilder<OrderResponse> { Message = "Order updated.", Data = response };
+            try
+            {
+                var orderToUpdateEntity = OrderMapper.Mapper.Map<Order>(request);
+                _orderRepository.Update(orderToUpdateEntity);
+                var response = OrderMapper.Mapper.Map<OrderResponse>(orderToUpdateEntity);
+                return new ResponseBuilder<OrderResponse> { Message = "Order updated.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<OrderResponse> { Message = $"Order not updated! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

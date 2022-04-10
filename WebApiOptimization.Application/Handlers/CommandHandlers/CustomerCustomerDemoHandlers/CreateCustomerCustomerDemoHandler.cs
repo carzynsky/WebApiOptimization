@@ -36,7 +36,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerCustom
             }
             catch (Exception e)
             {
-                return new ResponseBuilder<CustomerCustomerDemoResponse> { Message = $"CustomerCustomerDemo not created! Error: {e.Message}", Data = null };
+                return new ResponseBuilder<CustomerCustomerDemoResponse> { Message = $"CustomerCustomerDemo not created! Error: {e.InnerException.Message}", Data = null };
             }
             
         }

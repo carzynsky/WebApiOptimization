@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -41,9 +42,16 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerCustom
                 return new ResponseBuilder<List<CustomerCustomerDemoResponse>> { Message = "No CustomerCustomerDemos found!", Data = null };
             }
 
-            _customerCustomerDemoRepository.DeleteRange(customerCustomerDemosToDelete);
-            var response = CustomerCustomerDemoMapper.Mapper.Map<List<CustomerCustomerDemoResponse>>(customerCustomerDemosToDelete);
-            return new ResponseBuilder<List<CustomerCustomerDemoResponse>> { Message = "CustomerCustomerDemos deleted.", Data = response };
+            try
+            {
+                _customerCustomerDemoRepository.DeleteRange(customerCustomerDemosToDelete);
+                var response = CustomerCustomerDemoMapper.Mapper.Map<List<CustomerCustomerDemoResponse>>(customerCustomerDemosToDelete);
+                return new ResponseBuilder<List<CustomerCustomerDemoResponse>> { Message = "CustomerCustomerDemos deleted.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<List<CustomerCustomerDemoResponse>> { Message = $"CustomerCustomerDemos not deleted! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

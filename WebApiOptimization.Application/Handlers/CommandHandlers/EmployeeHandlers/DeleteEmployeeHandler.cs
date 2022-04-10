@@ -33,11 +33,21 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandle
 
             try
             {
+                // Set reportsTo to null for employees
+                var employeesWithThisReportsTo = _employeeRepository.GetByReportsTo(request.Id).ToList();
+                if (employeesWithThisReportsTo.Any())
+                {
+                    employeesWithThisReportsTo.ForEach(x => x.ReportsTo = null);
+                    _employeeRepository.UpdateRange(employeesWithThisReportsTo);
+                }
+
+                // Find employeeTerritories with this employeeId
                 var employeeTerritoryEntityToRemove = _employeeTerritoryRepository.GetByEmployeeId(request.Id).ToList();
                 if (employeeTerritoryEntityToRemove.Any())
                 {
                     _employeeTerritoryRepository.DeleteRange(employeeTerritoryEntityToRemove);
                 }
+
 
                 // Set EmployeeId as null for each Order
                 var ordersWithThisEmployeeId = _orderRepository.GetByEmployeeId(request.Id).ToList();
@@ -53,7 +63,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandle
             }
             catch (Exception e)
             {
-                return new ResponseBuilder<EmployeeResponse> { Message = $"Employee not deleted! Error: {e.Message}", Data = null };
+                return new ResponseBuilder<EmployeeResponse> { Message = $"Employee not deleted! Error: {e.InnerException.Message}", Data = null };
             }
         }
     }

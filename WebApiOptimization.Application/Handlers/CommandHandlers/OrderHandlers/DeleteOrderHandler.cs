@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,17 +29,24 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.OrderHandlers
                 return new ResponseBuilder<OrderResponse> { Message = $"Order with id={request.Id} not found!", Data = null };
             }
 
-            // Find order details with this orderId
-            var orderDetailsWithThisOrderId = _orderDetailRepository.GetByOrderId(request.Id).ToList();
-            if (orderDetailsWithThisOrderId.Any())
+            try
             {
-                // Remove entries
-                _orderDetailRepository.DeleteRange(orderDetailsWithThisOrderId);
-            }
+                // Find order details with this orderId
+                var orderDetailsWithThisOrderId = _orderDetailRepository.GetByOrderId(request.Id).ToList();
+                if (orderDetailsWithThisOrderId.Any())
+                {
+                    // Remove entries
+                    _orderDetailRepository.DeleteRange(orderDetailsWithThisOrderId);
+                }
 
-            _orderRepository.Delete(orderToDelete);
-            var response = OrderMapper.Mapper.Map<OrderResponse>(orderToDelete);
-            return new ResponseBuilder<OrderResponse> { Message = "Order deleted.", Data = response };
+                _orderRepository.Delete(orderToDelete);
+                var response = OrderMapper.Mapper.Map<OrderResponse>(orderToDelete);
+                return new ResponseBuilder<OrderResponse> { Message = "Order deleted.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<OrderResponse> { Message = $"Order not deleted! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

@@ -31,12 +31,12 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerHandle
             try
             {
                 var newCustomer = _customerRepository.Add(customerEntity);
-                var response = CategoryMapper.Mapper.Map<CustomerResponse>(newCustomer);
+                var response = CustomerMapper.Mapper.Map<CustomerResponse>(newCustomer);
                 return new ResponseBuilder<CustomerResponse> { Message = "Customer created.", Data = response };
             }
             catch(Exception e)
             {
-                return new ResponseBuilder<CustomerResponse> { Message = $"Customer not created! Error: {e.Message}", Data = null };
+                return new ResponseBuilder<CustomerResponse> { Message = $"Customer not created! Error: {e.InnerException.Message}", Data = null };
             }
         }
     }

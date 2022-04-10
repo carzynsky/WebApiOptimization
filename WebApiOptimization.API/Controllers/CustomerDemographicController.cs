@@ -68,7 +68,7 @@ namespace WebApiOptimization.API.Controllers
             if (result == null)
                 return NotFound($"CustomerDemographic with customer type id={id} not found!");
 
-            return Ok();
+            return Ok(result);
         }
     }
 }

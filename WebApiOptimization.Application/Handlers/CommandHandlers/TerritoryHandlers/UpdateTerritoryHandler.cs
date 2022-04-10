@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.TerritoryCommands;
@@ -26,10 +27,17 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.TerritoryHandl
                 return new ResponseBuilder<TerritoryResponse> { Message = $"Territory with id={request.TerritoryId} not found!", Data = null };
             }
 
-            var territoryToUpdateEntity = TerritoryMapper.Mapper.Map<Territory>(request);
-            _territoryRepository.Update(territoryToUpdateEntity);
-            var response = TerritoryMapper.Mapper.Map<TerritoryResponse>(territoryToUpdateEntity);
-            return new ResponseBuilder<TerritoryResponse> { Message = "Territory updated.", Data = response };
+            try
+            {
+                var territoryToUpdateEntity = TerritoryMapper.Mapper.Map<Territory>(request);
+                _territoryRepository.Update(territoryToUpdateEntity);
+                var response = TerritoryMapper.Mapper.Map<TerritoryResponse>(territoryToUpdateEntity);
+                return new ResponseBuilder<TerritoryResponse> { Message = "Territory updated.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<TerritoryResponse> { Message = $"Territory not updated! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

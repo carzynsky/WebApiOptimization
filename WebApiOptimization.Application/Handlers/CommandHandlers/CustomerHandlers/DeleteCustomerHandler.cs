@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,18 +29,25 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerHandle
                 return new ResponseBuilder<CustomerResponse> { Message = "Customer not found!", Data = null };
             }
 
-            // Find orders with this customer
-            var ordersWithThisCustomer = _orderRepository.GetByCustomerId(request.CustomerId).ToList();
-            if (ordersWithThisCustomer.Any())
+            try
             {
-                // Set CustomerId as null for each order
-                ordersWithThisCustomer.ForEach(x => x.CustomerID = null);
-                _orderRepository.UpdateRange(ordersWithThisCustomer);
-            }
+                // Find orders with this customer
+                var ordersWithThisCustomer = _orderRepository.GetByCustomerId(request.CustomerId).ToList();
+                if (ordersWithThisCustomer.Any())
+                {
+                    // Set CustomerId as null for each order
+                    ordersWithThisCustomer.ForEach(x => x.CustomerID = null);
+                    _orderRepository.UpdateRange(ordersWithThisCustomer);
+                }
 
-            _customerRepository.Delete(customerToDelete);
-            var response = CustomerMapper.Mapper.Map<CustomerResponse>(customerToDelete);
-            return new ResponseBuilder<CustomerResponse> { Message = "Customer deleted.", Data = response };
+                _customerRepository.Delete(customerToDelete);
+                var response = CustomerMapper.Mapper.Map<CustomerResponse>(customerToDelete);
+                return new ResponseBuilder<CustomerResponse> { Message = "Customer deleted.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<CustomerResponse> { Message = $"Customer not deleted! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

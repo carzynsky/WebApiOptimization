@@ -36,7 +36,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.OrderHandlers
             }
             catch(Exception e)
             {
-                return new ResponseBuilder<OrderResponse> { Message = $"Order not created! Error: {e.Message}", Data = null };
+                return new ResponseBuilder<OrderResponse> { Message = $"Order not created! Error: {e.InnerException.Message}", Data = null };
             }
         }
     }

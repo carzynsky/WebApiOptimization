@@ -5,6 +5,7 @@ namespace WebApiOptimization.Application.Commands.CustomerCommands
 {
     public class CreateCustomerCommand : IRequest<ResponseBuilder<CustomerResponse>>
     {
+        public string CustomerID { get; set; }
         public string CompanyName { get; set; }
         public string ContactName { get; set; }
         public string ContactTitle { get; set; }

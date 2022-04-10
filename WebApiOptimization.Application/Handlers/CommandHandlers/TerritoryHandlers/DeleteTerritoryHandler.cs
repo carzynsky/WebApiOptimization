@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,16 +29,23 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.TerritoryHandl
                 return new ResponseBuilder<TerritoryResponse> { Message = $"Territory with id={request.Id} not found!", Data = null };
             }
 
-            // Find employeeTerritories with this TerritoryId
-            var employeeTerritoriesWithThisTerritoryId = _employeeTerritoryRepository.GetByTerritoryId(request.Id).ToList();
-            if (employeeTerritoriesWithThisTerritoryId.Any())
+            try
             {
-                _employeeTerritoryRepository.DeleteRange(employeeTerritoriesWithThisTerritoryId);
-            }
+                // Find employeeTerritories with this TerritoryId
+                var employeeTerritoriesWithThisTerritoryId = _employeeTerritoryRepository.GetByTerritoryId(request.Id).ToList();
+                if (employeeTerritoriesWithThisTerritoryId.Any())
+                {
+                    _employeeTerritoryRepository.DeleteRange(employeeTerritoriesWithThisTerritoryId);
+                }
 
-            _territoryRepository.Delete(territoryToDeleteEntity);
-            var response = TerritoryMapper.Mapper.Map<TerritoryResponse>(territoryToDeleteEntity);
-            return new ResponseBuilder<TerritoryResponse> { Message = $"Territory deleted", Data = response };
+                _territoryRepository.Delete(territoryToDeleteEntity);
+                var response = TerritoryMapper.Mapper.Map<TerritoryResponse>(territoryToDeleteEntity);
+                return new ResponseBuilder<TerritoryResponse> { Message = "Territory deleted", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<TerritoryResponse> { Message = $"Territory not deleted! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

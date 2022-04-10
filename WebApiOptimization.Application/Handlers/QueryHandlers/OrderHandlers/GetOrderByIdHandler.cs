@@ -19,7 +19,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Order
 
         public async Task<ResponseBuilder<OrderResponse>> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
         {
-            var orderEntity = _orderRepository.GetById(request.Id);
+            var orderEntity = _orderRepository.GetById(request.Id, true);
             if(orderEntity == null)
             {
                 return new ResponseBuilder<OrderResponse> { Message = $"Order with id={request.Id} not found!", Data = null };

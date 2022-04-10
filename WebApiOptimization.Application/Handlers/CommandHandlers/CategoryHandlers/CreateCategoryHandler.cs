@@ -35,7 +35,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CategoryHandle
             }
             catch(Exception e)
             {
-                return new ResponseBuilder<CategoryResponse> { Message = $"Category not created! Error: {e.Message}", Data = null };
+                return new ResponseBuilder<CategoryResponse> { Message = $"Category not created! Error: {e.InnerException.Message}", Data = null };
             }
         }
     }

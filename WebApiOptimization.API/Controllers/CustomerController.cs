@@ -44,7 +44,7 @@ namespace WebApiOptimization.API.Controllers
         [HttpPut("{id}")]
         public ActionResult<ResponseBuilder<CustomerResponse>> Update(string id, UpdateCustomerCommand updateCustomerCommand)
         {
-            if (id != updateCustomerCommand.CustomerId)
+            if (id != updateCustomerCommand.CustomerID)
                 return BadRequest($"CustomerId does not match with updated data!");
 
             var result = _mediator.Send(updateCustomerCommand);
@@ -61,7 +61,7 @@ namespace WebApiOptimization.API.Controllers
             if (result == null)
                 return NotFound($"Customer with id={id} not found!");
 
-            return Ok();
+            return Ok(result);
         }
     }
 }

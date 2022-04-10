@@ -35,7 +35,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerDemogr
             }
             catch(Exception e)
             {
-                return new ResponseBuilder<CustomerDemographicResponse> { Message = $"CustomerDemographic not created! Error: {e.Message}", Data = null };
+                return new ResponseBuilder<CustomerDemographicResponse> { Message = $"CustomerDemographic not created! Error: {e.InnerException.Message}", Data = null };
             }
             
         }

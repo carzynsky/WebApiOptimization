@@ -19,7 +19,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Employee
 
         public async Task<ResponseBuilder<EmployeeResponse>> Handle(GetEmployeeByIdQuery request, CancellationToken cancellationToken)
         {
-            var employeeEntity = _employeeRepository.GetById(request.Id);
+            var employeeEntity = _employeeRepository.GetById(request.Id, true);
             if (employeeEntity == null)
             {
                 return new ResponseBuilder<EmployeeResponse> { Message = $"Employee with id={request.Id} not found!", Data = null };

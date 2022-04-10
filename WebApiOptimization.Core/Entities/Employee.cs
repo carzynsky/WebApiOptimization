@@ -57,8 +57,10 @@ namespace WebApiOptimization.Core.Entities
         [Column(TypeName = "ntext")]
         public string Notes { get; set; }
 
-        // ??? some fk but to what? to employee?
         public int? ReportsTo { get; set; }
+
+        [ForeignKey("ReportsTo")]
+        public virtual Employee ReportsToEmployee { get; set; }
 
         [StringLength(255)]
         public string PhotoPath { get; set; }

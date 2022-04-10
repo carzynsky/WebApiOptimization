@@ -74,5 +74,22 @@ namespace WebApiOptimization.Infrastructure.Repositories
                    .AsNoTracking()
                    .Where(x => x.ShipVia == shipperId);
         }
+
+        public Order GetById(int id, bool eagerLoading = false)
+        {
+            if (eagerLoading)
+            {
+                return NorthwndContext.Orders
+                    .AsNoTracking()
+                    .Include(x => x.Employee)
+                    .Include(x => x.Customer)
+                    .Include(x => x.Shipper)
+                    .FirstOrDefault(x => x.OrderID == id);
+            }
+
+            return NorthwndContext.Orders
+                    .AsNoTracking()
+                    .FirstOrDefault(x => x.OrderID == id);
+        }
     }
 }

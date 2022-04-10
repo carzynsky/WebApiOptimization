@@ -56,7 +56,7 @@ namespace WebApiOptimization.API.Controllers
             if (result == null)
                 return NotFound($"EmployeeTerritory not found!");
 
-            return Ok();
+            return Ok(result);
         }
     }
 }

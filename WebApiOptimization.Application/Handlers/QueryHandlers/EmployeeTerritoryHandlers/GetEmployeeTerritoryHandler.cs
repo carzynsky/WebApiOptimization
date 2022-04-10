@@ -29,15 +29,15 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.EmployeeTerritor
             }
             else if(request.EmployeeId != null && request.TerritoryId == null)
             {
-                employeeTerritories = _employeeTerritoryRepository.GetByEmployeeId((int)request.EmployeeId);
+                employeeTerritories = _employeeTerritoryRepository.GetByEmployeeId((int)request.EmployeeId, true);
             }
             else if(request.EmployeeId == null && request.TerritoryId != null)
             {
-                employeeTerritories = _employeeTerritoryRepository.GetByTerritoryId(request.TerritoryId);
+                employeeTerritories = _employeeTerritoryRepository.GetByTerritoryId(request.TerritoryId, true);
             }
             else
             {
-                employeeTerritories = _employeeTerritoryRepository.GetByEmployeeIdAndTerritoryId((int)request.EmployeeId, request.TerritoryId);
+                employeeTerritories = _employeeTerritoryRepository.GetByEmployeeIdAndTerritoryId((int)request.EmployeeId, request.TerritoryId, true);
             }
 
             var response = EmployeeTerritoryMapper.Mapper.Map<IEnumerable<EmployeeTerritoryResponse>>(employeeTerritories);

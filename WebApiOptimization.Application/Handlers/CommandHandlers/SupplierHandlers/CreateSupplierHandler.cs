@@ -36,7 +36,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.SupplierHandle
             }
             catch(Exception e)
             {
-                return new ResponseBuilder<SupplierResponse> { Message = $"Supplier not created! Error: {e.Message}", Data = null };
+                return new ResponseBuilder<SupplierResponse> { Message = $"Supplier not created! Error: {e.InnerException.Message}", Data = null };
             }
         }
     }

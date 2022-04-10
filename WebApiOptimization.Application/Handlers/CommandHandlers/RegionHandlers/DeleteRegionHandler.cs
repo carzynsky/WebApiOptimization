@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,11 +14,13 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.RegionHandlers
     {
         private readonly IRegionRepository _regionRepository;
         private readonly ITerritoryRepository _territoryRepository;
+        private readonly IEmployeeTerritoryRepository _employeeTerritoryRepository;
 
-        public DeleteRegionHandler(IRegionRepository regionRepository, ITerritoryRepository territoryRepository)
+        public DeleteRegionHandler(IRegionRepository regionRepository, ITerritoryRepository territoryRepository, IEmployeeTerritoryRepository employeeTerritoryRepository)
         {
             _regionRepository = regionRepository;
             _territoryRepository = territoryRepository;
+            _employeeTerritoryRepository = employeeTerritoryRepository;
         }
 
         public async Task<ResponseBuilder<RegionResponse>> Handle(DeleteRegionCommand request, CancellationToken cancellationToken)
@@ -28,16 +31,32 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.RegionHandlers
                 return new ResponseBuilder<RegionResponse> { Message = $"Region with id={request.Id} not found!", Data = null };
             }
 
-            // Find territories with this regionId
-            var territoriesWithThisRegionId = _territoryRepository.GetByRegionId(request.Id).ToList();
-            if (territoriesWithThisRegionId.Any())
+            try
             {
-                _territoryRepository.DeleteRange(territoriesWithThisRegionId);
-            }
+                // Find territories with this regionId
+                var territoriesWithThisRegionId = _territoryRepository.GetByRegionId(request.Id).ToList();
+                if (territoriesWithThisRegionId.Any())
+                {
+                    foreach (var territory in territoriesWithThisRegionId)
+                    {
+                        var employeeTerritoryWithThisTerritory = _employeeTerritoryRepository.GetByTerritoryId(territory.TerritoryId).ToList();
+                        if (employeeTerritoryWithThisTerritory.Any())
+                        {
+                            _employeeTerritoryRepository.DeleteRange(employeeTerritoryWithThisTerritory);
+                        }
+                    }
 
-            _regionRepository.Delete(regionToDelete);
-            var response = RegionMapper.Mapper.Map<RegionResponse>(regionToDelete);
-            return new ResponseBuilder<RegionResponse> { Message = "Region deleted!=.", Data = response };
+                    _territoryRepository.DeleteRange(territoriesWithThisRegionId);
+                }
+
+                _regionRepository.Delete(regionToDelete);
+                var response = RegionMapper.Mapper.Map<RegionResponse>(regionToDelete);
+                return new ResponseBuilder<RegionResponse> { Message = "Region deleted.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<RegionResponse> { Message = $"Region not deleted! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

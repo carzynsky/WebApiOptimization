@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -14,10 +15,12 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeTerrit
     public class DeleteEmployeeTerritoryHandler : IRequestHandler<DeleteEmployeeTerritoryCommand, ResponseBuilder<List<EmployeeTerritoryResponse>>>
     {
         private readonly IEmployeeTerritoryRepository _employeeTerritoryRepository;
+
         public DeleteEmployeeTerritoryHandler(IEmployeeTerritoryRepository employeeTerritoryRepository)
         {
             _employeeTerritoryRepository = employeeTerritoryRepository;
         }
+
         public async Task<ResponseBuilder<List<EmployeeTerritoryResponse>>> Handle(DeleteEmployeeTerritoryCommand request, CancellationToken cancellationToken)
         {
             List<EmployeeTerritory> employeeTerritories;
@@ -34,9 +37,16 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeTerrit
                 employeeTerritories = _employeeTerritoryRepository.GetByTerritoryId(request.TerritoryId).ToList();
             }
 
-            _employeeTerritoryRepository.DeleteRange(employeeTerritories);
-            var response = EmployeeMapper.Mapper.Map<List<EmployeeTerritoryResponse>>(employeeTerritories);
-            return new ResponseBuilder<List<EmployeeTerritoryResponse>> { Message = "EmployeTerritories deleted.", Data = response };
+            try
+            {
+                _employeeTerritoryRepository.DeleteRange(employeeTerritories);
+                var response = EmployeeMapper.Mapper.Map<List<EmployeeTerritoryResponse>>(employeeTerritories);
+                return new ResponseBuilder<List<EmployeeTerritoryResponse>> { Message = "EmployeTerritories deleted.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<List<EmployeeTerritoryResponse>> { Message = $"EmployeTerritories not deleted! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

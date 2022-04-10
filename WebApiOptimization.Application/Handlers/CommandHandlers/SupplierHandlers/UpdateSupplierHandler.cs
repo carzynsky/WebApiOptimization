@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.SupplierCommands;
@@ -26,10 +27,17 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.SupplierHandle
                 return new ResponseBuilder<SupplierResponse> { Message = $"Supplier with id={request.SupplierId} not found!", Data = null };
             }
 
-            var supplierToUpdateEntity = SupplierMapper.Mapper.Map<Supplier>(request);
-            _supplierRepository.Update(supplierToUpdateEntity);
-            var response = SupplierMapper.Mapper.Map<SupplierResponse>(supplierToUpdateEntity);
-            return new ResponseBuilder<SupplierResponse> { Message = $"Supplier updated.", Data = response };
+            try
+            {
+                var supplierToUpdateEntity = SupplierMapper.Mapper.Map<Supplier>(request);
+                _supplierRepository.Update(supplierToUpdateEntity);
+                var response = SupplierMapper.Mapper.Map<SupplierResponse>(supplierToUpdateEntity);
+                return new ResponseBuilder<SupplierResponse> { Message = "Supplier updated.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<SupplierResponse> { Message = $"Supplier not updated! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

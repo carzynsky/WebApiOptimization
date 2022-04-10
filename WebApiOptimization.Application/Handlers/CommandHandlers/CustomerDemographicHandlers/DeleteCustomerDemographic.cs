@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,17 +29,24 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerDemogr
                 return new ResponseBuilder<CustomerDemographicResponse> { Message = $"CustomerDemographic with id={request.CustomerTypeId} not found!", Data = null };
             }
 
-            // Find CustomerCustomerDemos with this CustomerTypeId
-            var customerCustomerDemosWithThisCustomerTypeId = _customerCustomerDemoRepository.GetByCustomerTypeId(request.CustomerTypeId).ToList();
-            if (customerCustomerDemosWithThisCustomerTypeId.Any())
+            try
             {
-                // Remove entries
-                _customerCustomerDemoRepository.DeleteRange(customerCustomerDemosWithThisCustomerTypeId);
-            }
+                // Find CustomerCustomerDemos with this CustomerTypeId
+                var customerCustomerDemosWithThisCustomerTypeId = _customerCustomerDemoRepository.GetByCustomerTypeId(request.CustomerTypeId).ToList();
+                if (customerCustomerDemosWithThisCustomerTypeId.Any())
+                {
+                    // Remove entries
+                    _customerCustomerDemoRepository.DeleteRange(customerCustomerDemosWithThisCustomerTypeId);
+                }
 
-            _customerDemographicRepository.Delete(customerDemographicToDelete);
-            var response = CustomerDemographicMapper.Mapper.Map<CustomerDemographicResponse>(customerDemographicToDelete);
-            return new ResponseBuilder<CustomerDemographicResponse> { Message = "CustomerDemographic deleted.", Data = response };
+                _customerDemographicRepository.Delete(customerDemographicToDelete);
+                var response = CustomerDemographicMapper.Mapper.Map<CustomerDemographicResponse>(customerDemographicToDelete);
+                return new ResponseBuilder<CustomerDemographicResponse> { Message = "CustomerDemographic deleted.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<CustomerDemographicResponse> { Message = $"CustomerDemographic not deleted! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

@@ -60,7 +60,7 @@ namespace WebApiOptimization.API.Controllers
             if (result == null)
                 return NotFound($"CustomerCustomerDemos not found!");
 
-            return Ok();
+            return Ok(result);
         }
     }
 }

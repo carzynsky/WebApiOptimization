@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.ProductCommands;
@@ -26,10 +27,17 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.ProductHandler
                 return new ResponseBuilder<ProductResponse> { Message = $"Product with id={request.ProductId} not found!", Data = null };
             }
 
-            var productToUpdateEntity = ProductMapper.Mapper.Map<Product>(request);
-            _productRepository.Update(productToUpdateEntity);
-            var response = ProductMapper.Mapper.Map<ProductResponse>(productToUpdateEntity);
-            return new ResponseBuilder<ProductResponse> { Message = "Product updated.", Data = response };
+            try
+            {
+                var productToUpdateEntity = ProductMapper.Mapper.Map<Product>(request);
+                _productRepository.Update(productToUpdateEntity);
+                var response = ProductMapper.Mapper.Map<ProductResponse>(productToUpdateEntity);
+                return new ResponseBuilder<ProductResponse> { Message = "Product updated.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<ProductResponse> { Message = $"Product not updated! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

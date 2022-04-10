@@ -36,7 +36,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.OrderDetailHan
             }
             catch (Exception e)
             {
-                return new ResponseBuilder<OrderDetailResponse> { Message = $"OrderDetail not created. Error: {e.Message}", Data = null };
+                return new ResponseBuilder<OrderDetailResponse> { Message = $"OrderDetail not created. Error: {e.InnerException.Message}", Data = null };
             }
         }
     }

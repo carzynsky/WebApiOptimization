@@ -19,7 +19,7 @@ namespace WebApiOptimization.Infrastructure.Repositories
             return NorthwndContext.EmployeeTerritories
                 .AsNoTracking()
                 .Include(x => x.Employee)
-                .Include(x => x.Territory);
+                .Include(x => x.Territory.Region);
         }
 
         public IEnumerable<EmployeeTerritory> GetByEmployeeId(int employeeId, bool eagerloading = false)
@@ -30,7 +30,7 @@ namespace WebApiOptimization.Infrastructure.Repositories
                     .AsNoTracking()
                     .Where(x => x.EmployeeID == employeeId)
                     .Include(x => x.Employee)
-                    .Include(x => x.Territory);
+                    .Include(x => x.Territory.Region);
             }
 
             return NorthwndContext.EmployeeTerritories
@@ -46,7 +46,7 @@ namespace WebApiOptimization.Infrastructure.Repositories
                     .AsNoTracking()
                     .Where(x => x.TerritoryID == territoryId)
                     .Include(x => x.Employee)
-                    .Include(x => x.Territory);
+                    .Include(x => x.Territory.Region);
             }
 
             return NorthwndContext.EmployeeTerritories
@@ -62,7 +62,7 @@ namespace WebApiOptimization.Infrastructure.Repositories
                     .AsNoTracking()
                     .Where(x => x.EmployeeID == employeeId && x.TerritoryID == territoryId)
                     .Include(x => x.Employee)
-                    .Include(x => x.Territory);
+                    .Include(x => x.Territory.Region);
             }
 
             return NorthwndContext.EmployeeTerritories

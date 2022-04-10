@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,21 +24,28 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.ProductHandler
         public async Task<ResponseBuilder<ProductResponse>> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
             var productToDelete = _productRepository.GetById(request.Id);
-            if(productToDelete == null)
+            if (productToDelete == null)
             {
                 return new ResponseBuilder<ProductResponse> { Message = $"Product with id={request.Id} not found!", Data = null };
             }
 
-            // Find order details with this orderId
-            var orderDetailsWithThisOrderId = _orderDetailRepository.GetByOrderId(request.Id).ToList();
-            if (orderDetailsWithThisOrderId.Any())
+            try
             {
-                _orderDetailRepository.DeleteRange(orderDetailsWithThisOrderId);
-            }
+                // Find order details with this orderId
+                var orderDetailsWithThisOrderId = _orderDetailRepository.GetByProductId(request.Id).ToList();
+                if (orderDetailsWithThisOrderId.Any())
+                {
+                    _orderDetailRepository.DeleteRange(orderDetailsWithThisOrderId);
+                }
 
-            _productRepository.Delete(productToDelete);
-            var response = ProductMapper.Mapper.Map<ProductResponse>(productToDelete);
-            return new ResponseBuilder<ProductResponse> { Message = "Product deleted.", Data = response };
+                _productRepository.Delete(productToDelete);
+                var response = ProductMapper.Mapper.Map<ProductResponse>(productToDelete);
+                return new ResponseBuilder<ProductResponse> { Message = "Product deleted.", Data = response };
+            }
+            catch (Exception e)
+            {
+                return new ResponseBuilder<ProductResponse> { Message = $"Product not deleted! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

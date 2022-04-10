@@ -36,9 +36,8 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.TerritoryHandl
             }
             catch(Exception e)
             {
-                return new ResponseBuilder<TerritoryResponse> { Message = $"Territory not created! Error: {e.Message}", Data = null };
+                return new ResponseBuilder<TerritoryResponse> { Message = $"Territory not created! Error: {e.InnerException.Message}", Data = null };
             }
-           
         }
     }
 }

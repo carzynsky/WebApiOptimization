@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,18 +29,25 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CategoryHandle
                 return new ResponseBuilder<CategoryResponse> { Message = $"Category with id={request.Id} not found!", Data = null };
             }
 
-            // Find products with this categoryId
-            var productsWithThisCategoryId = _productRepository.GetByCategoryId(request.Id).ToList();
-            if (productsWithThisCategoryId.Any())
+            try
             {
-                // Set CategoryId as null for each product
-                productsWithThisCategoryId.ForEach(x => x.CategoryID = null);
-                _productRepository.UpdateRange(productsWithThisCategoryId);
-            }
+                // Find products with this categoryId
+                var productsWithThisCategoryId = _productRepository.GetByCategoryId(request.Id).ToList();
+                if (productsWithThisCategoryId.Any())
+                {
+                    // Set CategoryId as null for each product
+                    productsWithThisCategoryId.ForEach(x => x.CategoryID = null);
+                    _productRepository.UpdateRange(productsWithThisCategoryId);
+                }
 
-            _categoryRepository.Delete(categoryToDeleteEntity);
-            var response = CategoryMapper.Mapper.Map<CategoryResponse>(categoryToDeleteEntity);
-            return new ResponseBuilder<CategoryResponse> { Message = $"Category deleted.", Data = response };
+                _categoryRepository.Delete(categoryToDeleteEntity);
+                var response = CategoryMapper.Mapper.Map<CategoryResponse>(categoryToDeleteEntity);
+                return new ResponseBuilder<CategoryResponse> { Message = "Category deleted.", Data = response };
+            }
+            catch(Exception e)
+            {
+                return new ResponseBuilder<CategoryResponse> { Message = $"Category not deleted! Error: {e.InnerException.Message}", Data = null };
+            }
         }
     }
 }

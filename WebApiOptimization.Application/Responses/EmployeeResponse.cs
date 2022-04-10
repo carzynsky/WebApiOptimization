@@ -1,4 +1,5 @@
 ﻿using System;
+using WebApiOptimization.Core.Entities;
 
 namespace WebApiOptimization.Application.Responses
 {
@@ -19,9 +20,8 @@ namespace WebApiOptimization.Application.Responses
         public string HomePhone { get; set; }
         public string Extension { get; set; }
         public string Notes { get; set; }
-
-        // ??? some fk but to what? to employee?
-        public int ReportsTo { get; set; }
+        public int? ReportsTo { get; set; }
+        public Employee ReportsToEmployee { get; set; }
         public string PhotoPath { get; set; }
     }
 }

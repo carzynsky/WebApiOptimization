@@ -35,7 +35,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandle
             }
             catch(Exception e)
             {
-                return new ResponseBuilder<EmployeeResponse> { Message = $"Employee not created! Error: {e.Message}", Data = null };
+                return new ResponseBuilder<EmployeeResponse> { Message = $"Employee not created! Error: {e.InnerException.Message}", Data = null };
             }
             
         }

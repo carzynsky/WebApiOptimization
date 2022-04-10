@@ -35,7 +35,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.ShipperHandler
             }
             catch(Exception e)
             {
-                return new ResponseBuilder<ShipperResponse> { Message = $"Shipper not created! Error: {e.Message}", Data = null };
+                return new ResponseBuilder<ShipperResponse> { Message = $"Shipper not created! Error: {e.InnerException.Message}", Data = null };
             }
         }
     }

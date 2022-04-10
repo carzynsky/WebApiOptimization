@@ -19,8 +19,11 @@ namespace WebApiOptimization.Infrastructure.Repositories
         {
             return NorthwndContext.OrderDetails
                 .AsNoTracking()
-                .Include(x => x.Order)
-                .Include(x => x.Product);
+                .Include(x => x.Order.Customer)
+                .Include(x => x.Order.Employee)
+                .Include(x => x.Order.Shipper)
+                .Include(x => x.Product.Category)
+                .Include(x => x.Product.Supplier);
         }
 
         public IEnumerable<OrderDetail> GetByOrderId(int orderId, bool eagerLoading = false)
@@ -30,8 +33,11 @@ namespace WebApiOptimization.Infrastructure.Repositories
                 return NorthwndContext.OrderDetails
                     .AsNoTracking()
                     .Where(x => x.OrderID == orderId)
-                    .Include(x => x.Order)
-                    .Include(x => x.Product);
+                    .Include(x => x.Order.Customer)
+                    .Include(x => x.Order.Employee)
+                    .Include(x => x.Order.Shipper)
+                    .Include(x => x.Product.Category)
+                    .Include(x => x.Product.Supplier);
             }
 
             return NorthwndContext.OrderDetails
@@ -46,8 +52,11 @@ namespace WebApiOptimization.Infrastructure.Repositories
                 return NorthwndContext.OrderDetails
                     .AsNoTracking()
                     .Where(x => x.ProductID == productId)
-                    .Include(x => x.Order)
-                    .Include(x => x.Product);
+                    .Include(x => x.Order.Customer)
+                    .Include(x => x.Order.Employee)
+                    .Include(x => x.Order.Shipper)
+                    .Include(x => x.Product.Category)
+                    .Include(x => x.Product.Supplier);
             }
 
             return NorthwndContext.OrderDetails
@@ -62,8 +71,11 @@ namespace WebApiOptimization.Infrastructure.Repositories
                 return NorthwndContext.OrderDetails
                     .AsNoTracking()
                     .Where(x => x.OrderID == orderId && x.ProductID == productId)
-                    .Include(x => x.Order)
-                    .Include(x => x.Product);
+                    .Include(x => x.Order.Customer)
+                    .Include(x => x.Order.Employee)
+                    .Include(x => x.Order.Shipper)
+                    .Include(x => x.Product.Category)
+                    .Include(x => x.Product.Supplier);
             }
             return NorthwndContext.OrderDetails
                 .AsNoTracking()
