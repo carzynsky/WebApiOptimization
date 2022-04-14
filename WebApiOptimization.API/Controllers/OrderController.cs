@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.OrderCommands;
 using WebApiOptimization.Application.Queries.OrderQueries;
 using WebApiOptimization.Application.Responses;
@@ -19,16 +20,16 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ResponseBuilder<IEnumerable<OrderResponse>>> GetAll()
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<OrderResponse>>>> GetAll()
         {
-            var result = _mediator.Send(new GetAllOrdersQuery());
+            var result = await _mediator.Send(new GetAllOrdersQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<ResponseBuilder<OrderResponse>> GetById(int id)
+        public async Task<ActionResult<ResponseBuilder<OrderResponse>>> GetById(int id)
         {
-            var result = _mediator.Send(new GetOrderByIdQuery(id));
+            var result = await _mediator.Send(new GetOrderByIdQuery(id));
             if (result == null)
                 return NotFound($"Order with id={id} not found!");
 
@@ -43,12 +44,12 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult<ResponseBuilder<OrderResponse>> Update(int id, UpdateOrderCommand updateOrderCommand)
+        public async Task<ActionResult<ResponseBuilder<OrderResponse>>> Update(int id, UpdateOrderCommand updateOrderCommand)
         {
             if (id != updateOrderCommand.OrderId)
                 return BadRequest($"OrderId does not match with updated data!");
 
-            var result = _mediator.Send(updateOrderCommand);
+            var result = await _mediator.Send(updateOrderCommand);
             if (result == null)
                 return NotFound($"Order with id={id} not found!");
 
@@ -56,9 +57,9 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult<ResponseBuilder<OrderResponse>> Delete(int id)
+        public async Task<ActionResult<ResponseBuilder<OrderResponse>>> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteOrderCommand(id));
+            var result = await _mediator.Send(new DeleteOrderCommand(id));
             if (result == null)
                 return NotFound($"Order with id={id} not found!");
 

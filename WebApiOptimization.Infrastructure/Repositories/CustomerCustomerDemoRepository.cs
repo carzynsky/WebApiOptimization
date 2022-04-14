@@ -5,6 +5,7 @@ using WebApiOptimization.Infrastructure.Data;
 using WebApiOptimization.Infrastructure.Repositories.Base;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace WebApiOptimization.Infrastructure.Repositories
 {
@@ -23,6 +24,15 @@ namespace WebApiOptimization.Infrastructure.Repositories
                 .Include(x => x.CustomerType);
         }
 
+        public override async Task<List<CustomerCustomerDemo>> GetAllAsync()
+        {
+            return await NorthwndContext.CustomerCustomerDemos
+                .AsNoTracking()
+                .Include(x => x.Customer)
+                .Include(x => x.CustomerType)
+                .ToListAsync();
+        }
+
         public IEnumerable<CustomerCustomerDemo> GetByCustomerId(string customerId, bool eagerLoading = false)
         {
             if (eagerLoading)
@@ -37,6 +47,24 @@ namespace WebApiOptimization.Infrastructure.Repositories
             return NorthwndContext.CustomerCustomerDemos
                 .AsNoTracking()
                 .Where(x => x.CustomerID == customerId);
+        }
+
+        public async Task<List<CustomerCustomerDemo>> GetByCustomerIdAsync(string customerId, bool eagerLoading = false)
+        {
+            if (eagerLoading)
+            {
+                return await NorthwndContext.CustomerCustomerDemos
+                    .AsNoTracking()
+                    .Where(x => x.CustomerID == customerId)
+                    .Include(x => x.Customer)
+                    .Include(x => x.CustomerType)
+                    .ToListAsync();
+            }
+
+            return await NorthwndContext.CustomerCustomerDemos
+                .AsNoTracking()
+                .Where(x => x.CustomerID == customerId)
+                .ToListAsync();
         }
 
         public IEnumerable<CustomerCustomerDemo> GetByCustomerTypeId(string customerTypeId, bool eagerLoading = false)
@@ -55,6 +83,24 @@ namespace WebApiOptimization.Infrastructure.Repositories
                 .Where(x => x.CustomerTypeID == customerTypeId);
         }
 
+        public async Task<List<CustomerCustomerDemo>> GetByCustomerTypeIdAsync(string customerTypeId, bool eagerLoading = false)
+        {
+            if (eagerLoading)
+            {
+                return await NorthwndContext.CustomerCustomerDemos
+                    .AsNoTracking()
+                    .Where(x => x.CustomerTypeID == customerTypeId)
+                    .Include(x => x.Customer)
+                    .Include(x => x.CustomerType)
+                    .ToListAsync();
+            }
+
+            return await NorthwndContext.CustomerCustomerDemos
+                .AsNoTracking()
+                .Where(x => x.CustomerTypeID == customerTypeId)
+                .ToListAsync();
+        }
+
         public IEnumerable<CustomerCustomerDemo> GetByCustomerIdAndCustomerTypeId(string customerId, string customerTypeId, bool eagerLoading = false)
         {
             if (eagerLoading)
@@ -69,6 +115,24 @@ namespace WebApiOptimization.Infrastructure.Repositories
             return NorthwndContext.CustomerCustomerDemos
                 .AsNoTracking()
                 .Where(x => x.CustomerID == customerId && x.CustomerTypeID == customerTypeId);
+        }
+
+        public async Task<List<CustomerCustomerDemo>> GetByCustomerIdAndCustomerTypeIdAsync(string customerId, string customerTypeId, bool eagerLoading = false)
+        {
+            if (eagerLoading)
+            {
+                return await NorthwndContext.CustomerCustomerDemos
+                    .AsNoTracking()
+                    .Where(x => x.CustomerID == customerId && x.CustomerTypeID == customerTypeId)
+                    .Include(x => x.Customer)
+                    .Include(x => x.CustomerType)
+                    .ToListAsync();
+            }
+
+            return await NorthwndContext.CustomerCustomerDemos
+                .AsNoTracking()
+                .Where(x => x.CustomerID == customerId && x.CustomerTypeID == customerTypeId)
+                .ToListAsync();
         }
     }
 }

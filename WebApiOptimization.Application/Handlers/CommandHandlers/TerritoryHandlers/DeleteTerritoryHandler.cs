@@ -23,7 +23,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.TerritoryHandl
 
         public async Task<ResponseBuilder<TerritoryResponse>> Handle(DeleteTerritoryCommand request, CancellationToken cancellationToken)
         {
-            var territoryToDeleteEntity = _territoryRepository.GetById(request.Id);
+            var territoryToDeleteEntity = await _territoryRepository.GetByIdAsync(request.Id);
             if (territoryToDeleteEntity == null)
             {
                 return new ResponseBuilder<TerritoryResponse> { Message = $"Territory with id={request.Id} not found!", Data = null };
@@ -32,7 +32,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.TerritoryHandl
             try
             {
                 // Find employeeTerritories with this TerritoryId
-                var employeeTerritoriesWithThisTerritoryId = _employeeTerritoryRepository.GetByTerritoryId(request.Id).ToList();
+                var employeeTerritoriesWithThisTerritoryId = await _employeeTerritoryRepository.GetByTerritoryIdAsync(request.Id);
                 if (employeeTerritoriesWithThisTerritoryId.Any())
                 {
                     _employeeTerritoryRepository.DeleteRange(employeeTerritoriesWithThisTerritoryId);

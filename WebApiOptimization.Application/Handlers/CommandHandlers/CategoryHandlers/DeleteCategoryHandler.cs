@@ -7,6 +7,7 @@ using WebApiOptimization.Application.Commands.CategoryCommands;
 using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApiOptimization.Application.Handlers.CommandHandlers.CategoryHandlers
 {
@@ -23,7 +24,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CategoryHandle
 
         public async Task<ResponseBuilder<CategoryResponse>> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
-            var categoryToDeleteEntity = _categoryRepository.GetById(request.Id);
+            var categoryToDeleteEntity = await _categoryRepository.GetByIdAsync(request.Id);
             if(categoryToDeleteEntity == null)
             {
                 return new ResponseBuilder<CategoryResponse> { Message = $"Category with id={request.Id} not found!", Data = null };
@@ -32,7 +33,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CategoryHandle
             try
             {
                 // Find products with this categoryId
-                var productsWithThisCategoryId = _productRepository.GetByCategoryId(request.Id).ToList();
+                var productsWithThisCategoryId = await _productRepository.GetByCategoryIdAsync(request.Id);
                 if (productsWithThisCategoryId.Any())
                 {
                     // Set CategoryId as null for each product

@@ -23,7 +23,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.SupplierHandle
 
         public async Task<ResponseBuilder<SupplierResponse>> Handle(DeleteSupplierCommand request, CancellationToken cancellationToken)
         {
-            var supplierToDeleteEntity = _supplierRepository.GetById(request.Id);
+            var supplierToDeleteEntity = await _supplierRepository.GetByIdAsync(request.Id);
             if (supplierToDeleteEntity == null)
             {
                 return new ResponseBuilder<SupplierResponse> { Message = $"Supplier with id={request.Id} not found!", Data = null };
@@ -32,7 +32,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.SupplierHandle
             try
             {
                 // Find products with this supplierId
-                var productsWithThisSupplierId = _productRepository.GetBySupplierId(request.Id).ToList();
+                var productsWithThisSupplierId = await _productRepository.GetBySupplierIdAsync(request.Id);
                 if (productsWithThisSupplierId.Any())
                 {
                     productsWithThisSupplierId.ForEach(x => x.SupplierID = null);

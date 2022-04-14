@@ -19,7 +19,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Customer
 
         public async Task<ResponseBuilder<CustomerResponse>> Handle(GetCustomerByIdQuery request, CancellationToken cancellationToken)
         {
-            var customerEntity = _customerRepository.GetById(request.Id);
+            var customerEntity = await _customerRepository.GetByIdAsync(request.Id);
             if(customerEntity == null)
             {
                 return new ResponseBuilder<CustomerResponse> { Message = $"Customer with id={request.Id} not found!", Data = null };

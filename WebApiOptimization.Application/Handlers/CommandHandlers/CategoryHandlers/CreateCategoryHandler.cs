@@ -29,7 +29,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CategoryHandle
 
             try
             {
-                var newCategory = _categoryRepository.Add(categoryEntity);
+                var newCategory = await _categoryRepository.AddAsync(categoryEntity);
                 var categoryResponse = CategoryMapper.Mapper.Map<CategoryResponse>(newCategory);
                 return new ResponseBuilder<CategoryResponse> { Message = "Category created.", Data = categoryResponse };
             }

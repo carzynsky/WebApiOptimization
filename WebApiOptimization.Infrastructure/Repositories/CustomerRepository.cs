@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Threading.Tasks;
 using WebApiOptimization.Core.Entities;
 using WebApiOptimization.Core.Repositories;
 using WebApiOptimization.Infrastructure.Data;
@@ -19,6 +20,13 @@ namespace WebApiOptimization.Infrastructure.Repositories
             return NorthwndContext.Customers
                 .AsNoTracking()
                 .FirstOrDefault(x => x.CustomerID.Equals(customerId));
+        }
+
+        public async Task<Customer> GetByIdAsync(string customerId)
+        {
+            return await NorthwndContext.Customers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.CustomerID.Equals(customerId));
         }
     }
 }

@@ -25,7 +25,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandle
 
         public async Task<ResponseBuilder<EmployeeResponse>> Handle(DeleteEmployeeCommand request, CancellationToken cancellationToken)
         {
-            var employeeToRemoveEntity = _employeeRepository.GetById(request.Id);
+            var employeeToRemoveEntity = await _employeeRepository.GetByIdAsync(request.Id);
             if (employeeToRemoveEntity == null)
             {
                 return new ResponseBuilder<EmployeeResponse> { Message = $"Employee with id={request.Id} not found!", Data = null };
@@ -34,7 +34,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandle
             try
             {
                 // Set reportsTo to null for employees
-                var employeesWithThisReportsTo = _employeeRepository.GetByReportsTo(request.Id).ToList();
+                var employeesWithThisReportsTo = await _employeeRepository.GetByReportsToAsync(request.Id);
                 if (employeesWithThisReportsTo.Any())
                 {
                     employeesWithThisReportsTo.ForEach(x => x.ReportsTo = null);
@@ -42,7 +42,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandle
                 }
 
                 // Find employeeTerritories with this employeeId
-                var employeeTerritoryEntityToRemove = _employeeTerritoryRepository.GetByEmployeeId(request.Id).ToList();
+                var employeeTerritoryEntityToRemove = await _employeeTerritoryRepository.GetByEmployeeIdAsync(request.Id);
                 if (employeeTerritoryEntityToRemove.Any())
                 {
                     _employeeTerritoryRepository.DeleteRange(employeeTerritoryEntityToRemove);
@@ -50,7 +50,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandle
 
 
                 // Set EmployeeId as null for each Order
-                var ordersWithThisEmployeeId = _orderRepository.GetByEmployeeId(request.Id).ToList();
+                var ordersWithThisEmployeeId = await _orderRepository.GetByEmployeeIdAsync(request.Id);
                 if (ordersWithThisEmployeeId.Any())
                 {
                     ordersWithThisEmployeeId.ForEach(x => x.EmployeeID = null);

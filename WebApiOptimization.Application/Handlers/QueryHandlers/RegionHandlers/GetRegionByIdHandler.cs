@@ -19,7 +19,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Region
 
         public async Task<ResponseBuilder<RegionResponse>> Handle(GetRegionByIdQuery request, CancellationToken cancellationToken)
         {
-            var regionEntity = _regionRepository.GetById(request.Id);
+            var regionEntity = await _regionRepository.GetByIdAsync(request.Id);
             if(regionEntity == null)
             {
                 return new ResponseBuilder<RegionResponse> { Message = $"Region with id={request.Id} not found!", Data = null };

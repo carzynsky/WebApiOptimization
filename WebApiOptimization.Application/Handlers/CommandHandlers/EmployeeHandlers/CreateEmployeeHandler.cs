@@ -29,7 +29,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandle
             }
             try
             {
-                var newEmployee = _employeeRepository.Add(employeeEntity);
+                var newEmployee = await _employeeRepository.AddAsync(employeeEntity);
                 var employeeResponse = EmployeeMapper.Mapper.Map<EmployeeResponse>(newEmployee);
                 return new ResponseBuilder<EmployeeResponse> { Message = "Employee created.", Data = employeeResponse };
             }

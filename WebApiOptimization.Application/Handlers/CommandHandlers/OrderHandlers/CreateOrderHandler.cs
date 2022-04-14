@@ -30,7 +30,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.OrderHandlers
 
             try
             {
-                var newOrder = _orderRepository.Add(orderEntity);
+                var newOrder = await _orderRepository.AddAsync(orderEntity);
                 var response = OrderDetailMapper.Mapper.Map<OrderResponse>(newOrder);
                 return new ResponseBuilder<OrderResponse> { Message = "Order created.", Data = response };
             }

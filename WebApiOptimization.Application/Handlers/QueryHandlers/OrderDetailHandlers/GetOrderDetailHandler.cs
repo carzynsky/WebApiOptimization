@@ -22,19 +22,19 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.OrderDetailHandl
             IEnumerable<OrderDetail> orderDetails;
             if(request.OrderId == null && request.ProductId == null)
             {
-                orderDetails = _orderDetailRepository.GetAll();
+                orderDetails = await _orderDetailRepository.GetAllAsync();
             }
             else if(request.OrderId != null && request.ProductId == null)
             {
-                orderDetails = _orderDetailRepository.GetByOrderId((int)request.OrderId, true);
+                orderDetails = await _orderDetailRepository.GetByOrderIdAsync((int)request.OrderId, true);
             }
             else if(request.OrderId == null && request.ProductId != null)
             {
-                orderDetails = _orderDetailRepository.GetByProductId((int)request.ProductId, true);
+                orderDetails = await _orderDetailRepository.GetByProductIdAsync((int)request.ProductId, true);
             }
             else
             {
-                orderDetails = _orderDetailRepository.GetByOrderIdAndProductId((int)request.OrderId, (int)request.ProductId, true);
+                orderDetails = await _orderDetailRepository.GetByOrderIdAndProductIdAsync((int)request.OrderId, (int)request.ProductId, true);
             }
 
             var response = OrderDetailMapper.Mapper.Map<IEnumerable<OrderDetailResponse>>(orderDetails);

@@ -23,7 +23,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerDemogr
 
         public async Task<ResponseBuilder<CustomerDemographicResponse>> Handle(DeleteCustomerDemographicCommand request, CancellationToken cancellationToken)
         {
-            var customerDemographicToDelete = _customerDemographicRepository.GetByCustomerTypeId(request.CustomerTypeId);
+            var customerDemographicToDelete = await _customerDemographicRepository.GetByCustomerTypeIdAsync(request.CustomerTypeId);
             if(customerDemographicToDelete == null)
             {
                 return new ResponseBuilder<CustomerDemographicResponse> { Message = $"CustomerDemographic with id={request.CustomerTypeId} not found!", Data = null };
@@ -32,7 +32,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerDemogr
             try
             {
                 // Find CustomerCustomerDemos with this CustomerTypeId
-                var customerCustomerDemosWithThisCustomerTypeId = _customerCustomerDemoRepository.GetByCustomerTypeId(request.CustomerTypeId).ToList();
+                var customerCustomerDemosWithThisCustomerTypeId = await _customerCustomerDemoRepository.GetByCustomerTypeIdAsync(request.CustomerTypeId);
                 if (customerCustomerDemosWithThisCustomerTypeId.Any())
                 {
                     // Remove entries

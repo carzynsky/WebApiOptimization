@@ -20,7 +20,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Employee
 
         public async Task<ResponseBuilder<IEnumerable<EmployeeResponse>>> Handle(GetAllEmployeesQuery request, CancellationToken cancellationToken)
         {
-            var employees = _employeeRepository.GetAll();
+            var employees = await _employeeRepository.GetAllAsync();
             var employeesResponse = EmployeeMapper.Mapper.Map<IEnumerable<EmployeeResponse>>(employees);
             return new ResponseBuilder<IEnumerable<EmployeeResponse>> { Message = "OK", Data = employeesResponse };
         }

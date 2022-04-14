@@ -20,7 +20,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerHandle
         }
         public async Task<ResponseBuilder<CustomerResponse>> Handle(UpdateCustomerCommand request, CancellationToken cancellationToken)
         {
-            var customerToUpdate = _customerRepository.GetById(request.CustomerID);
+            var customerToUpdate = await _customerRepository.GetByIdAsync(request.CustomerID);
             if (customerToUpdate == null)
             {
                 return new ResponseBuilder<CustomerResponse> { Message = $"Customer with id={request.CustomerID} not found!", Data = null };

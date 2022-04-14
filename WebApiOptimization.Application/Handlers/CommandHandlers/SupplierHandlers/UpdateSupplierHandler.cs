@@ -21,7 +21,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.SupplierHandle
 
         public async Task<ResponseBuilder<SupplierResponse>> Handle(UpdateSupplierCommand request, CancellationToken cancellationToken)
         {
-            var supplierToUpdate = _supplierRepository.GetById(request.SupplierId);
+            var supplierToUpdate = await _supplierRepository.GetByIdAsync(request.SupplierId);
             if (supplierToUpdate == null)
             {
                 return new ResponseBuilder<SupplierResponse> { Message = $"Supplier with id={request.SupplierId} not found!", Data = null };

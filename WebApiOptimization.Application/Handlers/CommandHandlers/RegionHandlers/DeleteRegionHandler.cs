@@ -25,7 +25,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.RegionHandlers
 
         public async Task<ResponseBuilder<RegionResponse>> Handle(DeleteRegionCommand request, CancellationToken cancellationToken)
         {
-            var regionToDelete = _regionRepository.GetById(request.Id);
+            var regionToDelete = await _regionRepository.GetByIdAsync(request.Id);
             if(regionToDelete == null)
             {
                 return new ResponseBuilder<RegionResponse> { Message = $"Region with id={request.Id} not found!", Data = null };
@@ -34,12 +34,12 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.RegionHandlers
             try
             {
                 // Find territories with this regionId
-                var territoriesWithThisRegionId = _territoryRepository.GetByRegionId(request.Id).ToList();
+                var territoriesWithThisRegionId = await _territoryRepository.GetByRegionIdAsync(request.Id);
                 if (territoriesWithThisRegionId.Any())
                 {
                     foreach (var territory in territoriesWithThisRegionId)
                     {
-                        var employeeTerritoryWithThisTerritory = _employeeTerritoryRepository.GetByTerritoryId(territory.TerritoryId).ToList();
+                        var employeeTerritoryWithThisTerritory = await _employeeTerritoryRepository.GetByTerritoryIdAsync(territory.TerritoryId);
                         if (employeeTerritoryWithThisTerritory.Any())
                         {
                             _employeeTerritoryRepository.DeleteRange(employeeTerritoryWithThisTerritory);

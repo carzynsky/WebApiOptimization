@@ -21,7 +21,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.RegionHandlers
 
         public async Task<ResponseBuilder<RegionResponse>> Handle(UpdateRegionCommand request, CancellationToken cancellationToken)
         {
-            var regionToUpdate = _regionRepository.GetById(request.RegionId);
+            var regionToUpdate = await _regionRepository.GetByIdAsync(request.RegionId);
             if (regionToUpdate == null)
             {
                 return new ResponseBuilder<RegionResponse> { Message = $"Region with id={request.RegionId} not found!", Data = null };

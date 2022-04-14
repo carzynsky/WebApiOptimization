@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.RegionCommands;
 using WebApiOptimization.Application.Queries.RegionQueries;
 using WebApiOptimization.Application.Responses;
@@ -18,16 +19,16 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ResponseBuilder<IEnumerable<RegionResponse>>> GetAll()
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<RegionResponse>>>> GetAll()
         {
-            var result = _mediator.Send(new GetAllRegionsQuery());
+            var result = await _mediator.Send(new GetAllRegionsQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<ResponseBuilder<RegionResponse>> GetById(int id)
+        public async Task<ActionResult<ResponseBuilder<RegionResponse>>> GetById(int id)
         {
-            var result = _mediator.Send(new GetRegionByIdQuery(id));
+            var result = await _mediator.Send(new GetRegionByIdQuery(id));
             if (result == null)
                 return NotFound($"Region with id={id} not found!");
 
@@ -35,19 +36,19 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ResponseBuilder<RegionResponse>> Add(CreateRegionCommand createRegionCommand)
+        public async Task<ActionResult<ResponseBuilder<RegionResponse>>> Add(CreateRegionCommand createRegionCommand)
         {
-            var result = _mediator.Send(createRegionCommand);
+            var result = await _mediator.Send(createRegionCommand);
             return Ok(result);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult<ResponseBuilder<RegionResponse>> Update(int id, UpdateRegionCommand updateRegionCommand)
+        public async Task<ActionResult<ResponseBuilder<RegionResponse>>> Update(int id, UpdateRegionCommand updateRegionCommand)
         {
             if (id != updateRegionCommand.RegionId)
                 return BadRequest($"RegionId does not match with updated data!");
 
-            var result = _mediator.Send(updateRegionCommand);
+            var result = await _mediator.Send(updateRegionCommand);
             if (result == null)
                 return NotFound($"Region with id={id} not found!");
 
@@ -55,9 +56,9 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult<ResponseBuilder<RegionResponse>> Delete(int id)
+        public async Task<ActionResult<ResponseBuilder<RegionResponse>>> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteRegionCommand(id));
+            var result = await _mediator.Send(new DeleteRegionCommand(id));
             if (result == null)
                 return NotFound($"Region with id={id} not found!");
 

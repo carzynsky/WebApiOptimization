@@ -22,7 +22,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.OrderDetailHan
 
         public async Task<ResponseBuilder<List<OrderDetailResponse>>> Handle(DeleteOrderDetailCommand request, CancellationToken cancellationToken)
         {
-            var orderDetailsToRemove = _orderDetailRepository.GetByOrderId(request.OrderID).ToList();
+            var orderDetailsToRemove = await _orderDetailRepository.GetByOrderIdAsync(request.OrderID);
             if(!orderDetailsToRemove.Any())
             {
                 return new ResponseBuilder<List<OrderDetailResponse>> { Message = $"OrderDetails with orderId={request.OrderID} not found!", Data = null };

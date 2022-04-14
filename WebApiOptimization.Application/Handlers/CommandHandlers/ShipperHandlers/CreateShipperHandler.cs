@@ -29,7 +29,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.ShipperHandler
             }
             try
             {
-                var newShipper = _shipperRepository.Add(shipperEntity);
+                var newShipper = await _shipperRepository.AddAsync(shipperEntity);
                 var response = ShipperMapper.Mapper.Map<ShipperResponse>(newShipper);
                 return new ResponseBuilder<ShipperResponse> { Message = "Shipper created.", Data = response };
             }

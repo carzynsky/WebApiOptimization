@@ -21,7 +21,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.ProductHandler
 
         public async Task<ResponseBuilder<ProductResponse>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
-            var productToUpdate = _productRepository.GetById(request.ProductId);
+            var productToUpdate = await _productRepository.GetByIdAsync(request.ProductId);
             if (productToUpdate == null)
             {
                 return new ResponseBuilder<ProductResponse> { Message = $"Product with id={request.ProductId} not found!", Data = null };

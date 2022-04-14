@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.CustomerDemographicCommands;
 using WebApiOptimization.Application.Queries.CustomerDemographicQueries;
 using WebApiOptimization.Application.Responses;
@@ -19,16 +20,16 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ResponseBuilder<IEnumerable<CustomerDemographicResponse>>> GetAll()
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<CustomerDemographicResponse>>>> GetAll()
         {
-            var result = _mediator.Send(new GetAllCustomerDemographicsQuery());
+            var result = await _mediator.Send(new GetAllCustomerDemographicsQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<ResponseBuilder<CustomerDemographicResponse>> GetById(int id)
+        public async Task<ActionResult<ResponseBuilder<CustomerDemographicResponse>>> GetById(int id)
         {
-            var result = _mediator.Send(new GetCustomerDemographicByIdQuery(id));
+            var result = await _mediator.Send(new GetCustomerDemographicByIdQuery(id));
             if (result == null)
                 return NotFound($"CustomerDemographic with id={id} not found!");
 
@@ -36,14 +37,14 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ResponseBuilder<CustomerDemographicResponse>> Add(CreateCustomerDemographicCommand createCustomerDemographicCommand)
+        public async Task<ActionResult<ResponseBuilder<CustomerDemographicResponse>>> Add(CreateCustomerDemographicCommand createCustomerDemographicCommand)
         {
-            var result = _mediator.Send(createCustomerDemographicCommand);
+            var result = await _mediator.Send(createCustomerDemographicCommand);
             return Ok(result);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult<ResponseBuilder<CustomerDemographicResponse>> Update(int id, UpdateCustomerDemographicCommand updateCustomerDemographicCommand)
+        public async Task<ActionResult<ResponseBuilder<CustomerDemographicResponse>>> Update(int id, UpdateCustomerDemographicCommand updateCustomerDemographicCommand)
         {
             int customerTypeId;
             if(!int.TryParse(updateCustomerDemographicCommand.CustomerTypeId, out customerTypeId))
@@ -54,7 +55,7 @@ namespace WebApiOptimization.API.Controllers
             if (id != customerTypeId)
                 return BadRequest($"CustomerTypeId does not match with updated data!");
 
-            var result = _mediator.Send(updateCustomerDemographicCommand);
+            var result = await _mediator.Send(updateCustomerDemographicCommand);
             if (result == null)
                 return NotFound($"CustomerDemographic with customer type id={id} not found!");
 
@@ -62,9 +63,9 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<ResponseBuilder<CustomerDemographicResponse>> Delete(string id)
+        public async Task<ActionResult<ResponseBuilder<CustomerDemographicResponse>>> Delete(string id)
         {
-            var result = _mediator.Send(new DeleteCustomerDemographicCommand(id));
+            var result = await _mediator.Send(new DeleteCustomerDemographicCommand(id));
             if (result == null)
                 return NotFound($"CustomerDemographic with customer type id={id} not found!");
 

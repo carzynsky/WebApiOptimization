@@ -21,7 +21,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandle
 
         public async Task<ResponseBuilder<EmployeeResponse>> Handle(UpdateEmployeeCommand request, CancellationToken cancellationToken)
         {
-            var employeeToUpdate = _employeeRepository.GetById(request.EmployeeId);
+            var employeeToUpdate = await _employeeRepository.GetByIdAsync(request.EmployeeId);
             if (employeeToUpdate == null)
             {
                 return new ResponseBuilder<EmployeeResponse> { Message = $"Employee with id={request.EmployeeId} not found!", Data = null };

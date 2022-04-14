@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using WebApiOptimization.Core.Repositories.Base;
 using WebApiOptimization.Infrastructure.Data;
 
@@ -23,6 +22,13 @@ namespace WebApiOptimization.Infrastructure.Repositories.Base
             return entity;
         }
 
+        public async Task<T> AddAsync(T entity)
+        {
+            await NorthwndContext.AddAsync(entity);
+            await NorthwndContext.SaveChangesAsync();
+            return entity;
+        }
+
         public void Delete(T entity)
         {
             NorthwndContext.Set<T>().Remove(entity);
@@ -40,9 +46,19 @@ namespace WebApiOptimization.Infrastructure.Repositories.Base
             return NorthwndContext.Set<T>().AsNoTracking();
         }
 
+        public virtual async Task<List<T>> GetAllAsync()
+        {
+            return await NorthwndContext.Set<T>().AsNoTracking().ToListAsync();
+        }
+
         public virtual T GetById(int id)
         {
             return NorthwndContext.Set<T>().Find(id);
+        }
+
+        public virtual async Task<T> GetByIdAsync(int id)
+        {
+            return await NorthwndContext.Set<T>().FindAsync(id);
         }
 
         public void Update(T entity)

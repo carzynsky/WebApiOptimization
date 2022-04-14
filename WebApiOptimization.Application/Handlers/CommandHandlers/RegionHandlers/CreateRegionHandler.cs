@@ -30,7 +30,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.RegionHandlers
 
             try
             {
-                var newRegion = _regionRepository.Add(regionEntity);
+                var newRegion = await _regionRepository.AddAsync(regionEntity);
                 var response = RegionMapper.Mapper.Map<RegionResponse>(newRegion);
                 return new ResponseBuilder<RegionResponse> { Message = "Region created", Data = response };
             }

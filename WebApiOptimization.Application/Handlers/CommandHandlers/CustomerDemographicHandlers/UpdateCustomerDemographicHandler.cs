@@ -21,7 +21,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerDemogr
 
         public async Task<ResponseBuilder<CustomerDemographicResponse>> Handle(UpdateCustomerDemographicCommand request, CancellationToken cancellationToken)
         {
-            var customerDemographicToUpdate = _customerDemographicRepository.GetById(int.Parse(request.CustomerTypeId));
+            var customerDemographicToUpdate = await _customerDemographicRepository.GetByIdAsync(int.Parse(request.CustomerTypeId));
             if(customerDemographicToUpdate == null)
             {
                 return new ResponseBuilder<CustomerDemographicResponse> { Message = $"CustomerDemographic with id={request.CustomerTypeId} not found!", Data = null };
