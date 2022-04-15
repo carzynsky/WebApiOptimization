@@ -30,7 +30,12 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<CustomerCustomerDemoResponse>>> Add(CreateCustomerCustomerDemoCommand createCustomerCustomerDemoCommand)
         {
             var result = await _mediator.Send(createCustomerCustomerDemoCommand);
-            return Ok(result);
+            if(result.Data == null)
+            {
+                return BadRequest(result);
+            }
+
+            return Created(string.Empty, result);
         }
 
         /* NO UPDATE FOR CustomerCustomerDemo
@@ -58,9 +63,11 @@ namespace WebApiOptimization.API.Controllers
             }
 
             var result = await _mediator.Send(deleteCustomerCustomerDemoCommand);
-            if (result == null)
-                return NotFound($"CustomerCustomerDemos not found!");
-
+            if (result.Data == null)
+            {
+                return NotFound(result);
+            }
+            
             return Ok(result);
         }
     }

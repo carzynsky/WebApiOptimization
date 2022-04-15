@@ -30,28 +30,39 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<OrderResponse>>> GetById(int id)
         {
             var result = await _mediator.Send(new GetOrderByIdQuery(id));
-            if (result == null)
-                return NotFound($"Order with id={id} not found!");
+            if (result.Data == null)
+            {
+                return NotFound(result);
+            }
 
             return Ok(result);
         }
 
         [HttpPost]
-        public ActionResult<ResponseBuilder<OrderResponse>> Add(CreateOrderCommand createOrderCommand)
+        public async Task<ActionResult<ResponseBuilder<OrderResponse>>> Add(CreateOrderCommand createOrderCommand)
         {
-            var result = _mediator.Send(createOrderCommand);
-            return Ok(result);
+            var result = await _mediator.Send(createOrderCommand);
+            if(result.Data == null)
+            {
+                return BadRequest(result);
+            }
+
+            return Created(string.Empty, result);
         }
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ResponseBuilder<OrderResponse>>> Update(int id, UpdateOrderCommand updateOrderCommand)
         {
             if (id != updateOrderCommand.OrderId)
+            {
                 return BadRequest($"OrderId does not match with updated data!");
+            }
 
             var result = await _mediator.Send(updateOrderCommand);
-            if (result == null)
-                return NotFound($"Order with id={id} not found!");
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }
@@ -60,8 +71,10 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<OrderResponse>>> Delete(int id)
         {
             var result = await _mediator.Send(new DeleteOrderCommand(id));
-            if (result == null)
-                return NotFound($"Order with id={id} not found!");
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }

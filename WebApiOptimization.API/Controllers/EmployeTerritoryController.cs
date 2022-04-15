@@ -22,9 +22,6 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<IEnumerable<EmployeeTerritoryResponse>>>> GetAll([FromQuery] GetEmployeeTerritoriesQuery getEmployeeTerritoriesQuery)
         {
             var result = await _mediator.Send(getEmployeeTerritoriesQuery);
-            if (result == null)
-                return NotFound($"EmployeeTerritory(ies) not found!");
-
             return Ok(result);
         }
 
@@ -32,7 +29,12 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<EmployeeTerritoryResponse>>> Add(CreateEmployeeTerritoryCommand createEmployeeTerritoryCommand)
         {
             var result = await _mediator.Send(createEmployeeTerritoryCommand);
-            return Ok(result);
+            if(result.Data == null)
+            {
+                return BadRequest(result);
+            }
+
+            return Created(string.Empty, result);
         }
 
         /*
@@ -54,8 +56,10 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<EmployeeTerritoryResponse>>> Delete([FromQuery] DeleteEmployeeTerritoryCommand deleteEmployeeTerritoryCommand)
         {
             var result = await _mediator.Send(deleteEmployeeTerritoryCommand);
-            if (result == null)
-                return NotFound($"EmployeeTerritory not found!");
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }

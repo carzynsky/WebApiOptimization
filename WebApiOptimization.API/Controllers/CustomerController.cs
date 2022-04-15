@@ -13,6 +13,7 @@ namespace WebApiOptimization.API.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly IMediator _mediator;
+
         public CustomerController(IMediator mediator)
         {
             _mediator = mediator;
@@ -29,8 +30,10 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<CustomerResponse>>> GetById(string id)
         {
             var result = await _mediator.Send(new GetCustomerByIdQuery(id));
-            if (result == null)
-                return NotFound($"Customer with id={id} not found!");
+            if (result.Data == null)
+            {
+                return NotFound(result);
+            }
 
             return Ok(result);
         }
@@ -39,18 +42,27 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<CustomerResponse>>> Add(CreateCustomerCommand createCustomerCommand)
         {
             var result = await _mediator.Send(createCustomerCommand);
-            return Ok(result);
+            if(result.Data == null)
+            {
+                return BadRequest(result);
+            }
+
+            return Created(string.Empty, result);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<ResponseBuilder<CustomerResponse>>> Update(string id, UpdateCustomerCommand updateCustomerCommand)
         {
             if (id != updateCustomerCommand.CustomerID)
+            {
                 return BadRequest($"CustomerId does not match with updated data!");
+            }
 
             var result = await _mediator.Send(updateCustomerCommand);
-            if (result == null)
-                return NotFound($"Customer with id={id} not found!");
+            if (result.Data == null)
+            {
+                return NotFound(result);
+            }
 
             return Ok(result);
         }
@@ -58,9 +70,11 @@ namespace WebApiOptimization.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ResponseBuilder<CustomerResponse>>> Delete(string id)
         {
-            var result = _mediator.Send(new DeleteCustomerCommand(id));
-            if (result == null)
-                return NotFound($"Customer with id={id} not found!");
+            var result = await _mediator.Send(new DeleteCustomerCommand(id));
+            if (result.Data == null)
+            {
+                return NotFound(result);
+            }
 
             return Ok(result);
         }

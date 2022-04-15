@@ -30,8 +30,10 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<CustomerDemographicResponse>>> GetById(int id)
         {
             var result = await _mediator.Send(new GetCustomerDemographicByIdQuery(id));
-            if (result == null)
-                return NotFound($"CustomerDemographic with id={id} not found!");
+            if (result.Data == null)
+            {
+                return NotFound(result);
+            }
 
             return Ok(result);
         }
@@ -40,6 +42,11 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<CustomerDemographicResponse>>> Add(CreateCustomerDemographicCommand createCustomerDemographicCommand)
         {
             var result = await _mediator.Send(createCustomerDemographicCommand);
+            if(result.Data == null)
+            {
+                return BadRequest(result);
+            }
+
             return Ok(result);
         }
 
@@ -53,11 +60,15 @@ namespace WebApiOptimization.API.Controllers
             }
 
             if (id != customerTypeId)
+            {
                 return BadRequest($"CustomerTypeId does not match with updated data!");
+            }
 
             var result = await _mediator.Send(updateCustomerDemographicCommand);
-            if (result == null)
-                return NotFound($"CustomerDemographic with customer type id={id} not found!");
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }
@@ -66,8 +77,10 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<CustomerDemographicResponse>>> Delete(string id)
         {
             var result = await _mediator.Send(new DeleteCustomerDemographicCommand(id));
-            if (result == null)
-                return NotFound($"CustomerDemographic with customer type id={id} not found!");
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }

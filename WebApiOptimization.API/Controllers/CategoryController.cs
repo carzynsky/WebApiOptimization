@@ -30,8 +30,10 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<CategoryResponse>>> GetById(int id)
         {
             var result = await _mediator.Send(new GetCategoryByIdQuery(id));
-            if (result == null)
-                return NotFound($"Category with id={id} not found!");
+            if (result.Data == null)
+            {
+                return NotFound(result);
+            }
 
             return Ok(result);
         }
@@ -40,7 +42,12 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<CategoryResponse>>> Add(CreateCategoryCommand createCategoryCommand)
         {
             var result = await _mediator.Send(createCategoryCommand);
-            return Ok(result);
+            if(result.Data == null)
+            {
+                return BadRequest(result);
+            }
+
+            return Created(string.Empty, result);
         }
 
         [HttpPut("{id:int}")]
@@ -50,8 +57,10 @@ namespace WebApiOptimization.API.Controllers
                 return BadRequest($"CategoryId does not match with updated data!");
 
             var result = await _mediator.Send(updateCategoryCommand);
-            if (result == null)
-                return NotFound($"Category with id={id} not found!");
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }
@@ -60,8 +69,10 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<CategoryResponse>>> Delete(int id)
         {
             var result = await _mediator.Send(new DeleteCategoryCommand(id));
-            if (result == null)
-                return NotFound($"Category with id={id} not found!");
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }

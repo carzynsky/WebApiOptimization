@@ -22,9 +22,6 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<IEnumerable<OrderDetailResponse>>>> Get([FromQuery] GetOrderDetailQuery getOrderDetailQuery)
         {
             var result = await _mediator.Send(getOrderDetailQuery);
-            if (result == null)
-                return NotFound(result);
-
             return Ok(result);
         }
 
@@ -32,21 +29,32 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<OrderDetailResponse>>> Add(CreateOrderDetailCommand createOrderDetailCommand)
         {
             var result = await _mediator.Send(createOrderDetailCommand);
-            return Ok(result);
+            if(result.Data == null)
+            {
+                return BadRequest(result);
+            }
+
+            return Created(string.Empty, result);
         }
 
         [HttpPut]
         public async Task<ActionResult<ResponseBuilder<OrderDetailResponse>>> Update([FromQuery] UpdateOrderDetailQueryParameter updateOrderDetailQueryParameter, UpdateOrderDetailCommand updateOrderDetailCommand)
         {
             if (updateOrderDetailQueryParameter.OrderId != updateOrderDetailCommand.OrderId)
+            {
                 return BadRequest($"OrderId does not match with updated data!");
+            }
 
             if (updateOrderDetailQueryParameter.ProductId != updateOrderDetailCommand.ProductId)
+            {
                 return BadRequest($"ProductId does not match with updated data!");
+            }
 
             var result = await _mediator.Send(updateOrderDetailCommand);
-            if (result == null)
-                return NotFound($"OrderDetail with order id={updateOrderDetailQueryParameter.OrderId} and product id={updateOrderDetailQueryParameter.ProductId} not found!");
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }
@@ -60,8 +68,10 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<List<OrderDetailResponse>>>> Delete([FromQuery] DeleteOrderDetailCommand deleteOrderDetailCommand)
         {
             var result = await _mediator.Send(deleteOrderDetailCommand);
-            if (result == null)
-                return NotFound($"OrderDetails with order id={deleteOrderDetailCommand.OrderID} not found!");
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }

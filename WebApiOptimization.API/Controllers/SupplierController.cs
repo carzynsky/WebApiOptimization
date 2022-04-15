@@ -30,8 +30,10 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<SupplierResponse>>> GetById(int id)
         {
             var result = await _mediator.Send(new GetSupplierByIdQuery(id));
-            if (result == null)
-                return NotFound($"Supplier with id={id} not found!");
+            if (result.Data == null)
+            {
+                return NotFound(result);
+            }
 
             return Ok(result);
         }
@@ -40,18 +42,27 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<SupplierResponse>>> Add(CreateSupplierCommand createSupplierCommand)
         {
             var result = await _mediator.Send(createSupplierCommand);
-            return Ok(result);
+            if(result.Data == null)
+            {
+                return BadRequest(result);
+            }
+
+            return Created(string.Empty, result);
         }
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ResponseBuilder<SupplierResponse>>> Update(int id, UpdateSupplierCommand updateSupplierCommand)
         {
             if (id != updateSupplierCommand.SupplierId)
+            {
                 return BadRequest($"SupplierId does not match with updated data!");
+            }
 
             var result = await _mediator.Send(updateSupplierCommand);
-            if (result == null)
-                return NotFound($"Supplier with id={id} not found!");
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }
@@ -60,8 +71,10 @@ namespace WebApiOptimization.API.Controllers
         public async Task<ActionResult<ResponseBuilder<SupplierResponse>>> Delete(int id)
         {
             var result = await _mediator.Send(new DeleteSupplierCommand(id));
-            if (result == null)
-                return NotFound($"Supplier with id={id} not found!");
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }
