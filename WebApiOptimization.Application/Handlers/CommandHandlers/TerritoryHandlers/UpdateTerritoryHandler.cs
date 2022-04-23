@@ -21,7 +21,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.TerritoryHandl
 
         public async Task<ResponseBuilder<TerritoryResponse>> Handle(UpdateTerritoryCommand request, CancellationToken cancellationToken)
         {
-            var territoryToUpdate = _territoryRepository.GetById(request.TerritoryId);
+            var territoryToUpdate = await _territoryRepository.GetByIdAsync(request.TerritoryId);
             if (territoryToUpdate == null)
             {
                 return new ResponseBuilder<TerritoryResponse> { Message = $"Territory with id={request.TerritoryId} not found!", Data = null };

@@ -32,7 +32,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerHandle
             try
             {
                 // Find orders with this customer
-                var ordersWithThisCustomer = _orderRepository.GetByCustomerId(request.CustomerId).ToList();
+                var ordersWithThisCustomer = await _orderRepository.GetByCustomerIdAsync(request.CustomerId);
                 if (ordersWithThisCustomer.Any())
                 {
                     // Set CustomerId as null for each order

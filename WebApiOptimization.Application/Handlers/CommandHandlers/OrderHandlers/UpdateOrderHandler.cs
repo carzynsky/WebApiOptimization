@@ -21,7 +21,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.OrderHandlers
 
         public async Task<ResponseBuilder<OrderResponse>> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
         {
-            var orderToUpdate = _orderRepository.GetById(request.OrderId);
+            var orderToUpdate = await _orderRepository.GetByIdAsync(request.OrderId);
             if (orderToUpdate == null)
             {
                 return new ResponseBuilder<OrderResponse> { Message = $"Order with id={request.OrderId} not found!", Data = null };

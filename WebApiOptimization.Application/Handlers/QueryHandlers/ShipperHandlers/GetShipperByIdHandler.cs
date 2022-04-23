@@ -19,7 +19,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Shipper
 
         public async Task<ResponseBuilder<ShipperResponse>> Handle(GetShipperByIdQuery request, CancellationToken cancellationToken)
         {
-            var shipperEntity = _shipperRepository.GetById(request.Id);
+            var shipperEntity = await _shipperRepository.GetByIdAsync(request.Id);
             if(shipperEntity == null)
             {
                 return new ResponseBuilder<ShipperResponse> { Message = $"Shipper with id={request.Id} not found!", Data = null };

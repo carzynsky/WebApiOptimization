@@ -30,7 +30,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.TerritoryHandl
 
             try
             {
-                var newTerritory = _territoryRepository.Add(territoryEntity);
+                var newTerritory = await _territoryRepository.AddAsync(territoryEntity);
                 var response = TerritoryMapper.Mapper.Map<TerritoryResponse>(newTerritory);
                 return new ResponseBuilder<TerritoryResponse> { Message = "Territory created.", Data = response };
             }

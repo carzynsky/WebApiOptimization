@@ -20,7 +20,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.OrderDetailHan
 
         public async Task<ResponseBuilder<OrderDetailResponse>> Handle(UpdateOrderDetailCommand request, CancellationToken cancellationToken)
         {
-            var orderDetailToUpdate = _orderDetailRepository.GetByOrderIdAndProductId(request.OrderId, request.ProductId);
+            var orderDetailToUpdate = await _orderDetailRepository.GetByOrderIdAndProductIdAsync(request.OrderId, request.ProductId);
             if (orderDetailToUpdate == null)
             {
                 return new ResponseBuilder<OrderDetailResponse> { Message = $"OrderDetail with orderId={request.OrderId} not found!", Data = null };

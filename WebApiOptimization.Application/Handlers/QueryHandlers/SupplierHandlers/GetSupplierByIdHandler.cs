@@ -19,7 +19,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Supplier
 
         public async Task<ResponseBuilder<SupplierResponse>> Handle(GetSupplierByIdQuery request, CancellationToken cancellationToken)
         {
-            var supplierEntity = _supplierRepository.GetById(request.Id);
+            var supplierEntity = await _supplierRepository.GetByIdAsync(request.Id);
             if(supplierEntity == null)
             {
                 return new ResponseBuilder<SupplierResponse> { Message = $"Supplier with id={request.Id} not found!", Data = null };

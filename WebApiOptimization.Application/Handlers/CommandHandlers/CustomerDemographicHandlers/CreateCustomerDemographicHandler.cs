@@ -29,7 +29,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerDemogr
             }
             try
             {
-                var newCustomerDemographic = _customerDemographicRepository.Add(customerDemographicEntity);
+                var newCustomerDemographic = await _customerDemographicRepository.AddAsync(customerDemographicEntity);
                 var response = CustomerCustomerDemoMapper.Mapper.Map<CustomerDemographicResponse>(newCustomerDemographic);
                 return new ResponseBuilder<CustomerDemographicResponse> { Message = "CustomerDemographic created.", Data = response };
             }
@@ -37,7 +37,6 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerDemogr
             {
                 return new ResponseBuilder<CustomerDemographicResponse> { Message = $"CustomerDemographic not created! Error: {e.InnerException.Message}", Data = null };
             }
-            
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.ShipperCommands;
 using WebApiOptimization.Application.Queries.ShipperQueries;
 using WebApiOptimization.Application.Responses;
@@ -19,48 +20,61 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ResponseBuilder<IEnumerable<ShipperResponse>>> GetAll()
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<ShipperResponse>>>> GetAll()
         {
-            var result = _mediator.Send(new GetAllShippersQuery());
+            var result = await _mediator.Send(new GetAllShippersQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<ResponseBuilder<ShipperResponse>> GetById(int id)
+        public async Task<ActionResult<ResponseBuilder<ShipperResponse>>> GetById(int id)
         {
-            var result = _mediator.Send(new GetShipperByIdQuery(id));
-            if (result == null)
-                return NotFound($"Shipper with id={id} not found!");
+            var result = await _mediator.Send(new GetShipperByIdQuery(id));
+            if (result.Data == null)
+            {
+                return NotFound(result);
+            }
 
             return Ok(result);
         }
 
         [HttpPost]
-        public ActionResult<ResponseBuilder<ShipperResponse>> Add(CreateShipperCommand createShipperCommand)
+        public async Task<ActionResult<ResponseBuilder<ShipperResponse>>> Add(CreateShipperCommand createShipperCommand)
         {
-            var result = _mediator.Send(createShipperCommand);
-            return Ok(result);
+            var result = await _mediator.Send(createShipperCommand);
+            if(result.Data == null)
+            {
+                return BadRequest(result);
+            }
+
+            return Created(string.Empty, result);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult<ResponseBuilder<ShipperResponse>> Update(int id, UpdateShipperCommand updateShipperCommand)
+        public async Task<ActionResult<ResponseBuilder<ShipperResponse>>> Update(int id, UpdateShipperCommand updateShipperCommand)
         {
             if (id != updateShipperCommand.ShipperId)
+            {
                 return BadRequest($"ShipperId does not match with updated data!");
+            }
 
-            var result = _mediator.Send(updateShipperCommand);
-            if (result == null)
-                return NotFound($"Shipper with id={id} not found!");
+            var result = await _mediator.Send(updateShipperCommand);
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult<ResponseBuilder<ShipperResponse>> Delete(int id)
+        public async Task<ActionResult<ResponseBuilder<ShipperResponse>>> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteShipperCommand(id));
-            if (result == null)
-                return NotFound($"Shipper with id={id} not found!");
+            var result = await _mediator.Send(new DeleteShipperCommand(id));
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }

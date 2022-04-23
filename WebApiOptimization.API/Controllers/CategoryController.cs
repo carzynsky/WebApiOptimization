@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.CategoryCommands;
 using WebApiOptimization.Application.Queries.CategoryQueries;
 using WebApiOptimization.Application.Responses;
@@ -19,49 +20,59 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ResponseBuilder<IEnumerable<CategoryResponse>>> GetAll()
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<CategoryResponse>>>> GetAll()
         {
-            var result = _mediator.Send(new GetAllCategoriesQuery());
-            
+            var result = await _mediator.Send(new GetAllCategoriesQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<ResponseBuilder<CategoryResponse>> GetById(int id)
+        public async Task<ActionResult<ResponseBuilder<CategoryResponse>>> GetById(int id)
         {
-            var result = _mediator.Send(new GetCategoryByIdQuery(id));
-            if (result == null)
-                return NotFound($"Category with id={id} not found!");
+            var result = await _mediator.Send(new GetCategoryByIdQuery(id));
+            if (result.Data == null)
+            {
+                return NotFound(result);
+            }
 
             return Ok(result);
         }
 
         [HttpPost]
-        public ActionResult<ResponseBuilder<CategoryResponse>> Add(CreateCategoryCommand createCategoryCommand)
+        public async Task<ActionResult<ResponseBuilder<CategoryResponse>>> Add(CreateCategoryCommand createCategoryCommand)
         {
-            var result = _mediator.Send(createCategoryCommand);
-            return Ok(result);
+            var result = await _mediator.Send(createCategoryCommand);
+            if(result.Data == null)
+            {
+                return BadRequest(result);
+            }
+
+            return Created(string.Empty, result);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult<ResponseBuilder<CategoryResponse>> Update(int id, UpdateCategoryCommand updateCategoryCommand)
+        public async Task<ActionResult<ResponseBuilder<CategoryResponse>>> Update(int id, UpdateCategoryCommand updateCategoryCommand)
         {
             if (id != updateCategoryCommand.CategoryId)
                 return BadRequest($"CategoryId does not match with updated data!");
 
-            var result = _mediator.Send(updateCategoryCommand);
-            if (result == null)
-                return NotFound($"Category with id={id} not found!");
+            var result = await _mediator.Send(updateCategoryCommand);
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult<ResponseBuilder<CategoryResponse>> Delete(int id)
+        public async Task<ActionResult<ResponseBuilder<CategoryResponse>>> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteCategoryCommand(id));
-            if (result == null)
-                return NotFound($"Category with id={id} not found!");
+            var result = await _mediator.Send(new DeleteCategoryCommand(id));
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }

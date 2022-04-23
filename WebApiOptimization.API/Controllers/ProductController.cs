@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.ProductCommands;
 using WebApiOptimization.Application.Queries.ProductQueries;
 using WebApiOptimization.Application.Responses;
@@ -18,48 +19,61 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ResponseBuilder<IEnumerable<ProductResponse>>> GetAll()
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<ProductResponse>>>> GetAll()
         {
-            var result = _mediator.Send(new GetAllProductsQuery());
+            var result = await _mediator.Send(new GetAllProductsQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<ResponseBuilder<ProductResponse>> GetById(int id)
+        public async Task<ActionResult<ResponseBuilder<ProductResponse>>> GetById(int id)
         {
-            var result = _mediator.Send(new GetProductByIdQuery(id));
-            if (result == null)
-                return NotFound($"Product with id={id} not found!");
+            var result = await _mediator.Send(new GetProductByIdQuery(id));
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }
 
         [HttpPost]
-        public ActionResult<ResponseBuilder<ProductResponse>> Add(CreateProductCommand createProductCommand)
+        public async Task<ActionResult<ResponseBuilder<ProductResponse>>> Add(CreateProductCommand createProductCommand)
         {
-            var result = _mediator.Send(createProductCommand);
-            return Ok(result);
+            var result = await _mediator.Send(createProductCommand);
+            if(result.Data == null)
+            {
+                return BadRequest(result);
+            }
+
+            return Created(string.Empty, result);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult<ResponseBuilder<ProductResponse>> Update(int id, UpdateProductCommand updateProductCommand)
+        public async Task<ActionResult<ResponseBuilder<ProductResponse>>> Update(int id, UpdateProductCommand updateProductCommand)
         {
             if (id != updateProductCommand.ProductId)
+            {
                 return BadRequest($"ProductId does not match with updated data!");
+            }
 
-            var result = _mediator.Send(updateProductCommand);
-            if (result == null)
-                return NotFound($"Product with id={id} not found!");
+            var result = await _mediator.Send(updateProductCommand);
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult<ResponseBuilder<ProductResponse>> Delete(int id)
+        public async Task<ActionResult<ResponseBuilder<ProductResponse>>> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteProductCommand(id));
-            if (result == null)
-                return NotFound($"Product with id={id} not found!");
+            var result = await _mediator.Send(new DeleteProductCommand(id));
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }

@@ -19,7 +19,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Territory
 
         public async Task<ResponseBuilder<TerritoryResponse>> Handle(GetTerritoryByIdQuery request, CancellationToken cancellationToken)
         {
-            var territoryEntity = _territoryRepository.GetById(request.Id, true);
+            var territoryEntity = await _territoryRepository.GetByIdAsync(request.Id, true);
             if(territoryEntity == null)
             {
                 return new ResponseBuilder<TerritoryResponse> { Message = $"Territory with id={request.Id} not found!", Data = null };

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using WebApiOptimization.Core.Entities;
 using WebApiOptimization.Core.Repositories;
 using WebApiOptimization.Infrastructure.Data;
@@ -22,9 +23,18 @@ namespace WebApiOptimization.Infrastructure.Repositories
                 .Include(x => x.Territory.Region);
         }
 
-        public IEnumerable<EmployeeTerritory> GetByEmployeeId(int employeeId, bool eagerloading = false)
+        public override async Task<List<EmployeeTerritory>> GetAllAsync()
         {
-            if (eagerloading)
+            return await NorthwndContext.EmployeeTerritories
+               .AsNoTracking()
+               .Include(x => x.Employee)
+               .Include(x => x.Territory.Region)
+               .ToListAsync();
+        }
+
+        public IEnumerable<EmployeeTerritory> GetByEmployeeId(int employeeId, bool eagerLoading = false)
+        {
+            if (eagerLoading)
             {
                 return NorthwndContext.EmployeeTerritories
                     .AsNoTracking()
@@ -36,6 +46,24 @@ namespace WebApiOptimization.Infrastructure.Repositories
             return NorthwndContext.EmployeeTerritories
                     .AsNoTracking()
                     .Where(x => x.EmployeeID == employeeId);
+        }
+
+        public async Task<List<EmployeeTerritory>> GetByEmployeeIdAsync(int employeeId, bool eagerLoading = false)
+        {
+            if (eagerLoading)
+            {
+                return await NorthwndContext.EmployeeTerritories
+                    .AsNoTracking()
+                    .Where(x => x.EmployeeID == employeeId)
+                    .Include(x => x.Employee)
+                    .Include(x => x.Territory.Region)
+                    .ToListAsync();
+            }
+
+            return await NorthwndContext.EmployeeTerritories
+                    .AsNoTracking()
+                    .Where(x => x.EmployeeID == employeeId)
+                    .ToListAsync();
         }
 
         public IEnumerable<EmployeeTerritory> GetByTerritoryId(string territoryId, bool eagerLoading = false)
@@ -53,6 +81,23 @@ namespace WebApiOptimization.Infrastructure.Repositories
                    .AsNoTracking()
                    .Where(x => x.TerritoryID == territoryId);
         }
+        public async Task<List<EmployeeTerritory>> GetByTerritoryIdAsync(string territoryId, bool eagerLoading = false)
+        {
+            if (eagerLoading)
+            {
+                return await NorthwndContext.EmployeeTerritories
+                    .AsNoTracking()
+                    .Where(x => x.TerritoryID == territoryId)
+                    .Include(x => x.Employee)
+                    .Include(x => x.Territory.Region)
+                    .ToListAsync();
+            }
+
+            return await NorthwndContext.EmployeeTerritories
+                   .AsNoTracking()
+                   .Where(x => x.TerritoryID == territoryId)
+                   .ToListAsync();
+        }
 
         public IEnumerable<EmployeeTerritory> GetByEmployeeIdAndTerritoryId(int employeeId, string territoryId, bool eagerLoading = false)
         {
@@ -68,6 +113,25 @@ namespace WebApiOptimization.Infrastructure.Repositories
             return NorthwndContext.EmployeeTerritories
                     .AsNoTracking()
                     .Where(x => x.EmployeeID == employeeId && x.TerritoryID == territoryId);
+        }
+
+
+        public async Task<List<EmployeeTerritory>> GetByEmployeeIdAndTerritoryIdAsync(int employeeId, string territoryId, bool eagerLoading = false)
+        {
+            if (eagerLoading)
+            {
+                return await NorthwndContext.EmployeeTerritories
+                    .AsNoTracking()
+                    .Where(x => x.EmployeeID == employeeId && x.TerritoryID == territoryId)
+                    .Include(x => x.Employee)
+                    .Include(x => x.Territory.Region)
+                    .ToListAsync();
+            }
+
+            return await NorthwndContext.EmployeeTerritories
+                    .AsNoTracking()
+                    .Where(x => x.EmployeeID == employeeId && x.TerritoryID == territoryId)
+                    .ToListAsync();
         }
     }
 }

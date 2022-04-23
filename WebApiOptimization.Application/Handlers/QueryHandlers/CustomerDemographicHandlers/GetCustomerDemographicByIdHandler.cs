@@ -19,7 +19,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.CustomerDemograp
 
         public async Task<ResponseBuilder<CustomerDemographicResponse>> Handle(GetCustomerDemographicByIdQuery request, CancellationToken cancellationToken)
         {
-            var customerDemographicEntity = _customerDemographicRepository.GetByCustomerTypeId(request.CustomerTypeId.ToString());
+            var customerDemographicEntity = await _customerDemographicRepository.GetByCustomerTypeIdAsync(request.CustomerTypeId.ToString());
             if(customerDemographicEntity == null)
             {
                 return new ResponseBuilder<CustomerDemographicResponse> { Message = $"CustomerDemographic with customer type id={request.CustomerTypeId} not found!", Data = null };

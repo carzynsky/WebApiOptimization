@@ -20,7 +20,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Region
 
         public async Task<ResponseBuilder<IEnumerable<RegionResponse>>> Handle(GetAllRegionsQuery request, CancellationToken cancellationToken)
         {
-            var regions = _regionRepository.GetAll();
+            var regions = await _regionRepository.GetAllAsync();
             var response = RegionMapper.Mapper.Map<IEnumerable<RegionResponse>>(regions);
             return new ResponseBuilder<IEnumerable<RegionResponse>> { Message = "OK.", Data = response } ;
         }

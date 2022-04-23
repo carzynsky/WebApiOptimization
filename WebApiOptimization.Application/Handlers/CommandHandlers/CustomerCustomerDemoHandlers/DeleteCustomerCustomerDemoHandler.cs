@@ -26,15 +26,15 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerCustom
             List<CustomerCustomerDemo> customerCustomerDemosToDelete;
             if(request.CustomerId != null && request.CustomerTypeId == null)
             {
-                customerCustomerDemosToDelete = _customerCustomerDemoRepository.GetByCustomerId(request.CustomerId).ToList();
+                customerCustomerDemosToDelete = await _customerCustomerDemoRepository.GetByCustomerIdAsync(request.CustomerId);
             }
             else if(request.CustomerId == null && request.CustomerTypeId != null)
             {
-                customerCustomerDemosToDelete = _customerCustomerDemoRepository.GetByCustomerTypeId(request.CustomerTypeId).ToList();
+                customerCustomerDemosToDelete = await _customerCustomerDemoRepository.GetByCustomerTypeIdAsync(request.CustomerTypeId);
             }
             else
             {
-                customerCustomerDemosToDelete = _customerCustomerDemoRepository.GetByCustomerIdAndCustomerTypeId(request.CustomerId, request.CustomerTypeId).ToList();
+                customerCustomerDemosToDelete = await _customerCustomerDemoRepository.GetByCustomerIdAndCustomerTypeIdAsync(request.CustomerId, request.CustomerTypeId);
             }
 
             if (!customerCustomerDemosToDelete.Any())

@@ -21,7 +21,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.ShipperHandler
 
         public async Task<ResponseBuilder<ShipperResponse>> Handle(UpdateShipperCommand request, CancellationToken cancellationToken)
         {
-            var shipperToUpdate = _shipperRepository.GetById(request.ShipperId);
+            var shipperToUpdate = await _shipperRepository.GetByIdAsync(request.ShipperId);
             if (shipperToUpdate == null)
             {
                 return new ResponseBuilder<ShipperResponse> { Message = $"Shipper with id={request.ShipperId} not found!", Data = null };

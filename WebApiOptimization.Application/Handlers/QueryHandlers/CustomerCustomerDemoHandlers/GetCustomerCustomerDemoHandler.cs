@@ -24,19 +24,19 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.CustomerCustomer
 
             if(request.CustomerId != null && request.CustomerTypeId == null)
             {
-                customerCustomerDemos = _customerCustomerDemoRepository.GetByCustomerId(request.CustomerId, true);
+                customerCustomerDemos = await _customerCustomerDemoRepository.GetByCustomerIdAsync(request.CustomerId, true);
             }
             else if(request.CustomerId == null && request.CustomerTypeId != null)
             {
-                customerCustomerDemos = _customerCustomerDemoRepository.GetByCustomerTypeId(request.CustomerTypeId, true);
+                customerCustomerDemos = await _customerCustomerDemoRepository.GetByCustomerTypeIdAsync(request.CustomerTypeId, true);
             }
             else if(request.CustomerId != null && request.CustomerTypeId != null)
             {
-                customerCustomerDemos = _customerCustomerDemoRepository.GetByCustomerIdAndCustomerTypeId(request.CustomerId, request.CustomerTypeId, true);
+                customerCustomerDemos = await _customerCustomerDemoRepository.GetByCustomerIdAndCustomerTypeIdAsync(request.CustomerId, request.CustomerTypeId, true);
             }
             else
             {
-                customerCustomerDemos = _customerCustomerDemoRepository.GetAll();
+                customerCustomerDemos = await _customerCustomerDemoRepository.GetAllAsync();
             }
 
             var response = CustomerCustomerDemoMapper.Mapper.Map<IEnumerable<CustomerCustomerDemoResponse>>(customerCustomerDemos);

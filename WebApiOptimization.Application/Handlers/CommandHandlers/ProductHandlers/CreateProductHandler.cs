@@ -30,7 +30,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.ProductHandler
 
             try
             {
-                var newProduct = _productRepository.Add(productEntity);
+                var newProduct = await _productRepository.AddAsync(productEntity);
                 var response = ProductMapper.Mapper.Map<ProductResponse>(newProduct);
                 return new ResponseBuilder<ProductResponse> { Message = "Product created.", Data = response };
             }

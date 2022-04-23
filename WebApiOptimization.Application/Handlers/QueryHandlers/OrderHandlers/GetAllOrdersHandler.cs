@@ -20,7 +20,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Order
 
         public async Task<ResponseBuilder<IEnumerable<OrderResponse>>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
         {
-            var orders = _orderRepository.GetAll();
+            var orders = await _orderRepository.GetAllAsync();
             var response = OrderMapper.Mapper.Map<IEnumerable<OrderResponse>>(orders);
             return new ResponseBuilder<IEnumerable<OrderResponse>> { Message = "OK.", Data = response };
         }

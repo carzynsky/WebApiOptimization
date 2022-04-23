@@ -30,7 +30,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeTerrit
 
             try
             {
-                var newEmployeeTerritory = _employeeTerritoryRepository.Add(employeeTerritoryEntity);
+                var newEmployeeTerritory = await _employeeTerritoryRepository.AddAsync(employeeTerritoryEntity);
                 var response = EmployeeTerritoryMapper.Mapper.Map<EmployeeTerritoryResponse>(newEmployeeTerritory);
                 return new ResponseBuilder<EmployeeTerritoryResponse> { Message = "EmployeeTerritory created.", Data = response };
             }

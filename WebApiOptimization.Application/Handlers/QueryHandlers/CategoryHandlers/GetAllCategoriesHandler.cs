@@ -20,7 +20,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.CategoryHandlers
 
         public async Task<ResponseBuilder<IEnumerable<CategoryResponse>>> Handle(GetAllCategoriesQuery request, CancellationToken cancellationToken)
         {
-            var categories = _categoryRepository.GetAll();
+            var categories = await _categoryRepository.GetAllAsync();
             var response = CategoryMapper.Mapper.Map<IEnumerable<CategoryResponse>>(categories);
             return new ResponseBuilder<IEnumerable<CategoryResponse>> { Message = "OK.", Data = response };
         }

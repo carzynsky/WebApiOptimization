@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.CustomerCustomerDemoCommands;
 using WebApiOptimization.Application.Queries.CustomerCustomerDemoQueries;
 using WebApiOptimization.Application.Responses;
@@ -19,17 +20,22 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ResponseBuilder<IEnumerable<CustomerCustomerDemoResponse>>> Get([FromQuery] GetCustomerCustomerDemoQuery getCustomerCustomerDemoQuery)
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<CustomerCustomerDemoResponse>>>> Get([FromQuery] GetCustomerCustomerDemoQuery getCustomerCustomerDemoQuery)
         {
-            var result = _mediator.Send(getCustomerCustomerDemoQuery);
+            var result = await _mediator.Send(getCustomerCustomerDemoQuery);
             return Ok(result);
         }
 
         [HttpPost]
-        public ActionResult<ResponseBuilder<CustomerCustomerDemoResponse>> Add(CreateCustomerCustomerDemoCommand createCustomerCustomerDemoCommand)
+        public async Task<ActionResult<ResponseBuilder<CustomerCustomerDemoResponse>>> Add(CreateCustomerCustomerDemoCommand createCustomerCustomerDemoCommand)
         {
-            var result = _mediator.Send(createCustomerCustomerDemoCommand);
-            return Ok(result);
+            var result = await _mediator.Send(createCustomerCustomerDemoCommand);
+            if(result.Data == null)
+            {
+                return BadRequest(result);
+            }
+
+            return Created(string.Empty, result);
         }
 
         /* NO UPDATE FOR CustomerCustomerDemo
@@ -49,17 +55,19 @@ namespace WebApiOptimization.API.Controllers
         */
 
         [HttpDelete]
-        public ActionResult<ResponseBuilder<CustomerCustomerDemoResponse>> Delete([FromQuery] DeleteCustomerCustomerDemoCommand deleteCustomerCustomerDemoCommand)
+        public async Task<ActionResult<ResponseBuilder<CustomerCustomerDemoResponse>>> Delete([FromQuery] DeleteCustomerCustomerDemoCommand deleteCustomerCustomerDemoCommand)
         {
             if(deleteCustomerCustomerDemoCommand.CustomerId == null && deleteCustomerCustomerDemoCommand.CustomerTypeId == null)
             {
                 return BadRequest("Parameters not provided!");
             }
 
-            var result = _mediator.Send(deleteCustomerCustomerDemoCommand);
-            if (result == null)
-                return NotFound($"CustomerCustomerDemos not found!");
-
+            var result = await _mediator.Send(deleteCustomerCustomerDemoCommand);
+            if (result.Data == null)
+            {
+                return NotFound(result);
+            }
+            
             return Ok(result);
         }
     }

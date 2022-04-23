@@ -22,7 +22,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CategoryHandle
 
         public async Task<ResponseBuilder<CategoryResponse>> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var categoryToUpdate = _categoryRepository.GetById(request.CategoryId);
+            var categoryToUpdate = await _categoryRepository.GetByIdAsync(request.CategoryId);
             if(categoryToUpdate == null)
             {
                 return new ResponseBuilder<CategoryResponse> { Message = $"Category with id={request.CategoryId} not found!", Data = null };

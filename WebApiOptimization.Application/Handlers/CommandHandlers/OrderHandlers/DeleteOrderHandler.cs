@@ -23,7 +23,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.OrderHandlers
 
         public async Task<ResponseBuilder<OrderResponse>> Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
         {
-            var orderToDelete = _orderRepository.GetById(request.Id);
+            var orderToDelete = await _orderRepository.GetByIdAsync(request.Id);
             if(orderToDelete == null)
             {
                 return new ResponseBuilder<OrderResponse> { Message = $"Order with id={request.Id} not found!", Data = null };
@@ -32,7 +32,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.OrderHandlers
             try
             {
                 // Find order details with this orderId
-                var orderDetailsWithThisOrderId = _orderDetailRepository.GetByOrderId(request.Id).ToList();
+                var orderDetailsWithThisOrderId = await _orderDetailRepository.GetByOrderIdAsync(request.Id);
                 if (orderDetailsWithThisOrderId.Any())
                 {
                     // Remove entries

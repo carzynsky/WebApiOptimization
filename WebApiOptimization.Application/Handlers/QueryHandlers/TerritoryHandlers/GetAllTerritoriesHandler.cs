@@ -20,7 +20,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Territory
 
         public async Task<ResponseBuilder<IEnumerable<TerritoryResponse>>> Handle(GetAllTerritoriesQuery request, CancellationToken cancellationToken)
         {
-            var territories = _territoryRepository.GetAll();
+            var territories = await _territoryRepository.GetAllAsync();
             var response = TerritoryMapper.Mapper.Map<IEnumerable<TerritoryResponse>>(territories);
             return new ResponseBuilder<IEnumerable<TerritoryResponse>> { Message = "OK.", Data = response };
         }

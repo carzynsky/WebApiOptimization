@@ -26,15 +26,15 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeTerrit
             List<EmployeeTerritory> employeeTerritories;
             if(request.EmployeeId != null && request.TerritoryId != null)
             {
-                employeeTerritories = _employeeTerritoryRepository.GetByEmployeeIdAndTerritoryId((int)request.EmployeeId, request.TerritoryId).ToList();
+                employeeTerritories = await _employeeTerritoryRepository.GetByEmployeeIdAndTerritoryIdAsync((int)request.EmployeeId, request.TerritoryId);
             }
             else if(request.EmployeeId != null && request.TerritoryId == null)
             {
-                employeeTerritories = _employeeTerritoryRepository.GetByEmployeeId((int)request.EmployeeId).ToList();
+                employeeTerritories = await _employeeTerritoryRepository.GetByEmployeeIdAsync((int)request.EmployeeId);
             }
             else
             {
-                employeeTerritories = _employeeTerritoryRepository.GetByTerritoryId(request.TerritoryId).ToList();
+                employeeTerritories = await _employeeTerritoryRepository.GetByTerritoryIdAsync(request.TerritoryId);
             }
 
             try

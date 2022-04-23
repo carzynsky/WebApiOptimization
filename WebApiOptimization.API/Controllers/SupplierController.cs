@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.SupplierCommands;
 using WebApiOptimization.Application.Queries.SupplierQueries;
 using WebApiOptimization.Application.Responses;
@@ -19,48 +20,61 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ResponseBuilder<IEnumerable<SupplierResponse>>> GetAll()
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<SupplierResponse>>>> GetAll()
         {
-            var result = _mediator.Send(new GetAllSuppliersQuery());
+            var result = await _mediator.Send(new GetAllSuppliersQuery());
             return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public ActionResult<ResponseBuilder<SupplierResponse>> GetById(int id)
+        public async Task<ActionResult<ResponseBuilder<SupplierResponse>>> GetById(int id)
         {
-            var result = _mediator.Send(new GetSupplierByIdQuery(id));
-            if (result == null)
-                return NotFound($"Supplier with id={id} not found!");
+            var result = await _mediator.Send(new GetSupplierByIdQuery(id));
+            if (result.Data == null)
+            {
+                return NotFound(result);
+            }
 
             return Ok(result);
         }
 
         [HttpPost]
-        public ActionResult<ResponseBuilder<SupplierResponse>> Add(CreateSupplierCommand createSupplierCommand)
+        public async Task<ActionResult<ResponseBuilder<SupplierResponse>>> Add(CreateSupplierCommand createSupplierCommand)
         {
-            var result = _mediator.Send(createSupplierCommand);
-            return Ok(result);
+            var result = await _mediator.Send(createSupplierCommand);
+            if(result.Data == null)
+            {
+                return BadRequest(result);
+            }
+
+            return Created(string.Empty, result);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult<ResponseBuilder<SupplierResponse>> Update(int id, UpdateSupplierCommand updateSupplierCommand)
+        public async Task<ActionResult<ResponseBuilder<SupplierResponse>>> Update(int id, UpdateSupplierCommand updateSupplierCommand)
         {
             if (id != updateSupplierCommand.SupplierId)
+            {
                 return BadRequest($"SupplierId does not match with updated data!");
+            }
 
-            var result = _mediator.Send(updateSupplierCommand);
-            if (result == null)
-                return NotFound($"Supplier with id={id} not found!");
+            var result = await _mediator.Send(updateSupplierCommand);
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult<ResponseBuilder<SupplierResponse>> Delete(int id)
+        public async Task<ActionResult<ResponseBuilder<SupplierResponse>>> Delete(int id)
         {
-            var result = _mediator.Send(new DeleteSupplierCommand(id));
-            if (result == null)
-                return NotFound($"Supplier with id={id} not found!");
+            var result = await _mediator.Send(new DeleteSupplierCommand(id));
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }

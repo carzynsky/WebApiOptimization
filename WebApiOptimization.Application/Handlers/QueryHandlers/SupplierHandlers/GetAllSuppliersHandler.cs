@@ -20,7 +20,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Supplier
 
         public async Task<ResponseBuilder<IEnumerable<SupplierResponse>>> Handle(GetAllSuppliersQuery request, CancellationToken cancellationToken)
         {
-            var suppliers = _supplierRepository.GetAll();
+            var suppliers = await _supplierRepository.GetAllAsync();
             var response = SupplierMapper.Mapper.Map<IEnumerable<SupplierResponse>>(suppliers);
             return new ResponseBuilder<IEnumerable<SupplierResponse>> { Message = "OK.", Data = response };
         }

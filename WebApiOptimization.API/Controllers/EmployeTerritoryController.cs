@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.EmployeeTerritoryCommands;
 using WebApiOptimization.Application.Queries.EmployeeTerritoryQueries;
 using WebApiOptimization.Application.Responses;
@@ -18,20 +19,22 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ResponseBuilder<IEnumerable<EmployeeTerritoryResponse>>> GetAll([FromQuery] GetEmployeeTerritoriesQuery getEmployeeTerritoriesQuery)
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<EmployeeTerritoryResponse>>>> GetAll([FromQuery] GetEmployeeTerritoriesQuery getEmployeeTerritoriesQuery)
         {
-            var result = _mediator.Send(getEmployeeTerritoriesQuery);
-            if (result == null)
-                return NotFound($"EmployeeTerritory(ies) not found!");
-
+            var result = await _mediator.Send(getEmployeeTerritoriesQuery);
             return Ok(result);
         }
 
         [HttpPost]
-        public ActionResult<ResponseBuilder<EmployeeTerritoryResponse>> Add(CreateEmployeeTerritoryCommand createEmployeeTerritoryCommand)
+        public async Task<ActionResult<ResponseBuilder<EmployeeTerritoryResponse>>> Add(CreateEmployeeTerritoryCommand createEmployeeTerritoryCommand)
         {
-            var result = _mediator.Send(createEmployeeTerritoryCommand);
-            return Ok(result);
+            var result = await _mediator.Send(createEmployeeTerritoryCommand);
+            if(result.Data == null)
+            {
+                return BadRequest(result);
+            }
+
+            return Created(string.Empty, result);
         }
 
         /*
@@ -50,11 +53,13 @@ namespace WebApiOptimization.API.Controllers
         */
 
         [HttpDelete]
-        public ActionResult<ResponseBuilder<EmployeeTerritoryResponse>> Delete([FromQuery] DeleteEmployeeTerritoryCommand deleteEmployeeTerritoryCommand)
+        public async Task<ActionResult<ResponseBuilder<EmployeeTerritoryResponse>>> Delete([FromQuery] DeleteEmployeeTerritoryCommand deleteEmployeeTerritoryCommand)
         {
-            var result = _mediator.Send(deleteEmployeeTerritoryCommand);
-            if (result == null)
-                return NotFound($"EmployeeTerritory not found!");
+            var result = await _mediator.Send(deleteEmployeeTerritoryCommand);
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }

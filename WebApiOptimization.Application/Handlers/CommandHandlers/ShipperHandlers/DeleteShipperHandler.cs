@@ -23,7 +23,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.ShipperHandler
 
         public async Task<ResponseBuilder<ShipperResponse>> Handle(DeleteShipperCommand request, CancellationToken cancellationToken)
         {
-            var shipperToDeleteEntity = _shipperRepository.GetById(request.Id);
+            var shipperToDeleteEntity = await _shipperRepository.GetByIdAsync(request.Id);
             if (shipperToDeleteEntity == null)
             {
                 return new ResponseBuilder<ShipperResponse> { Message = $"Shipper with id={request.Id} not found!", Data = null };
@@ -32,7 +32,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.ShipperHandler
             try
             {
                 // Find orders with this shipperId
-                var ordersWithThisShipperId = _orderRepository.GetByShipperId(request.Id).ToList();
+                var ordersWithThisShipperId = await _orderRepository.GetByShipperIdAsync(request.Id);
                 if (ordersWithThisShipperId.Any())
                 {
                     ordersWithThisShipperId.ForEach(x => x.ShipVia = null);

@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.TerritoryCommands;
 using WebApiOptimization.Application.Queries.TerritoryQueries;
 using WebApiOptimization.Application.Responses;
@@ -19,48 +20,61 @@ namespace WebApiOptimization.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ResponseBuilder<IEnumerable<TerritoryResponse>>> GetAll()
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<TerritoryResponse>>>> GetAll()
         {
-            var result = _mediator.Send(new GetAllTerritoriesQuery());
+            var result = await _mediator.Send(new GetAllTerritoriesQuery());
             return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<ResponseBuilder<TerritoryResponse>> GetById(string id)
+        public async Task<ActionResult<ResponseBuilder<TerritoryResponse>>> GetById(string id)
         {
-            var result = _mediator.Send(new GetTerritoryByIdQuery(id));
-            if (result == null)
-                return NotFound($"Territory with id={id} not found!");
+            var result = await _mediator.Send(new GetTerritoryByIdQuery(id));
+            if (result.Data == null)
+            {
+                return NotFound(result);
+            }
 
             return Ok(result);
         }
 
         [HttpPost]
-        public ActionResult<ResponseBuilder<TerritoryResponse>> Add(CreateTerritoryCommand createTerritoryCommand)
+        public async Task<ActionResult<ResponseBuilder<TerritoryResponse>>> Add(CreateTerritoryCommand createTerritoryCommand)
         {
-            var result = _mediator.Send(createTerritoryCommand);
-            return Ok(result);
+            var result = await _mediator.Send(createTerritoryCommand);
+            if(result.Data == null)
+            {
+                return BadRequest(result);
+            }
+
+            return Created(string.Empty, result);
         }
 
         [HttpPut("{id}")]
-        public ActionResult<ResponseBuilder<TerritoryResponse>> Update(string id, UpdateTerritoryCommand updateTerritoryCommand)
+        public async Task<ActionResult<ResponseBuilder<TerritoryResponse>>> Update(string id, UpdateTerritoryCommand updateTerritoryCommand)
         {
             if (id != updateTerritoryCommand.TerritoryId)
+            {
                 return BadRequest($"TerritoryId does not match with updated data!");
+            }
 
-            var result = _mediator.Send(updateTerritoryCommand);
-            if (result == null)
-                return NotFound($"Territory with id={id} not found!");
+            var result = await _mediator.Send(updateTerritoryCommand);
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<ResponseBuilder<TerritoryResponse>> Delete(string id)
+        public async Task<ActionResult<ResponseBuilder<TerritoryResponse>>> Delete(string id)
         {
-            var result = _mediator.Send(new DeleteTerritoryCommand(id));
-            if (result == null)
-                return NotFound($"Territory with id={id} not found!");
+            var result = await _mediator.Send(new DeleteTerritoryCommand(id));
+            if (result.Data == null)
+            {
+                return BadRequest(result);
+            }
 
             return Ok(result);
         }

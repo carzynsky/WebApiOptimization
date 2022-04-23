@@ -30,7 +30,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.SupplierHandle
 
             try
             {
-                var newSupplier = _supplierRepository.Add(supplierEntity);
+                var newSupplier = await _supplierRepository.AddAsync(supplierEntity);
                 var response = SupplierMapper.Mapper.Map<SupplierResponse>(newSupplier);
                 return new ResponseBuilder<SupplierResponse> { Message = "Supplier created.", Data = response };
             }

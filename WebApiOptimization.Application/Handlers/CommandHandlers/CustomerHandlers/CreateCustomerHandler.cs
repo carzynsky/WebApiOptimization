@@ -30,7 +30,7 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.CustomerHandle
 
             try
             {
-                var newCustomer = _customerRepository.Add(customerEntity);
+                var newCustomer = await _customerRepository.AddAsync(customerEntity);
                 var response = CustomerMapper.Mapper.Map<CustomerResponse>(newCustomer);
                 return new ResponseBuilder<CustomerResponse> { Message = "Customer created.", Data = response };
             }

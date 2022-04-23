@@ -17,7 +17,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.CategoryHandlers
         }
         public async Task<ResponseBuilder<CategoryResponse>> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
         {
-            var categoryEntity = _categoryRepository.GetById(request.Id);
+            var categoryEntity = await _categoryRepository.GetByIdAsync(request.Id);
             if(categoryEntity == null)
             {
                 return new ResponseBuilder<CategoryResponse> { Message = $"Category with id={request.Id} not found!", Data = null };
