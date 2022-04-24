@@ -9,8 +9,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System.IO.Compression;
 using System.Reflection;
-using Utf8Json.AspNetCoreMvcFormatter;
-using Utf8Json.Resolvers;
 using WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandlers;
 using WebApiOptimization.Core.Repositories;
 using WebApiOptimization.Core.Repositories.Base;
@@ -42,6 +40,16 @@ namespace WebApiOptimization.API
             {
                 options.Level = CompressionLevel.Fastest;
             });
+
+            services.AddDistributedSqlServerCache(options =>
+            {
+                options.ConnectionString = @"Data Source=DESKTOP-4P5I0TV;
+                Initial Catalog=NORTHWND; Integrated Security=True;";
+                options.SchemaName = "dbo";
+                options.TableName = "CacheStore";
+            });
+
+            services.AddMemoryCache();
 
             // default system.text.json
             services.AddControllers();
