@@ -9,6 +9,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System.IO.Compression;
 using System.Reflection;
+using Utf8Json.AspNetCoreMvcFormatter;
+using Utf8Json.Resolvers;
 using WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandlers;
 using WebApiOptimization.Core.Repositories;
 using WebApiOptimization.Core.Repositories.Base;
@@ -41,7 +43,23 @@ namespace WebApiOptimization.API
                 options.Level = CompressionLevel.Fastest;
             });
 
+            // default system.text.json
             services.AddControllers();
+
+            // newtonsoft
+            //services.AddControllers().AddNewtonsoftJson();
+
+            // utf8 json
+            /*
+            services.AddControllers(option =>
+            {
+                option.OutputFormatters.Clear();
+                option.OutputFormatters.Add(new JsonOutputFormatter(StandardResolver.Default));
+                option.InputFormatters.Clear();
+                option.InputFormatters.Add(new JsonInputFormatter());
+            });
+            */
+
             services.AddDbContext<NorthwndContext>(x => x.UseSqlServer(Configuration.GetConnectionString("NorthwndDB")), ServiceLifetime.Transient);
             services.AddSwaggerGen(c =>
             {
