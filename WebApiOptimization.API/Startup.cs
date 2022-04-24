@@ -33,12 +33,12 @@ namespace WebApiOptimization.API
             services.AddResponseCompression(options =>
             {
                 options.EnableForHttps = true;
-                options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<GzipCompressionProvider>();
             });
 
-            services.Configure<BrotliCompressionProviderOptions>(options =>
+            services.Configure<GzipCompressionProviderOptions>(options =>
             {
-                options.Level = CompressionLevel.Optimal;
+                options.Level = CompressionLevel.Fastest;
             });
 
             services.AddControllers();
@@ -70,20 +70,7 @@ namespace WebApiOptimization.API
 
             #region AddMediatr
 
-            // one is enough
             services.AddMediatR(typeof(CreateEmployeeHandler).GetTypeInfo().Assembly);
-            /*
-            services.AddMediatR(typeof(GetAllEmployeesHandler).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(GetEmployeeByIdHandler).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(DeleteEmployeeHandler).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(UpdateEmployeeHandler).GetTypeInfo().Assembly);
-
-            services.AddMediatR(typeof(CreateCategoryHandler).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(GetAllCategoriesHandler).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(GetCategoryByIdHandler).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(DeleteCategoryHandler).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(UpdateCategoryHandler).GetTypeInfo().Assembly);
-            */
             #endregion
         }
 
