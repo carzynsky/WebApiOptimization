@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,6 +33,20 @@ namespace WebApiOptimization.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            /*
+            // If using Kestrel:
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
+            // If using IIS:
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+            */
+
             services.AddResponseCompression(options =>
             {
                 options.EnableForHttps = true;
@@ -50,6 +65,7 @@ namespace WebApiOptimization.API
             //services.AddControllers().AddNewtonsoftJson();
 
             // utf8 json
+            
             /*
             services.AddControllers(option =>
             {
@@ -59,7 +75,7 @@ namespace WebApiOptimization.API
                 option.InputFormatters.Add(new JsonInputFormatter());
             });
             */
-
+            
             services.AddDbContext<NorthwndContext>(x => x.UseSqlServer(Configuration.GetConnectionString("NorthwndDB")), ServiceLifetime.Transient);
             services.AddSwaggerGen(c =>
             {

@@ -31,12 +31,12 @@ namespace WebApiOptimization.Application.Handlers.CommandHandlers.OrderHandlers
             try
             {
                 var newOrder = await _orderRepository.AddAsync(orderEntity);
-                var response = OrderDetailMapper.Mapper.Map<OrderResponse>(newOrder);
+                var response = OrderMapper.Mapper.Map<OrderResponse>(newOrder);
                 return new ResponseBuilder<OrderResponse> { Message = "Order created.", Data = response };
             }
             catch(Exception e)
             {
-                return new ResponseBuilder<OrderResponse> { Message = $"Order not created! Error: {e.InnerException.Message}", Data = null };
+                return new ResponseBuilder<OrderResponse> { Message = $"Order not created! Error: {e.InnerException?.Message}", Data = null };
             }
         }
     }
