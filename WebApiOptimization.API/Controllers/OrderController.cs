@@ -1,6 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.OrderCommands;
 using WebApiOptimization.Application.Queries.OrderQueries;
@@ -12,19 +17,68 @@ namespace WebApiOptimization.API.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private IMediator _mediator;
+        private readonly IMediator _mediator;
+        private readonly IMemoryCache _memoryCache;
+        private readonly IDistributedCache _distributedCache;
+        public string Orders => "Orders";
 
-        public OrderController(IMediator mediator)
+        public OrderController(IMediator mediator, IMemoryCache memoryCache, IDistributedCache distributedCache)
         {
             _mediator = mediator;
+            _memoryCache = memoryCache;
+            _distributedCache = distributedCache;
         }
 
         [HttpGet]
         public async Task<ActionResult<ResponseBuilder<IEnumerable<OrderResponse>>>> GetAll()
         {
-            var result = await _mediator.Send(new GetAllOrdersQuery());
-            return Ok(result);
+
+            // InMemory Cache
+            /*
+            ResponseBuilder<IEnumerable<OrderResponse>> response;
+            if (!_memoryCache.TryGetValue("OrdersKey", out response))
+            {
+                // setting cache options
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+
+                // keep in cache for 15 seconds since last access
+                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
+                response = await _mediator.Send(new GetAllOrdersQuery());
+
+                // Save data in cache
+                _memoryCache.Set("OrdersKey", response, cacheEntryOptions);
+            }
+
+            return Ok(response);
+            */
+
+            #region Distributed cache
+
+            var objectFromCache = _distributedCache.Get(Orders);
+            if(objectFromCache != null)
+            {
+                var json = Encoding.UTF8.GetString(objectFromCache);
+                var result = JsonSerializer.Deserialize<ResponseBuilder<IEnumerable<OrderResponse>>>(json);
+                if(result != null)
+                {
+                    return Ok(result);
+                }
+            }
+
+            var orders = await _mediator.Send(new GetAllOrdersQuery());
+
+            var serialized = JsonSerializer.SerializeToUtf8Bytes(orders);
+            var cacheEntryOptions = new DistributedCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
+
+            _distributedCache.Set(Orders, serialized, cacheEntryOptions);
+            return Ok(orders);
+
+            #endregion 
         }
+
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ResponseBuilder<OrderResponse>>> GetById(int id)
