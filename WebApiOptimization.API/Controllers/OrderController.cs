@@ -20,6 +20,7 @@ namespace WebApiOptimization.API.Controllers
         private readonly IMediator _mediator;
         private readonly IMemoryCache _memoryCache;
         private readonly IDistributedCache _distributedCache;
+        public string Orders => "Orders";
 
         public OrderController(IMediator mediator, IMemoryCache memoryCache, IDistributedCache distributedCache)
         {
@@ -31,7 +32,9 @@ namespace WebApiOptimization.API.Controllers
         [HttpGet]
         public async Task<ActionResult<ResponseBuilder<IEnumerable<OrderResponse>>>> GetAll()
         {
+
             // InMemory Cache
+            /*
             ResponseBuilder<IEnumerable<OrderResponse>> response;
             if (!_memoryCache.TryGetValue("OrdersKey", out response))
             {
@@ -39,7 +42,8 @@ namespace WebApiOptimization.API.Controllers
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
 
                 // keep in cache for 15 seconds since last access
-                .SetSlidingExpiration(TimeSpan.FromSeconds(15));
+                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
                 response = await _mediator.Send(new GetAllOrdersQuery());
 
                 // Save data in cache
@@ -47,42 +51,34 @@ namespace WebApiOptimization.API.Controllers
             }
 
             return Ok(response);
-            
-
-            // sql server distributed caching but it takes too much time tho
-            /*
-            var orders = await GetOrdersFromCache();
-            if(orders != null)
-            {
-                return Ok(orders);
-            }
-            await SetOrdersCache();
-            return Ok(await GetOrdersFromCache());
             */
-        }
-        
-        // Takes so much time
-        /*
-        private async Task<ResponseBuilder<IEnumerable<OrderResponse>>> GetOrdersFromCache()
-        {
-            var orders = await _distributedCache.GetAsync("Orders");
-            if(orders != null)
+
+            #region Distributed cache
+
+            var objectFromCache = _distributedCache.Get(Orders);
+            if(objectFromCache != null)
             {
-                var ordersStr = Encoding.UTF8.GetString(orders);
-                var ordersObj = JsonSerializer.Deserialize<ResponseBuilder<IEnumerable<OrderResponse>>>(ordersStr);
-                return ordersObj;
+                var json = Encoding.UTF8.GetString(objectFromCache);
+                var result = JsonSerializer.Deserialize<ResponseBuilder<IEnumerable<OrderResponse>>>(json);
+                if(result != null)
+                {
+                    return Ok(result);
+                }
             }
-            return null;
+
+            var orders = await _mediator.Send(new GetAllOrdersQuery());
+
+            var serialized = JsonSerializer.SerializeToUtf8Bytes(orders);
+            var cacheEntryOptions = new DistributedCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
+
+            _distributedCache.Set(Orders, serialized, cacheEntryOptions);
+            return Ok(orders);
+
+            #endregion 
         }
 
-        private async Task SetOrdersCache()
-        {
-            var orders = await _mediator.Send(new GetAllOrdersQuery());
-            byte[] ordersObjValue = JsonSerializer.SerializeToUtf8Bytes(orders);
-            await _distributedCache.SetAsync("Orders", ordersObjValue, new DistributedCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromSeconds(15)));
-        }
-        */
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ResponseBuilder<OrderResponse>>> GetById(int id)

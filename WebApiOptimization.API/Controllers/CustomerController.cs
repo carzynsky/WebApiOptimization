@@ -1,6 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.CustomerCommands;
 using WebApiOptimization.Application.Queries.CustomerQueries;
@@ -13,17 +18,65 @@ namespace WebApiOptimization.API.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IMemoryCache _memoryCache;
+        private readonly IDistributedCache _distributedCache;
+        public string CustomersKey => "Customers";
 
-        public CustomerController(IMediator mediator)
+        public CustomerController(IMediator mediator, IMemoryCache memoryCache, IDistributedCache distributedCache)
         {
             _mediator = mediator;
+            _memoryCache = memoryCache;
+            _distributedCache = distributedCache;
         }
 
         [HttpGet]
         public async Task<ActionResult<ResponseBuilder<IEnumerable<CustomerResponse>>>> GetAll()
         {
+            /*
             var result = await _mediator.Send(new GetAllCustomersQuery());
             return Ok(result);
+            */
+
+            /*
+            // InMemory Cache
+            ResponseBuilder<IEnumerable<CustomerResponse>> response;
+            if (!_memoryCache.TryGetValue(CustomersKey, out response))
+            {
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
+
+                response = await _mediator.Send(new GetAllCustomersQuery());
+                _memoryCache.Set(CustomersKey, response, cacheEntryOptions);
+            }
+
+            return Ok(response);
+            */
+
+            #region Distributed cache
+
+            var objectFromCache = _distributedCache.Get(CustomersKey);
+            if (objectFromCache != null)
+            {
+                var json = Encoding.UTF8.GetString(objectFromCache);
+                var result = JsonSerializer.Deserialize<ResponseBuilder<IEnumerable<CustomerResponse>>>(json);
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+            }
+
+            var customers = await _mediator.Send(new GetAllCustomersQuery());
+
+            var serialized = JsonSerializer.SerializeToUtf8Bytes(customers);
+            var cacheEntryOptions = new DistributedCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
+
+            _distributedCache.Set(CustomersKey, serialized, cacheEntryOptions);
+            return Ok(customers);
+
+            #endregion
         }
 
         [HttpGet("{id}")]

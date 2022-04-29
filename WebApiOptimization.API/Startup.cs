@@ -43,8 +43,7 @@ namespace WebApiOptimization.API
 
             services.AddDistributedSqlServerCache(options =>
             {
-                options.ConnectionString = @"Data Source=DESKTOP-4P5I0TV;
-                Initial Catalog=NORTHWND; Integrated Security=True;";
+                options.ConnectionString = @"Data Source=DESKTOP-4P5I0TV;Initial Catalog=NORTHWND; Integrated Security=True;";
                 options.SchemaName = "dbo";
                 options.TableName = "CacheStore";
             });
