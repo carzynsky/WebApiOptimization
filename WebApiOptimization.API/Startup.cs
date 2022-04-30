@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 using System.IO.Compression;
 using System.Reflection;
 using WebApiOptimization.Application.Handlers.CommandHandlers.EmployeeHandlers;
@@ -48,25 +50,37 @@ namespace WebApiOptimization.API
                 options.TableName = "CacheStore";
             });
 
-            services.AddMemoryCache();
-
-            // default system.text.json
-            services.AddControllers();
-
-            // newtonsoft
-            //services.AddControllers().AddNewtonsoftJson();
-
-            // utf8 json
-            /*
-            services.AddControllers(option =>
+            services.Configure<IpRateLimitOptions>(options =>
             {
-                option.OutputFormatters.Clear();
-                option.OutputFormatters.Add(new JsonOutputFormatter(StandardResolver.Default));
-                option.InputFormatters.Clear();
-                option.InputFormatters.Add(new JsonInputFormatter());
+                options.EnableEndpointRateLimiting = false;
+                options.StackBlockedRequests = false;
+                options.HttpStatusCode = 429;
+                options.RealIpHeader = "X-Real-IP";
+                options.ClientIdHeader = "X-ClientId";
+                options.GeneralRules = new List<RateLimitRule> 
+                { 
+                    new RateLimitRule 
+                    { 
+                        Endpoint = "*", 
+                        Period = "1m", 
+                        Limit = 25 
+                    },
+                    new RateLimitRule
+                    {
+                        Endpoint = "*",
+                        Period = "1h",
+                        Limit = 1000
+                    }
+                };
             });
-            */
+            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+            services.AddInMemoryRateLimiting();
 
+            services.AddMemoryCache();
+            services.AddControllers();
             services.AddDbContext<NorthwndContext>(x => x.UseSqlServer(Configuration.GetConnectionString("NorthwndDB")), ServiceLifetime.Transient);
             services.AddSwaggerGen(c =>
             {
@@ -96,6 +110,7 @@ namespace WebApiOptimization.API
             #region AddMediatr
 
             services.AddMediatR(typeof(CreateEmployeeHandler).GetTypeInfo().Assembly);
+
             #endregion
         }
 
@@ -110,13 +125,10 @@ namespace WebApiOptimization.API
             }
 
             app.UseResponseCompression();
-
+            app.UseIpRateLimiting();
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
