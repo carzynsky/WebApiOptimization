@@ -7,6 +7,7 @@ namespace WebApiOptimization.Core.Repositories
 {
     public interface IEmployeeTerritoryRepository : IRepository<EmployeeTerritory>
     {
+        Task<List<EmployeeTerritory>> GetAllPagedAsync(int pageNumber, int pageSize);
         IEnumerable<EmployeeTerritory> GetByEmployeeId(int employeeId, bool eagerLoading = false);
         Task<List<EmployeeTerritory>> GetByEmployeeIdAsync(int employeeId, bool eagerLoading = false);
         IEnumerable<EmployeeTerritory> GetByTerritoryId(string territoryId, bool eagerLoading = false);

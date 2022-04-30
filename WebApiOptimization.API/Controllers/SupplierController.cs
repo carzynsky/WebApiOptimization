@@ -1,6 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.SupplierCommands;
 using WebApiOptimization.Application.Queries.SupplierQueries;
@@ -12,18 +16,48 @@ namespace WebApiOptimization.API.Controllers
     [ApiController]
     public class SupplierController : ControllerBase
     {
-        private IMediator _mediator;
+        private readonly IMediator _mediator;
+        private readonly IDistributedCache _distributedCache;
+        public string SuppliersKey => "Suppliers";
 
-        public SupplierController(IMediator mediator)
+        public SupplierController(IMediator mediator, IDistributedCache distributedCache)
         {
             _mediator = mediator;
+            _distributedCache = distributedCache;
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseBuilder<IEnumerable<SupplierResponse>>>> GetAll()
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<SupplierResponse>>>> GetAll([FromQuery] GetAllSuppliersQuery getAllSuppliersQuery)
         {
-            var result = await _mediator.Send(new GetAllSuppliersQuery());
-            return Ok(result);
+            if(getAllSuppliersQuery.PageNumber != 0 && getAllSuppliersQuery.PageSize != 0)
+            {
+                var result = await _mediator.Send(getAllSuppliersQuery);
+                return Ok(result);
+            }
+
+            #region Distributed cache
+
+            var objectFromCache = _distributedCache.Get(SuppliersKey);
+            if (objectFromCache != null)
+            {
+                var json = Encoding.UTF8.GetString(objectFromCache);
+                var result = JsonSerializer.Deserialize<ResponseBuilder<IEnumerable<SupplierResponse>>>(json);
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+            }
+
+            var suppliers = await _mediator.Send(getAllSuppliersQuery);
+            var serialized = JsonSerializer.SerializeToUtf8Bytes(suppliers);
+            var cacheEntryOptions = new DistributedCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
+
+            _distributedCache.Set(SuppliersKey, serialized, cacheEntryOptions);
+            return Ok(suppliers);
+
+            #endregion 
         }
 
         [HttpGet("{id:int}")]

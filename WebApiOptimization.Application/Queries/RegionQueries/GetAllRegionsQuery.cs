@@ -1,8 +1,11 @@
 ﻿using MediatR;
 using System.Collections.Generic;
+using WebApiOptimization.Application.Filter;
 using WebApiOptimization.Application.Responses;
-
 namespace WebApiOptimization.Application.Queries.RegionQueries
 {
-    public record GetAllRegionsQuery : IRequest<ResponseBuilder<IEnumerable<RegionResponse>>>;
+    public class GetAllRegionsQuery : PaginationFilter, IRequest<ResponseBuilder<IEnumerable<RegionResponse>>>
+    {
+
+    }
 }

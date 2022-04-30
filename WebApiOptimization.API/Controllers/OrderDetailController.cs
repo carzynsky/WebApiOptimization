@@ -18,40 +18,23 @@ namespace WebApiOptimization.API.Controllers
     public class OrderDetailController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IMemoryCache _memoryCache;
         private readonly IDistributedCache _distributedCache;
         public string OrderDetailsKey => "OrderDetails";
 
-        public OrderDetailController(IMediator mediator, IMemoryCache memoryCache, IDistributedCache distributedCache)
+        public OrderDetailController(IMediator mediator, IDistributedCache distributedCache)
         {
             _mediator = mediator;
-            _memoryCache = memoryCache;
             _distributedCache = distributedCache;
         }
 
         [HttpGet]
         public async Task<ActionResult<ResponseBuilder<IEnumerable<OrderDetailResponse>>>> Get([FromQuery] GetOrderDetailQuery getOrderDetailQuery)
         {
-            /*
-            var result = await _mediator.Send(getOrderDetailQuery);
-            return Ok(result);
-            */
-
-            /*
-            // InMemory Cache
-            ResponseBuilder<IEnumerable<OrderDetailResponse>> response;
-            if (!_memoryCache.TryGetValue(OrderDetailsKey, out response))
+            if(getOrderDetailQuery.PageNumber != 0 && getOrderDetailQuery.PageSize != 0)
             {
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
-                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
-                response = await _mediator.Send(getOrderDetailQuery);
-
-                _memoryCache.Set(OrderDetailsKey, response, cacheEntryOptions);
+                var response = await _mediator.Send(getOrderDetailQuery);
+                return Ok(response);
             }
-
-            return Ok(response);
-            */
 
             #region Distributed cache
 

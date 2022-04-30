@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Queries.EmployeeTerritoryQueries;
 using WebApiOptimization.Application.Responses;
+using WebApiOptimization.Application.Wrappers;
 using WebApiOptimization.Core.Entities;
 using WebApiOptimization.Core.Repositories;
 
@@ -23,11 +24,7 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.EmployeeTerritor
         {
             IEnumerable<EmployeeTerritory> employeeTerritories;
 
-            if (request.TerritoryId == null && request.EmployeeId == null)
-            {
-                employeeTerritories = await _employeeTerritoryRepository.GetAllAsync();
-            }
-            else if(request.EmployeeId != null && request.TerritoryId == null)
+            if(request.EmployeeId != null && request.TerritoryId == null)
             {
                 employeeTerritories = await _employeeTerritoryRepository.GetByEmployeeIdAsync((int)request.EmployeeId, true);
             }
@@ -35,9 +32,19 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.EmployeeTerritor
             {
                 employeeTerritories = await _employeeTerritoryRepository.GetByTerritoryIdAsync(request.TerritoryId, true);
             }
-            else
+            else if(request.EmployeeId != null && request.TerritoryId != null)
             {
                 employeeTerritories = await _employeeTerritoryRepository.GetByEmployeeIdAndTerritoryIdAsync((int)request.EmployeeId, request.TerritoryId, true);
+            }
+            else if(request.PageNumber != 0 && request.PageSize != 0)
+            {
+                employeeTerritories = await _employeeTerritoryRepository.GetAllPagedAsync(request.PageNumber, request.PageSize);
+                var employeeTerritoriesDto = EmployeeTerritoryMapper.Mapper.Map<IEnumerable<EmployeeTerritoryResponse>>(employeeTerritories);
+                return new PagedResponse<IEnumerable<EmployeeTerritoryResponse>>(employeeTerritoriesDto, request.PageNumber, request.PageSize, "OK");
+            }
+            else
+            {
+                employeeTerritories = await _employeeTerritoryRepository.GetAllAsync();
             }
 
             var response = EmployeeTerritoryMapper.Mapper.Map<IEnumerable<EmployeeTerritoryResponse>>(employeeTerritories);

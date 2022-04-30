@@ -18,40 +18,23 @@ namespace WebApiOptimization.API.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IMemoryCache _memoryCache;
         private readonly IDistributedCache _distributedCache;
         public string CustomersKey => "Customers";
 
-        public CustomerController(IMediator mediator, IMemoryCache memoryCache, IDistributedCache distributedCache)
+        public CustomerController(IMediator mediator, IDistributedCache distributedCache)
         {
             _mediator = mediator;
-            _memoryCache = memoryCache;
             _distributedCache = distributedCache;
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseBuilder<IEnumerable<CustomerResponse>>>> GetAll()
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<CustomerResponse>>>> GetAll([FromQuery] GetAllCustomersQuery getAllCustomersQuery)
         {
-            /*
-            var result = await _mediator.Send(new GetAllCustomersQuery());
-            return Ok(result);
-            */
-
-            /*
-            // InMemory Cache
-            ResponseBuilder<IEnumerable<CustomerResponse>> response;
-            if (!_memoryCache.TryGetValue(CustomersKey, out response))
+            if(getAllCustomersQuery.PageNumber != 0 && getAllCustomersQuery.PageSize != 0)
             {
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
-                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
-
-                response = await _mediator.Send(new GetAllCustomersQuery());
-                _memoryCache.Set(CustomersKey, response, cacheEntryOptions);
+                var result = await _mediator.Send(getAllCustomersQuery);
+                return Ok(result);
             }
-
-            return Ok(response);
-            */
 
             #region Distributed cache
 
@@ -66,8 +49,7 @@ namespace WebApiOptimization.API.Controllers
                 }
             }
 
-            var customers = await _mediator.Send(new GetAllCustomersQuery());
-
+            var customers = await _mediator.Send(getAllCustomersQuery);
             var serialized = JsonSerializer.SerializeToUtf8Bytes(customers);
             var cacheEntryOptions = new DistributedCacheEntryOptions()
                 .SetSlidingExpiration(TimeSpan.FromSeconds(15))

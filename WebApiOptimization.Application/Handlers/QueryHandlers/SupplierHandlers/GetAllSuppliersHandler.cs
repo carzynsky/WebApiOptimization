@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Queries.SupplierQueries;
 using WebApiOptimization.Application.Responses;
+using WebApiOptimization.Application.Wrappers;
+using WebApiOptimization.Core.Entities;
 using WebApiOptimization.Core.Repositories;
 
-namespace WebApiOptimization.Application.Handlers.QueryHandlers.Supplier
+namespace WebApiOptimization.Application.Handlers.QueryHandlers.SupplierHandlers
 {
     public class GetAllSuppliersHandler : IRequestHandler<GetAllSuppliersQuery, ResponseBuilder<IEnumerable<SupplierResponse>>>
     {
@@ -20,9 +22,19 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Supplier
 
         public async Task<ResponseBuilder<IEnumerable<SupplierResponse>>> Handle(GetAllSuppliersQuery request, CancellationToken cancellationToken)
         {
-            var suppliers = await _supplierRepository.GetAllAsync();
-            var response = SupplierMapper.Mapper.Map<IEnumerable<SupplierResponse>>(suppliers);
-            return new ResponseBuilder<IEnumerable<SupplierResponse>> { Message = "OK.", Data = response };
+            List<Supplier> suppliers;
+            List<SupplierResponse> suppliersDto;
+
+            if(request.PageNumber == 0 || request.PageSize == 0)
+            {
+                suppliers = await _supplierRepository.GetAllAsync();
+                suppliersDto = SupplierMapper.Mapper.Map<List<SupplierResponse>>(suppliers);
+                return new ResponseBuilder<IEnumerable<SupplierResponse>> { Message = "OK.", Data = suppliersDto };
+            }
+
+            suppliers = await _supplierRepository.GetAllPagedAsync(request.PageNumber, request.PageSize);
+            suppliersDto = SupplierMapper.Mapper.Map<List<SupplierResponse>>(suppliers);
+            return new PagedResponse<IEnumerable<SupplierResponse>>(suppliersDto, request.PageNumber, request.PageSize, "OK");
         }
     }
 }

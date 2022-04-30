@@ -7,6 +7,7 @@ namespace WebApiOptimization.Core.Repositories
 {
     public interface IOrderDetailRepository : IRepository<OrderDetail>
     {
+        Task<List<OrderDetail>> GetAllPagedAsync(int pageNumber, int pageSize);
         IEnumerable<OrderDetail> GetByOrderId(int orderId, bool eagerLoading = false);
         Task<List<OrderDetail>> GetByOrderIdAsync(int orderId, bool eagerLoading = false);
         IEnumerable<OrderDetail> GetByProductId(int productId, bool eagerLoading = false);

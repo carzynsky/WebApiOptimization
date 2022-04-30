@@ -1,6 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.EmployeeTerritoryCommands;
 using WebApiOptimization.Application.Queries.EmployeeTerritoryQueries;
@@ -13,16 +17,48 @@ namespace WebApiOptimization.API.Controllers
     public class EmployeTerritoryController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public EmployeTerritoryController(IMediator mediator)
+        private readonly IDistributedCache _distributedCache;
+        public string EmployeeTerritoriesKey => "EmployeeTerritories";
+
+        public EmployeTerritoryController(IMediator mediator, IDistributedCache distributedCache)
         {
             _mediator = mediator;
+            _distributedCache = distributedCache;
         }
 
         [HttpGet]
         public async Task<ActionResult<ResponseBuilder<IEnumerable<EmployeeTerritoryResponse>>>> GetAll([FromQuery] GetEmployeeTerritoriesQuery getEmployeeTerritoriesQuery)
         {
-            var result = await _mediator.Send(getEmployeeTerritoriesQuery);
-            return Ok(result);
+            if(getEmployeeTerritoriesQuery.PageNumber != 0 && getEmployeeTerritoriesQuery.PageSize != 0)
+            {
+                var result = await _mediator.Send(getEmployeeTerritoriesQuery);
+                return Ok(result);
+            }
+
+            #region Distributed cache
+
+            var objectFromCache = _distributedCache.Get(EmployeeTerritoriesKey);
+            if (objectFromCache != null)
+            {
+                var json = Encoding.UTF8.GetString(objectFromCache);
+                var result = JsonSerializer.Deserialize<ResponseBuilder<IEnumerable<EmployeeTerritoryResponse>>>(json);
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+            }
+
+            var employeeTerritories = await _mediator.Send(getEmployeeTerritoriesQuery);
+            var serialized = JsonSerializer.SerializeToUtf8Bytes(employeeTerritories);
+            var cacheEntryOptions = new DistributedCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
+
+            _distributedCache.Set(EmployeeTerritoriesKey, serialized, cacheEntryOptions);
+            return Ok(employeeTerritories);
+
+            #endregion 
+
         }
 
         [HttpPost]
@@ -36,21 +72,6 @@ namespace WebApiOptimization.API.Controllers
 
             return Created(string.Empty, result);
         }
-
-        /*
-        [HttpPut("{id:int}")]
-        public ActionResult<EmployeeTerritoryResponse> Update(int id, UpdateEmployeeTerritoryCommand updateEmployeeTerritoryCommand)
-        {
-            if (id != updateEmployeeTerritoryCommand.EmployeeId)
-                return BadRequest($"EmployeeId does not match with updated data!");
-
-            var result = _mediator.Send(updateEmployeeTerritoryCommand);
-            if (result == null)
-                return NotFound($"EmployeeTerritory with employee id={id} not found!");
-
-            return Ok(result);
-        }
-        */
 
         [HttpDelete]
         public async Task<ActionResult<ResponseBuilder<EmployeeTerritoryResponse>>> Delete([FromQuery] DeleteEmployeeTerritoryCommand deleteEmployeeTerritoryCommand)

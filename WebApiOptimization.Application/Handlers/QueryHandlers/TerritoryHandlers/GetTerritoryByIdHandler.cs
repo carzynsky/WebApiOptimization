@@ -6,7 +6,7 @@ using WebApiOptimization.Application.Queries.TerritoryQueries;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
 
-namespace WebApiOptimization.Application.Handlers.QueryHandlers.Territory
+namespace WebApiOptimization.Application.Handlers.QueryHandlers.TerritoryHandlers
 {
     public class GetTerritoryByIdHandler : IRequestHandler<GetTerritoryByIdQuery, ResponseBuilder<TerritoryResponse>>
     {

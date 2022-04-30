@@ -1,6 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.CustomerCustomerDemoCommands;
 using WebApiOptimization.Application.Queries.CustomerCustomerDemoQueries;
@@ -13,17 +17,47 @@ namespace WebApiOptimization.API.Controllers
     public class CustomerCustomerDemoController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IDistributedCache _distributedCache;
+        public string CustomerCustomerDemosKey => "CustomerCustomerDemos";
 
-        public CustomerCustomerDemoController(IMediator mediator)
+        public CustomerCustomerDemoController(IMediator mediator, IDistributedCache distributedCache)
         {
             _mediator = mediator;
+            _distributedCache = distributedCache;
         }
 
         [HttpGet]
         public async Task<ActionResult<ResponseBuilder<IEnumerable<CustomerCustomerDemoResponse>>>> Get([FromQuery] GetCustomerCustomerDemoQuery getCustomerCustomerDemoQuery)
         {
-            var result = await _mediator.Send(getCustomerCustomerDemoQuery);
-            return Ok(result);
+            if(getCustomerCustomerDemoQuery.PageNumber != 0 & getCustomerCustomerDemoQuery.PageSize != 0)
+            {
+                var result = await _mediator.Send(getCustomerCustomerDemoQuery);
+                return Ok(result);
+            }
+
+            #region Distributed cache
+
+            var objectFromCache = _distributedCache.Get(CustomerCustomerDemosKey);
+            if (objectFromCache != null)
+            {
+                var json = Encoding.UTF8.GetString(objectFromCache);
+                var result = JsonSerializer.Deserialize<ResponseBuilder<IEnumerable<CustomerCustomerDemoResponse>>>(json);
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+            }
+
+            var customerCustomerDemos = await _mediator.Send(getCustomerCustomerDemoQuery);
+            var serialized = JsonSerializer.SerializeToUtf8Bytes(customerCustomerDemos);
+            var cacheEntryOptions = new DistributedCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
+
+            _distributedCache.Set(CustomerCustomerDemosKey, serialized, cacheEntryOptions);
+            return Ok(customerCustomerDemos);
+
+            #endregion 
         }
 
         [HttpPost]
@@ -37,22 +71,6 @@ namespace WebApiOptimization.API.Controllers
 
             return Created(string.Empty, result);
         }
-
-        /* NO UPDATE FOR CustomerCustomerDemo
-        [HttpPut("{id:int}")]
-        public ActionResult<CustomerCustomerDemoResponse> Update(int id, UpdateCustomerCustomerDemoCommand updateCustomerCustomerDemoCommand)
-        {
-            if (id != updateCustomerCustomerDemoCommand.CustomerId)
-                return BadRequest($"CustomerId does not match with updated data!");
-
-            var result = _mediator.Send(updateCustomerCustomerDemoCommand);
-            if (result == null)
-                return NotFound($"CustomerCustomerDemo with customer id={id} not found!");
-
-            return Ok(result);
-        }
-
-        */
 
         [HttpDelete]
         public async Task<ActionResult<ResponseBuilder<CustomerCustomerDemoResponse>>> Delete([FromQuery] DeleteCustomerCustomerDemoCommand deleteCustomerCustomerDemoCommand)

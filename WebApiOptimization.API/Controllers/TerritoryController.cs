@@ -1,6 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.TerritoryCommands;
 using WebApiOptimization.Application.Queries.TerritoryQueries;
@@ -12,18 +16,49 @@ namespace WebApiOptimization.API.Controllers
     [ApiController]
     public class TerritoryController : ControllerBase
     {
-        private IMediator _mediator;
+        private readonly IMediator _mediator;
+        private readonly IDistributedCache _distributedCache;
+        public string TerritoriesKey => "Territories";
 
-        public TerritoryController(IMediator mediator)
+        public TerritoryController(IMediator mediator, IDistributedCache distributedCache)
         {
             _mediator = mediator;
+            _distributedCache = distributedCache;
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseBuilder<IEnumerable<TerritoryResponse>>>> GetAll()
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<TerritoryResponse>>>> GetAll([FromQuery] GetAllTerritoriesQuery getAllTerritoriesQuery)
         {
-            var result = await _mediator.Send(new GetAllTerritoriesQuery());
-            return Ok(result);
+            if(getAllTerritoriesQuery.PageNumber != 0 && getAllTerritoriesQuery.PageSize != 0)
+            {
+                var result = await _mediator.Send(getAllTerritoriesQuery);
+                return Ok(result);
+            }
+
+            #region Distributed cache
+
+            var objectFromCache = _distributedCache.Get(TerritoriesKey);
+            if (objectFromCache != null)
+            {
+                var json = Encoding.UTF8.GetString(objectFromCache);
+                var result = JsonSerializer.Deserialize<ResponseBuilder<IEnumerable<TerritoryResponse>>>(json);
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+            }
+
+            var territories = await _mediator.Send(getAllTerritoriesQuery);
+            var serialized = JsonSerializer.SerializeToUtf8Bytes(territories);
+            var cacheEntryOptions = new DistributedCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
+
+            _distributedCache.Set(TerritoriesKey, serialized, cacheEntryOptions);
+            return Ok(territories);
+
+            #endregion
+
         }
 
         [HttpGet("{id}")]

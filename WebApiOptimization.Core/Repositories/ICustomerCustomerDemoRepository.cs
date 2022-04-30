@@ -7,6 +7,7 @@ namespace WebApiOptimization.Core.Repositories
 {
     public interface ICustomerCustomerDemoRepository : IRepository<CustomerCustomerDemo>
     {
+        Task<List<CustomerCustomerDemo>> GetAllPagedAsync(int pageNumber, int pageSize);
         IEnumerable<CustomerCustomerDemo> GetByCustomerId(string customerId, bool eagerLoading = false);
         Task<List<CustomerCustomerDemo>> GetByCustomerIdAsync(string customerId, bool eagerLoading = false);
         IEnumerable<CustomerCustomerDemo> GetByCustomerTypeId(string customerTypeId, bool eagerLoading = false);

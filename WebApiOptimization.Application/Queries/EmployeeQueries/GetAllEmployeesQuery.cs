@@ -1,9 +1,12 @@
 ﻿using MediatR;
 using System.Collections.Generic;
+using WebApiOptimization.Application.Filter;
 using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.Application.Queries.EmployeeQueries
 {
-    public record GetAllEmployeesQuery : IRequest<ResponseBuilder<IEnumerable<EmployeeResponse>>>;
- 
+    public class GetAllEmployeesQuery : PaginationFilter, IRequest<ResponseBuilder<IEnumerable<EmployeeResponse>>>
+    {
+
+    }
 }

@@ -1,8 +1,12 @@
 ﻿using MediatR;
 using System.Collections.Generic;
+using WebApiOptimization.Application.Filter;
 using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.Application.Queries.OrderQueries
 {
-    public record GetAllOrdersQuery : IRequest<ResponseBuilder<IEnumerable<OrderResponse>>>;
+    public class GetAllOrdersQuery : PaginationFilter, IRequest<ResponseBuilder<IEnumerable<OrderResponse>>>
+    {
+
+    }
 }

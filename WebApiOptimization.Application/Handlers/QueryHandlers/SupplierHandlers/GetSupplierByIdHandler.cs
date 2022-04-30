@@ -6,7 +6,7 @@ using WebApiOptimization.Application.Queries.SupplierQueries;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
 
-namespace WebApiOptimization.Application.Handlers.QueryHandlers.Supplier
+namespace WebApiOptimization.Application.Handlers.QueryHandlers.SupplierHandlers
 {
     public class GetSupplierByIdHandler : IRequestHandler<GetSupplierByIdQuery, ResponseBuilder<SupplierResponse>>
     {

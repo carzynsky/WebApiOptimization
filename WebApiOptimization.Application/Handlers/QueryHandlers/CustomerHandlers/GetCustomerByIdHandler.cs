@@ -6,7 +6,7 @@ using WebApiOptimization.Application.Queries.CustomerQueries;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
 
-namespace WebApiOptimization.Application.Handlers.QueryHandlers.Customer
+namespace WebApiOptimization.Application.Handlers.QueryHandlers.CustomerHandlers
 {
     public class GetCustomerByIdHandler : IRequestHandler<GetCustomerByIdQuery, ResponseBuilder<CustomerResponse>>
     {

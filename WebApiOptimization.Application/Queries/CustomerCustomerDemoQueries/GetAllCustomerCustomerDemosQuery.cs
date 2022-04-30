@@ -1,8 +1,13 @@
 ﻿using MediatR;
 using System.Collections.Generic;
+using WebApiOptimization.Application.Filter;
 using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.Application.Queries.CustomerCustomerDemoQueries
 {
-    public record GetCustomerCustomerDemoQuery(string CustomerId, string CustomerTypeId) : IRequest<ResponseBuilder<IEnumerable<CustomerCustomerDemoResponse>>>;
+    public class GetCustomerCustomerDemoQuery : PaginationFilter, IRequest<ResponseBuilder<IEnumerable<CustomerCustomerDemoResponse>>>
+    {
+        public string CustomerId { get; set; }
+        public string CustomerTypeId { get; set; }
+    }
 }

@@ -6,7 +6,7 @@ using WebApiOptimization.Application.Queries.OrderQueries;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
 
-namespace WebApiOptimization.Application.Handlers.QueryHandlers.Order
+namespace WebApiOptimization.Application.Handlers.QueryHandlers.OrderHandler
 {
     public class GetOrderByIdHandler : IRequestHandler<GetOrderByIdQuery, ResponseBuilder<OrderResponse>>
     {

@@ -1,8 +1,12 @@
 ﻿using MediatR;
 using System.Collections.Generic;
+using WebApiOptimization.Application.Filter;
 using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.Application.Queries.CustomerDemographicQueries
 {
-    public record GetAllCustomerDemographicsQuery : IRequest<ResponseBuilder<IEnumerable<CustomerDemographicResponse>>>;
+    public class GetAllCustomerDemographicsQuery : PaginationFilter, IRequest<ResponseBuilder<IEnumerable<CustomerDemographicResponse>>>
+    {
+
+    }
 }

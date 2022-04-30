@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiOptimization.Core.Entities;
@@ -13,6 +14,15 @@ namespace WebApiOptimization.Infrastructure.Repositories
         public CustomerRepository(NorthwndContext northwndContext) : base(northwndContext)
         {
 
+        }
+
+        public async Task<List<Customer>> GetAllPagedAsync(int pageNumber, int pageSize)
+        {
+            return await NorthwndContext.Customers
+                .AsNoTracking()
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
         }
 
         public Customer GetById(string customerId)

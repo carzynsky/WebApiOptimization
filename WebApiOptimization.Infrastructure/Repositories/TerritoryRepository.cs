@@ -15,6 +15,7 @@ namespace WebApiOptimization.Infrastructure.Repositories
         {
             
         }
+
         public override IEnumerable<Territory> GetAll()
         {
             return NorthwndContext.Territories
@@ -27,6 +28,16 @@ namespace WebApiOptimization.Infrastructure.Repositories
             return await NorthwndContext.Territories
                 .AsNoTracking()
                 .Include(x => x.Region)
+                .ToListAsync();
+        }
+
+        public async Task<List<Territory>> GetAllPagedAsync(int pageNumber, int pageSize)
+        {
+            return await NorthwndContext.Territories
+                .AsNoTracking()
+                .Include(x => x.Region)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
         }
 

@@ -18,40 +18,23 @@ namespace WebApiOptimization.API.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IMemoryCache _memoryCache;
         private readonly IDistributedCache _distributedCache;
         public string ProductsKey => "Products";
 
-        public ProductController(IMediator mediator, IMemoryCache memoryCache, IDistributedCache distributedCache)
+        public ProductController(IMediator mediator, IDistributedCache distributedCache)
         {
             _mediator = mediator;
-            _memoryCache = memoryCache;
             _distributedCache = distributedCache;
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseBuilder<IEnumerable<ProductResponse>>>> GetAll()
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<ProductResponse>>>> GetAll([FromQuery] GetAllProductsQuery getAllProductsQuery)
         {
-            /*
-            var result = await _mediator.Send(new GetAllProductsQuery());
-            return Ok(result);
-            */
-
-            /*
-            // InMemory Cache
-            ResponseBuilder<IEnumerable<ProductResponse>> response;
-            if (!_memoryCache.TryGetValue(ProductsKey, out response))
+            if(getAllProductsQuery.PageNumber != 0 && getAllProductsQuery.PageSize != 0)
             {
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
-                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
-
-                response = await _mediator.Send(new GetAllProductsQuery());
-                _memoryCache.Set(ProductsKey, response, cacheEntryOptions);
+                var result = await _mediator.Send(getAllProductsQuery);
+                return Ok(result);
             }
-
-            return Ok(response);
-            */
 
             #region Distributed cache
 
@@ -67,7 +50,6 @@ namespace WebApiOptimization.API.Controllers
             }
 
             var products = await _mediator.Send(new GetAllProductsQuery());
-
             var serialized = JsonSerializer.SerializeToUtf8Bytes(products);
             var cacheEntryOptions = new DistributedCacheEntryOptions()
                 .SetSlidingExpiration(TimeSpan.FromSeconds(15))
