@@ -18,40 +18,23 @@ namespace WebApiOptimization.API.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IMemoryCache _memoryCache;
         private readonly IDistributedCache _distributedCache;
         public string EmployeesKey => "Employees";
 
-        public EmployeeController(IMediator mediator, IMemoryCache memoryCache, IDistributedCache ditributedCache)
+        public EmployeeController(IMediator mediator, IDistributedCache distributedCache)
         {
             _mediator = mediator;
-            _memoryCache = memoryCache;
-            _distributedCache = ditributedCache;
+            _distributedCache = distributedCache;
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseBuilder<IEnumerable<EmployeeResponse>>>> GetAll()
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<EmployeeResponse>>>> GetAll([FromQuery] GetAllEmployeesQuery getAllEmployeesQuery)
         {
-            /*
-            var result = await _mediator.Send(new GetAllEmployeesQuery());
-            return Ok(result);
-            */
-
-            /*
-            // InMemory Cache
-            ResponseBuilder<IEnumerable<EmployeeResponse>> response;
-            if (!_memoryCache.TryGetValue(EmployeesKey, out response))
+            if(getAllEmployeesQuery.PageNumber != 0 && getAllEmployeesQuery.PageSize != 0)
             {
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
-                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
-
-                response = await _mediator.Send(new GetAllEmployeesQuery());
-                _memoryCache.Set(EmployeesKey, response, cacheEntryOptions);
+                var result = await _mediator.Send(getAllEmployeesQuery);
+                return Ok(result);
             }
-
-            return Ok(response);
-            */
 
             #region Distributed cache
 
@@ -67,7 +50,6 @@ namespace WebApiOptimization.API.Controllers
             }
 
             var employees = await _mediator.Send(new GetAllEmployeesQuery());
-
             var serialized = JsonSerializer.SerializeToUtf8Bytes(employees);
             var cacheEntryOptions = new DistributedCacheEntryOptions()
                 .SetSlidingExpiration(TimeSpan.FromSeconds(15))

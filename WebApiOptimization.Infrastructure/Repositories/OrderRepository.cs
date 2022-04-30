@@ -35,6 +35,18 @@ namespace WebApiOptimization.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<Order>> GetAllPagedAsync(int pageNumber, int pageSize)
+        {
+            return await NorthwndContext.Orders
+                .AsNoTracking()
+                .Include(x => x.Employee)
+                .Include(x => x.Customer)
+                .Include(x => x.Shipper)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
         public IEnumerable<Order> GetByEmployeeId(int employeeId, bool eagerLoading = false)
         {
             if (eagerLoading)

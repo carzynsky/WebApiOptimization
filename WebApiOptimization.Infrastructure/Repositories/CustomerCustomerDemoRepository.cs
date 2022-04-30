@@ -33,6 +33,17 @@ namespace WebApiOptimization.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<CustomerCustomerDemo>> GetAllPagedAsync(int pageNumber, int pageSize)
+        {
+            return await NorthwndContext.CustomerCustomerDemos
+                .AsNoTracking()
+                .Include(x => x.Customer)
+                .Include(x => x.CustomerType)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
         public IEnumerable<CustomerCustomerDemo> GetByCustomerId(string customerId, bool eagerLoading = false)
         {
             if (eagerLoading)

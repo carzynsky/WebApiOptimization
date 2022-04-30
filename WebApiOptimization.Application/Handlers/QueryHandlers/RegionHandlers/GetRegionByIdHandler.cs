@@ -6,7 +6,7 @@ using WebApiOptimization.Application.Queries.RegionQueries;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
 
-namespace WebApiOptimization.Application.Handlers.QueryHandlers.Region
+namespace WebApiOptimization.Application.Handlers.QueryHandlers.RegionHandlers
 {
     public class GetRegionByIdHandler : IRequestHandler<GetRegionByIdQuery, ResponseBuilder<RegionResponse>>
     {

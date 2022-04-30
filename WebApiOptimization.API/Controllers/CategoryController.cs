@@ -1,6 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.CategoryCommands;
 using WebApiOptimization.Application.Queries.CategoryQueries;
@@ -13,17 +17,47 @@ namespace WebApiOptimization.API.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IDistributedCache _distributedCache;
+        public string CategoriesKey => "Categories";
 
-        public CategoryController(IMediator mediator)
+        public CategoryController(IMediator mediator, IDistributedCache distributedCache)
         {
             _mediator = mediator;
+            _distributedCache = distributedCache;
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseBuilder<IEnumerable<CategoryResponse>>>> GetAll()
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<CategoryResponse>>>> GetAll([FromQuery] GetAllCategoriesQuery getAllCategoriesQuery)
         {
-            var result = await _mediator.Send(new GetAllCategoriesQuery());
-            return Ok(result);
+            if(getAllCategoriesQuery.PageNumber != 0 && getAllCategoriesQuery.PageSize != 0)
+            {
+                var result = await _mediator.Send(getAllCategoriesQuery);
+                return Ok(result);
+            }
+
+            #region Distributed cache
+
+            var objectFromCache = _distributedCache.Get(CategoriesKey);
+            if (objectFromCache != null)
+            {
+                var json = Encoding.UTF8.GetString(objectFromCache);
+                var result = JsonSerializer.Deserialize<ResponseBuilder<IEnumerable<CategoryResponse>>>(json);
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+            }
+
+            var categories = await _mediator.Send(getAllCategoriesQuery);
+            var serialized = JsonSerializer.SerializeToUtf8Bytes(categories);
+            var cacheEntryOptions = new DistributedCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
+
+            _distributedCache.Set(CategoriesKey, serialized, cacheEntryOptions);
+            return Ok(categories);
+
+            #endregion
         }
 
         [HttpGet("{id:int}")]

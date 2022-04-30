@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace WebApiOptimization.Application.Responses
 {
-    public class ResponseBuilder<T> where T : class
+    public class ResponseBuilder<T>
     {
         public string Message { get; set; }
         public T Data { get; set; }
-
     }
 }

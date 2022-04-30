@@ -6,7 +6,7 @@ using WebApiOptimization.Application.Queries.ShipperQueries;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
 
-namespace WebApiOptimization.Application.Handlers.QueryHandlers.Shipper
+namespace WebApiOptimization.Application.Handlers.QueryHandlers.ShipperHandlers
 {
     public class GetShipperByIdHandler : IRequestHandler<GetShipperByIdQuery, ResponseBuilder<ShipperResponse>>
     {

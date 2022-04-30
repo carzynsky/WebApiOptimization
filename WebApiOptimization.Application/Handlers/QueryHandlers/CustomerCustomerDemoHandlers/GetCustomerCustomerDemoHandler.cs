@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Queries.CustomerCustomerDemoQueries;
 using WebApiOptimization.Application.Responses;
+using WebApiOptimization.Application.Wrappers;
 using WebApiOptimization.Core.Entities;
 using WebApiOptimization.Core.Repositories;
 
@@ -33,6 +34,12 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.CustomerCustomer
             else if(request.CustomerId != null && request.CustomerTypeId != null)
             {
                 customerCustomerDemos = await _customerCustomerDemoRepository.GetByCustomerIdAndCustomerTypeIdAsync(request.CustomerId, request.CustomerTypeId, true);
+            }
+            else if(request.PageNumber != 0 && request.PageSize != 0)
+            {
+                customerCustomerDemos = await _customerCustomerDemoRepository.GetAllPagedAsync(request.PageNumber, request.PageSize);
+                var customerCustomerDemosDto = CustomerCustomerDemoMapper.Mapper.Map<IEnumerable<CustomerCustomerDemoResponse>>(customerCustomerDemos);
+                return new PagedResponse<IEnumerable<CustomerCustomerDemoResponse>>(customerCustomerDemosDto, request.PageNumber, request.PageSize, "OK");
             }
             else
             {

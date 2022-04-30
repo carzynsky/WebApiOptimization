@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using WebApiOptimization.Application.Mappers;
 using WebApiOptimization.Application.Queries.EmployeeQueries;
 using WebApiOptimization.Application.Responses;
+using WebApiOptimization.Application.Wrappers;
+using WebApiOptimization.Core.Entities;
 using WebApiOptimization.Core.Repositories;
 
-namespace WebApiOptimization.Application.Handlers.QueryHandlers.Employee
+namespace WebApiOptimization.Application.Handlers.QueryHandlers.EmployeeHandlers
 {
     public class GetAllEmployeesHandler : IRequestHandler<GetAllEmployeesQuery, ResponseBuilder<IEnumerable<EmployeeResponse>>>
     {
@@ -20,9 +22,19 @@ namespace WebApiOptimization.Application.Handlers.QueryHandlers.Employee
 
         public async Task<ResponseBuilder<IEnumerable<EmployeeResponse>>> Handle(GetAllEmployeesQuery request, CancellationToken cancellationToken)
         {
-            var employees = await _employeeRepository.GetAllAsync();
-            var employeesResponse = EmployeeMapper.Mapper.Map<IEnumerable<EmployeeResponse>>(employees);
-            return new ResponseBuilder<IEnumerable<EmployeeResponse>> { Message = "OK", Data = employeesResponse };
+            List<Employee> employees;
+            List<EmployeeResponse> employeesDto;
+
+            if(request.PageNumber == 0 || request.PageSize == 0)
+            {
+                employees = await _employeeRepository.GetAllAsync();
+                employeesDto = EmployeeMapper.Mapper.Map<List<EmployeeResponse>>(employees);
+                return new ResponseBuilder<IEnumerable<EmployeeResponse>> { Message = "OK", Data = employeesDto };
+            }
+
+            employees = await _employeeRepository.GetAllPagedAsync(request.PageNumber, request.PageSize);
+            employeesDto = EmployeeMapper.Mapper.Map<List<EmployeeResponse>>(employees);
+            return new PagedResponse<IEnumerable<EmployeeResponse>>(employeesDto, request.PageNumber, request.PageSize, "OK");
         }
     }
 }

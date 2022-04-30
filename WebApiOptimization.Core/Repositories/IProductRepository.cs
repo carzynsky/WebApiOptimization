@@ -7,6 +7,7 @@ namespace WebApiOptimization.Core.Repositories
 {
     public interface IProductRepository : IRepository<Product>
     {
+        Task<List<Product>> GetAllPagedAsync(int pageNumber, int pageSize);
         Product GetById(int id, bool eagerLoading = false); 
         Task<Product> GetByIdAsync(int id, bool eagerLoading = false);
         IEnumerable<Product> GetByCategoryId(int categoryId, bool eagerLoading = false);

@@ -1,6 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using WebApiOptimization.Application.Commands.ShipperCommands;
 using WebApiOptimization.Application.Queries.ShipperQueries;
@@ -13,17 +17,47 @@ namespace WebApiOptimization.API.Controllers
     public class ShipperController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IDistributedCache _distributedCache;
+        public string ShippersKey => "Shippers";
 
-        public ShipperController(IMediator mediator)
+        public ShipperController(IMediator mediator, IDistributedCache distributedCache)
         {
             _mediator = mediator;
+            _distributedCache = distributedCache;
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseBuilder<IEnumerable<ShipperResponse>>>> GetAll()
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<ShipperResponse>>>> GetAll([FromQuery] GetAllShippersQuery getAllShippersQuery)
         {
-            var result = await _mediator.Send(new GetAllShippersQuery());
-            return Ok(result);
+            if(getAllShippersQuery.PageNumber != 0 && getAllShippersQuery.PageSize != 0)
+            {
+                var result = await _mediator.Send(getAllShippersQuery);
+                return Ok(result);
+            }
+
+            #region Distributed cache
+
+            var objectFromCache = _distributedCache.Get(ShippersKey);
+            if (objectFromCache != null)
+            {
+                var json = Encoding.UTF8.GetString(objectFromCache);
+                var result = JsonSerializer.Deserialize<ResponseBuilder<IEnumerable<ShipperResponse>>>(json);
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+            }
+
+            var shippers = await _mediator.Send(getAllShippersQuery);
+            var serialized = JsonSerializer.SerializeToUtf8Bytes(shippers);
+            var cacheEntryOptions = new DistributedCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
+
+            _distributedCache.Set(ShippersKey, serialized, cacheEntryOptions);
+            return Ok(shippers);
+
+            #endregion
         }
 
         [HttpGet("{id:int}")]

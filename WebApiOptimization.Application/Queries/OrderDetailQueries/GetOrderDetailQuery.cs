@@ -1,8 +1,13 @@
 ﻿using MediatR;
 using System.Collections.Generic;
+using WebApiOptimization.Application.Filter;
 using WebApiOptimization.Application.Responses;
 
 namespace WebApiOptimization.Application.Queries.OrderDetailQueries
 {
-    public record GetOrderDetailQuery(int? OrderId, int? ProductId) : IRequest<ResponseBuilder<IEnumerable<OrderDetailResponse>>>;
+    public class GetOrderDetailQuery : PaginationFilter, IRequest<ResponseBuilder<IEnumerable<OrderDetailResponse>>>
+    {
+        public int? OrderID { get; set; }
+        public int? ProductID { get; set; }
+    }
 }

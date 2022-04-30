@@ -6,7 +6,7 @@ using WebApiOptimization.Application.Queries.EmployeeQueries;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
 
-namespace WebApiOptimization.Application.Handlers.QueryHandlers.Employee
+namespace WebApiOptimization.Application.Handlers.QueryHandlers.EmployeeHandlers
 {
     public class GetEmployeeByIdHandler : IRequestHandler<GetEmployeeByIdQuery, ResponseBuilder<EmployeeResponse>>
     {

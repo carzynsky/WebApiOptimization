@@ -6,7 +6,7 @@ using WebApiOptimization.Application.Queries.ProductQueries;
 using WebApiOptimization.Application.Responses;
 using WebApiOptimization.Core.Repositories;
 
-namespace WebApiOptimization.Application.Handlers.QueryHandlers.Product
+namespace WebApiOptimization.Application.Handlers.QueryHandlers.ProductHandlers
 {
     public class GetProductByIdHandler : IRequestHandler<GetProductByIdQuery, ResponseBuilder<ProductResponse>>
     {

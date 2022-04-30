@@ -18,40 +18,23 @@ namespace WebApiOptimization.API.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IMemoryCache _memoryCache;
         private readonly IDistributedCache _distributedCache;
         public string Orders => "Orders";
 
-        public OrderController(IMediator mediator, IMemoryCache memoryCache, IDistributedCache distributedCache)
+        public OrderController(IMediator mediator, IDistributedCache distributedCache)
         {
             _mediator = mediator;
-            _memoryCache = memoryCache;
             _distributedCache = distributedCache;
         }
 
         [HttpGet]
-        public async Task<ActionResult<ResponseBuilder<IEnumerable<OrderResponse>>>> GetAll()
+        public async Task<ActionResult<ResponseBuilder<IEnumerable<OrderResponse>>>> GetAll([FromQuery] GetAllOrdersQuery getAllOrdersQuery)
         {
-
-            // InMemory Cache
-            /*
-            ResponseBuilder<IEnumerable<OrderResponse>> response;
-            if (!_memoryCache.TryGetValue("OrdersKey", out response))
+            if(getAllOrdersQuery.PageNumber != 0 && getAllOrdersQuery.PageSize != 0)
             {
-                // setting cache options
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-
-                // keep in cache for 15 seconds since last access
-                .SetSlidingExpiration(TimeSpan.FromSeconds(15))
-                .SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
-                response = await _mediator.Send(new GetAllOrdersQuery());
-
-                // Save data in cache
-                _memoryCache.Set("OrdersKey", response, cacheEntryOptions);
+                var response = await _mediator.Send(getAllOrdersQuery);
+                return Ok(response);
             }
-
-            return Ok(response);
-            */
 
             #region Distributed cache
 
@@ -78,7 +61,6 @@ namespace WebApiOptimization.API.Controllers
 
             #endregion 
         }
-
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ResponseBuilder<OrderResponse>>> GetById(int id)
